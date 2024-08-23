@@ -5,7 +5,6 @@ plugins {
 }
 
 group = "ac.grim.grimac"
-version = "2.3.67"
 
 repositories {
     maven("https://repo.viaversion.com") // ViaVersion
@@ -28,7 +27,6 @@ dependencies {
     compileOnly("com.viaversion:viaversion-api:4.9.4-SNAPSHOT")
     compileOnly("io.netty:netty-all:4.1.85.Final")
 }
-
 
 tasks.jar {
     enabled = false
