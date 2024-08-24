@@ -3,8 +3,8 @@ plugins {
 }
 
 allprojects {
+    group = "dev.clairton.yuki"
     version = "2.3.67"
-    description = "Libre simulation anticheat designed for 1.20 with 1.8-1.20 support, powered by PacketEvents 2.0."
 }
 
 subprojects {

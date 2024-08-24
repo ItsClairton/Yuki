@@ -1,4 +1,4 @@
-rootProject.name = "grimac"
+rootProject.name = "yuki"
 
 include("api")
 include("plugin")

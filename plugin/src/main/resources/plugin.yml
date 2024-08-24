@@ -1,8 +1,8 @@
-name: GrimAC
+name: Yuki
 version: ${version}
-main: ac.grim.grimac.GrimAC
-description: ${description}
-author: GrimAC
+main: dev.clairton.yuki.GrimAC
+description: A powerful anticheat based on Grim
+author: [GrimAC, ItsClairton]
 permissions:
   grim.alerts:
     description: Receive alerts for violations

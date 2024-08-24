@@ -1,0 +1,24 @@
+package dev.clairton.yuki.manager.init.start;
+
+import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.manager.init.Initable;
+import dev.clairton.yuki.utils.anticheat.LogUtil;
+import io.github.retrooper.packetevents.util.folia.FoliaScheduler;
+import org.bukkit.Bukkit;
+
+public class TickRunner implements Initable {
+    @Override
+    public void start() {
+        LogUtil.info("Registering tick schedulers...");
+
+        if (FoliaScheduler.isFolia()) {
+            FoliaScheduler.getAsyncScheduler().runAtFixedRate(GrimAPI.INSTANCE.getPlugin(), (dummy) -> {
+                GrimAPI.INSTANCE.getTickManager().tickSync();
+                GrimAPI.INSTANCE.getTickManager().tickAsync();
+            }, 1, 1);
+        } else {
+            Bukkit.getScheduler().runTaskTimer(GrimAPI.INSTANCE.getPlugin(), () -> GrimAPI.INSTANCE.getTickManager().tickSync(), 0, 1);
+            Bukkit.getScheduler().runTaskTimerAsynchronously(GrimAPI.INSTANCE.getPlugin(), () -> GrimAPI.INSTANCE.getTickManager().tickAsync(), 0, 1);
+        }
+    }
+}

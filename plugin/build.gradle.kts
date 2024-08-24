@@ -4,8 +4,6 @@ plugins {
     id("com.gradleup.shadow") version "8.3.0"
 }
 
-group = "ac.grim.grimac"
-
 repositories {
     maven("https://repo.viaversion.com") // ViaVersion
     maven("https://repo.aikar.co/content/groups/aikar/") // ACF
@@ -61,20 +59,20 @@ tasks.shadowJar {
 
     archiveFileName.set("${rootProject.name}-${project.version}.jar")
 
-    relocate("io.github.retrooper.packetevents", "ac.grim.grimac.shaded.packetevents")
-    relocate("co.aikar.commands", "ac.grim.grimac.shaded.acf")
-    relocate("co.aikar.locale", "ac.grim.grimac.shaded.locale")
-    relocate("club.minnced", "ac.grim.grimac.shaded.discord-webhooks")
-    relocate("github.scarsz.configuralize", "ac.grim.grimac.shaded.configuralize")
-    relocate("com.github.puregero", "ac.grim.grimac.shaded.com.github.puregero")
-    relocate("com.google.code.gson", "ac.grim.grimac.shaded.gson")
-    relocate("alexh", "ac.grim.grimac.shaded.maps")
-    relocate("it.unimi.dsi.fastutil", "ac.grim.grimac.shaded.fastutil")
-    relocate("net.kyori", "ac.grim.grimac.shaded.kyori")
-    relocate("okhttp3", "ac.grim.grimac.shaded.okhttp3")
-    relocate("okio", "ac.grim.grimac.shaded.okio")
-    relocate("org.yaml.snakeyaml", "ac.grim.grimac.shaded.snakeyaml")
-    relocate("org.json", "ac.grim.grimac.shaded.json")
-    relocate("org.intellij", "ac.grim.grimac.shaded.intellij")
-    relocate("org.jetbrains", "ac.grim.grimac.shaded.jetbrains")
+    relocate("io.github.retrooper.packetevents", "dev.clairton.yuki.shaded.packetevents")
+    relocate("co.aikar.commands", "dev.clairton.yuki.shaded.acf")
+    relocate("co.aikar.locale", "dev.clairton.yuki.shaded.locale")
+    relocate("club.minnced", "dev.clairton.yuki.shaded.discord-webhooks")
+    relocate("github.scarsz.configuralize", "dev.clairton.yuki.shaded.configuralize")
+    relocate("com.github.puregero", "dev.clairton.yuki.shaded.com.github.puregero")
+    relocate("com.google.code.gson", "dev.clairton.yuki.shaded.gson")
+    relocate("alexh", "dev.clairton.yuki.shaded.maps")
+    relocate("it.unimi.dsi.fastutil", "dev.clairton.yuki.shaded.fastutil")
+    relocate("net.kyori", "dev.clairton.yuki.shaded.kyori")
+    relocate("okhttp3", "dev.clairton.yuki.shaded.okhttp3")
+    relocate("okio", "dev.clairton.yuki.shaded.okio")
+    relocate("org.yaml.snakeyaml", "dev.clairton.yuki.shaded.snakeyaml")
+    relocate("org.json", "dev.clairton.yuki.shaded.json")
+    relocate("org.intellij", "dev.clairton.yuki.shaded.intellij")
+    relocate("org.jetbrains", "dev.clairton.yuki.shaded.jetbrains")
 }
