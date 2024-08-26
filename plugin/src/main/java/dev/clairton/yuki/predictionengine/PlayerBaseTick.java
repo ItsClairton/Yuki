@@ -9,14 +9,16 @@ import dev.clairton.yuki.utils.enums.FluidTag;
 import dev.clairton.yuki.utils.enums.Pose;
 import dev.clairton.yuki.utils.latency.CompensatedEntities;
 import dev.clairton.yuki.utils.math.GrimMath;
+import dev.clairton.yuki.utils.nmsutil.*;
 import com.github.retrooper.packetevents.protocol.attribute.Attributes;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateType;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateAttributes;
-import dev.clairton.yuki.utils.nmsutil.*;
 import org.bukkit.util.Vector;
+
+import java.util.Optional;
 
 public class PlayerBaseTick {
     GrimPlayer player;
@@ -148,9 +150,14 @@ public class PlayerBaseTick {
         // Pre-1.17 clients don't have powder snow and therefore don't desync
         if (player.getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_16_4)) return;
 
-        // The client first desync's this attribute
         final ValuedAttribute playerSpeed = player.compensatedEntities.getSelf().getAttribute(Attributes.GENERIC_MOVEMENT_SPEED).get();
-        playerSpeed.property().get().getModifiers().removeIf(modifier -> modifier.getUUID().equals(CompensatedEntities.SNOW_MODIFIER_UUID) || modifier.getName().getKey().equals("powder_snow"));
+
+        // Might be null after respawn?
+        final Optional<WrapperPlayServerUpdateAttributes.Property> property = playerSpeed.property();
+        if (property.isEmpty()) return;
+
+        // The client first desync's this attribute
+        property.get().getModifiers().removeIf(modifier -> modifier.getUUID().equals(CompensatedEntities.SNOW_MODIFIER_UUID) || modifier.getName().getKey().equals("powder_snow"));
         playerSpeed.recalculate();
 
         // And then re-adds it using purely what the server has sent it
@@ -164,7 +171,7 @@ public class PlayerBaseTick {
                 float percentFrozen = (float) Math.min(i, ticksToFreeze) / (float) ticksToFreeze;
                 float percentFrozenReducedToSpeed = -0.05F * percentFrozen;
 
-                playerSpeed.property().get().getModifiers().add(new WrapperPlayServerUpdateAttributes.PropertyModifier(CompensatedEntities.SNOW_MODIFIER_UUID, percentFrozenReducedToSpeed, WrapperPlayServerUpdateAttributes.PropertyModifier.Operation.ADDITION));
+                property.get().getModifiers().add(new WrapperPlayServerUpdateAttributes.PropertyModifier(CompensatedEntities.SNOW_MODIFIER_UUID, percentFrozenReducedToSpeed, WrapperPlayServerUpdateAttributes.PropertyModifier.Operation.ADDITION));
                 playerSpeed.recalculate();
             }
         }
