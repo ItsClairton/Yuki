@@ -1,8 +1,8 @@
 name: Yuki
 version: ${version}
 main: dev.clairton.yuki.GrimAC
-description: A powerful anticheat based on Grim
-author: [GrimAC, ItsClairton]
+description: A powerful anti-cheat based on Grim
+authors: [GrimAC, ItsClairton]
 permissions:
   grim.alerts:
     description: Receive alerts for violations

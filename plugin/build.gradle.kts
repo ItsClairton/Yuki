@@ -59,7 +59,8 @@ tasks.shadowJar {
 
     archiveFileName.set("${rootProject.name}-${project.version}.jar")
 
-    relocate("io.github.retrooper.packetevents", "dev.clairton.yuki.shaded.packetevents")
+    relocate("com.github.retrooper.packetevents", "dev.clairton.yuki.shaded.packetevents.common")
+    relocate("io.github.retrooper.packetevents", "dev.clairton.yuki.shaded.packetevents.spigot")
     relocate("co.aikar.commands", "dev.clairton.yuki.shaded.acf")
     relocate("co.aikar.locale", "dev.clairton.yuki.shaded.locale")
     relocate("club.minnced", "dev.clairton.yuki.shaded.discord-webhooks")
