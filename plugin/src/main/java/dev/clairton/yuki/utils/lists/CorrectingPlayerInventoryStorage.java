@@ -1,6 +1,6 @@
 package dev.clairton.yuki.utils.lists;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.player.GrimPlayer;
 import dev.clairton.yuki.utils.inventory.Inventory;
 import dev.clairton.yuki.utils.inventory.InventoryStorage;
@@ -60,7 +60,7 @@ public class CorrectingPlayerInventoryStorage extends InventoryStorage {
     // Required as server now only sends changes if client disagrees with them.
     public void handleClientClaimedSlotSet(int slotID) {
         if (slotID >= 0 && slotID <= Inventory.ITEMS_END) {
-            pendingFinalizedSlot.put(slotID, GrimAPI.INSTANCE.getTickManager().currentTick + 5);
+            pendingFinalizedSlot.put(slotID, Yuki.getInstance().getTickManager().currentTick + 5);
         }
     }
 
@@ -81,7 +81,7 @@ public class CorrectingPlayerInventoryStorage extends InventoryStorage {
         // OR, the client was in control of setting this slot
         if (finalTransaction == null || player.lastTransactionReceived.get() >= finalTransaction) {
             // This is the last change for this slot, try to resync this slot if possible
-            pendingFinalizedSlot.put(item, GrimAPI.INSTANCE.getTickManager().currentTick + 5);
+            pendingFinalizedSlot.put(item, Yuki.getInstance().getTickManager().currentTick + 5);
             serverIsCurrentlyProcessingThesePredictions.remove(item);
         }
 
@@ -104,7 +104,7 @@ public class CorrectingPlayerInventoryStorage extends InventoryStorage {
             ItemStack toPE = SpigotConversionUtil.fromBukkitItemStack(bukkitItem);
 
             if (existing.getType() != toPE.getType() || existing.getAmount() != toPE.getAmount()) {
-                FoliaScheduler.getEntityScheduler().execute(player.bukkitPlayer, GrimAPI.INSTANCE.getPlugin(), () -> {
+                FoliaScheduler.getEntityScheduler().execute(player.bukkitPlayer, Yuki.getInstance().getPlugin(), () -> {
                     player.bukkitPlayer.updateInventory();
                 }, null, 0);
                 setItem(slot, toPE);
@@ -115,7 +115,7 @@ public class CorrectingPlayerInventoryStorage extends InventoryStorage {
     public void tickWithBukkit() {
         if (player.bukkitPlayer == null) return;
 
-        int tickID = GrimAPI.INSTANCE.getTickManager().currentTick;
+        int tickID = Yuki.getInstance().getTickManager().currentTick;
         for (Iterator<Map.Entry<Integer, Integer>> it = pendingFinalizedSlot.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Integer, Integer> entry = it.next();
             if (entry.getValue() <= tickID) {
@@ -125,7 +125,7 @@ public class CorrectingPlayerInventoryStorage extends InventoryStorage {
         }
 
         if (player.getInventory().needResend) {
-            FoliaScheduler.getEntityScheduler().execute(player.bukkitPlayer, GrimAPI.INSTANCE.getPlugin(), () -> {
+            FoliaScheduler.getEntityScheduler().execute(player.bukkitPlayer, Yuki.getInstance().getPlugin(), () -> {
                 // Potential race condition doing this multiple times
                 if (!player.getInventory().needResend) return;
 

@@ -1,9 +1,9 @@
 package dev.clairton.yuki;
 
-import dev.clairton.yuki.api.AbstractCheck;
-import dev.clairton.yuki.api.GrimAbstractAPI;
-import dev.clairton.yuki.api.GrimUser;
-import dev.clairton.yuki.api.alerts.AlertManager;
+import ac.grim.grimac.api.AbstractCheck;
+import ac.grim.grimac.api.GrimAbstractAPI;
+import ac.grim.grimac.api.GrimUser;
+import ac.grim.grimac.api.alerts.AlertManager;
 import dev.clairton.yuki.manager.init.Initable;
 import dev.clairton.yuki.player.GrimPlayer;
 import com.github.retrooper.packetevents.netty.channel.ChannelHelper;
@@ -21,9 +21,9 @@ import java.util.function.Function;
 //This is used for grim's external API. It has its own class just for organization.
 public class GrimExternalAPI implements GrimAbstractAPI, Initable {
 
-    private final GrimAPI api;
+    private final Yuki api;
 
-    public GrimExternalAPI(GrimAPI api) {
+    public GrimExternalAPI(Yuki api) {
         this.api = api;
     }
 
@@ -66,7 +66,7 @@ public class GrimExternalAPI implements GrimAbstractAPI, Initable {
 
     @Override
     public String getGrimVersion() {
-        PluginDescriptionFile description = GrimAPI.INSTANCE.getPlugin().getDescription();
+        PluginDescriptionFile description = Yuki.getInstance().getPlugin().getDescription();
         return description.getVersion();
     }
 
@@ -82,9 +82,9 @@ public class GrimExternalAPI implements GrimAbstractAPI, Initable {
 
     @Override
     public void reload() {
-        GrimAPI.INSTANCE.getConfigManager().reload();
+        Yuki.getInstance().getConfigManager().reload();
         //Reload checks for all players
-        for (GrimPlayer grimPlayer : GrimAPI.INSTANCE.getPlayerDataManager().getEntries()) {
+        for (GrimPlayer grimPlayer : Yuki.getInstance().getPlayerDataManager().getEntries()) {
             ChannelHelper.runInEventLoop(grimPlayer.user.getChannel(), () -> {
                 grimPlayer.onReload();
                 grimPlayer.updatePermissions();
@@ -95,14 +95,14 @@ public class GrimExternalAPI implements GrimAbstractAPI, Initable {
             });
         }
         //Restart
-        GrimAPI.INSTANCE.getDiscordManager().start();
-        GrimAPI.INSTANCE.getSpectateManager().start();
-        GrimAPI.INSTANCE.getExternalAPI().start();
+        Yuki.getInstance().getDiscordManager().start();
+        Yuki.getInstance().getSpectateManager().start();
+        Yuki.getInstance().getExternalAPI().start();
     }
 
     @Override
     public AlertManager getAlertManager() {
-        return GrimAPI.INSTANCE.getAlertManager();
+        return Yuki.getInstance().getAlertManager();
     }
 
     @Override
@@ -116,6 +116,6 @@ public class GrimExternalAPI implements GrimAbstractAPI, Initable {
         variableReplacements.put("%fast_math%", user -> !user.isVanillaMath() + "");
         variableReplacements.put("%tps%", user -> String.format("%.2f", SpigotReflectionUtil.getTPS()));
         variableReplacements.put("%version%", GrimUser::getVersionName);
-        variableReplacements.put("%prefix%", user -> ChatColor.translateAlternateColorCodes('&', GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("prefix", "&bGrim &8»")));
+        variableReplacements.put("%prefix%", user -> ChatColor.translateAlternateColorCodes('&', Yuki.getInstance().getConfigManager().getConfig().getStringElse("prefix", "&bGrim &8»")));
     }
 }

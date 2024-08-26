@@ -1,8 +1,8 @@
 package dev.clairton.yuki.manager;
 
-import dev.clairton.yuki.GrimAPI;
-import dev.clairton.yuki.api.AbstractCheck;
-import dev.clairton.yuki.api.events.CommandExecuteEvent;
+import dev.clairton.yuki.Yuki;
+import ac.grim.grimac.api.AbstractCheck;
+import ac.grim.grimac.api.events.CommandExecuteEvent;
 import dev.clairton.yuki.checks.Check;
 import dev.clairton.yuki.events.packets.ProxyAlertMessenger;
 import dev.clairton.yuki.player.GrimPlayer;
@@ -28,7 +28,7 @@ public class PunishmentManager {
     }
 
     public void reload() {
-        DynamicConfig config = GrimAPI.INSTANCE.getConfigManager().getConfig();
+        DynamicConfig config = Yuki.getInstance().getConfigManager().getConfig();
         List<String> punish = config.getStringListElse("Punishments", new ArrayList<>());
         experimentalSymbol = config.getStringElse("experimental-symbol", "*");
 
@@ -105,14 +105,14 @@ public class PunishmentManager {
                 .replace("%description%", check.getDescription())
         );
 
-        original = GrimAPI.INSTANCE.getExternalAPI().replaceVariables(player, original, true);
+        original = Yuki.getInstance().getExternalAPI().replaceVariables(player, original, true);
 
         return original;
     }
 
     public boolean handleAlert(GrimPlayer player, String verbose, Check check) {
-        String alertString = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("alerts-format", "%prefix% &f%player% &bfailed &f%check_name% &f(x&c%vl%&f) &7%verbose%");
-        boolean testMode = GrimAPI.INSTANCE.getConfigManager().getConfig().getBooleanElse("test-mode", false);
+        String alertString = Yuki.getInstance().getConfigManager().getConfig().getStringElse("alerts-format", "%prefix% &f%player% &bfailed &f%check_name% &f(x&c%vl%&f) &7%verbose%");
+        boolean testMode = Yuki.getInstance().getConfigManager().getConfig().getBooleanElse("test-mode", false);
         boolean sentDebug = false;
 
         // Check commands
@@ -123,12 +123,12 @@ public class PunishmentManager {
                     String cmd = replaceAlertPlaceholders(command.getCommand(), group, check, alertString, verbose);
 
                     // Verbose that prints all flags
-                    if (GrimAPI.INSTANCE.getAlertManager().getEnabledVerbose().size() > 0 && command.command.equals("[alert]")) {
+                    if (Yuki.getInstance().getAlertManager().getEnabledVerbose().size() > 0 && command.command.equals("[alert]")) {
                         sentDebug = true;
-                        for (Player bukkitPlayer : GrimAPI.INSTANCE.getAlertManager().getEnabledVerbose()) {
+                        for (Player bukkitPlayer : Yuki.getInstance().getAlertManager().getEnabledVerbose()) {
                             bukkitPlayer.sendMessage(cmd);
                         }
-                        if (GrimAPI.INSTANCE.getConfigManager().getConfig().getBooleanElse("verbose.print-to-console", false)) {
+                        if (Yuki.getInstance().getConfigManager().getConfig().getBooleanElse("verbose.print-to-console", false)) {
                             LogUtil.console(cmd); // Print verbose to console
                         }
                     }
@@ -144,9 +144,9 @@ public class PunishmentManager {
 
                             if (command.command.equals("[webhook]")) {
                                 String vl = group.violations.values().stream().filter((e) -> e == check).count() + "";
-                                GrimAPI.INSTANCE.getDiscordManager().sendAlert(player, verbose, check.getCheckName(), vl);
+                                Yuki.getInstance().getDiscordManager().sendAlert(player, verbose, check.getCheckName(), vl);
                             } else if (command.command.equals("[proxy]")) {
-                                String proxyAlertString = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("alerts-format-proxy", "%prefix% &f[&cproxy&f] &f%player% &bfailed &f%check_name% &f(x&c%vl%&f) &7%verbose%");
+                                String proxyAlertString = Yuki.getInstance().getConfigManager().getConfig().getStringElse("alerts-format-proxy", "%prefix% &f[&cproxy&f] &f%player% &bfailed &f%check_name% &f(x&c%vl%&f) &7%verbose%");
                                 proxyAlertString = replaceAlertPlaceholders(command.getCommand(), group, check, proxyAlertString, verbose);
                                 ProxyAlertMessenger.sendPluginMessage(proxyAlertString);
                             } else {
@@ -160,7 +160,7 @@ public class PunishmentManager {
                                 }
 
                                 String finalCmd = cmd;
-                                FoliaScheduler.getGlobalRegionScheduler().run(GrimAPI.INSTANCE.getPlugin(), (dummy) -> {
+                                FoliaScheduler.getGlobalRegionScheduler().run(Yuki.getInstance().getPlugin(), (dummy) -> {
                                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCmd);
                                 });
                             }

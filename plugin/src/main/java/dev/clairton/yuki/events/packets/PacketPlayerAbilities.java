@@ -1,6 +1,6 @@
 package dev.clairton.yuki.events.packets;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.checks.Check;
 import dev.clairton.yuki.checks.type.PacketCheck;
 import dev.clairton.yuki.player.GrimPlayer;
@@ -37,7 +37,7 @@ public class PacketPlayerAbilities extends Check implements PacketCheck {
 
             if (lastSentPlayerCanFly && !abilities.isFlightAllowed()) {
                 int noFlying = player.lastTransactionSent.get();
-                int maxFlyingPing = GrimAPI.INSTANCE.getConfigManager().getConfig().getIntElse("max-ping-out-of-flying", 1000);
+                int maxFlyingPing = Yuki.getInstance().getConfigManager().getConfig().getIntElse("max-ping-out-of-flying", 1000);
                 if (maxFlyingPing != -1) {
                     player.runNettyTaskInMs(() -> {
                         if (player.lastTransactionReceived.get() < noFlying) {

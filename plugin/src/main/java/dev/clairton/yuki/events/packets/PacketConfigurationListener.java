@@ -1,6 +1,6 @@
 package dev.clairton.yuki.events.packets;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.checks.impl.misc.ClientBrand;
 import dev.clairton.yuki.player.GrimPlayer;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
@@ -18,7 +18,7 @@ public class PacketConfigurationListener extends PacketListenerAbstract {
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
         if (event.getPacketType() == PacketType.Configuration.Client.PLUGIN_MESSAGE) {
-            GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
+            GrimPlayer player = Yuki.getInstance().getPlayerDataManager().getPlayer(event.getUser());
             if (player == null) return;
             //
             WrapperConfigClientPluginMessage wrapper = new WrapperConfigClientPluginMessage(event);

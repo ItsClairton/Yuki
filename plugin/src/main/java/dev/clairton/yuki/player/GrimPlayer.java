@@ -1,8 +1,8 @@
 package dev.clairton.yuki.player;
 
-import dev.clairton.yuki.GrimAPI;
-import dev.clairton.yuki.api.AbstractCheck;
-import dev.clairton.yuki.api.GrimUser;
+import dev.clairton.yuki.Yuki;
+import ac.grim.grimac.api.AbstractCheck;
+import ac.grim.grimac.api.GrimUser;
 import dev.clairton.yuki.checks.impl.aim.processor.AimProcessor;
 import dev.clairton.yuki.checks.impl.misc.ClientBrand;
 import dev.clairton.yuki.checks.impl.misc.TransactionOrder;
@@ -434,7 +434,7 @@ public class GrimPlayer implements GrimUser {
         }
         user.closeConnection();
         if (bukkitPlayer != null) {
-            FoliaScheduler.getEntityScheduler().execute(bukkitPlayer, GrimAPI.INSTANCE.getPlugin(), () -> {
+            FoliaScheduler.getEntityScheduler().execute(bukkitPlayer, Yuki.getInstance().getPlugin(), () -> {
                 bukkitPlayer.kickPlayer(textReason);
             }, null, 1);
         }
@@ -449,12 +449,12 @@ public class GrimPlayer implements GrimUser {
         if (lastTransSent != 0 && lastTransSent + 80 < System.currentTimeMillis()) {
             sendTransaction(true); // send on netty thread
         }
-        if ((System.nanoTime() - getPlayerClockAtLeast()) > GrimAPI.INSTANCE.getConfigManager().getMaxPingTransaction() * 1e9) {
+        if ((System.nanoTime() - getPlayerClockAtLeast()) > Yuki.getInstance().getConfigManager().getMaxPingTransaction() * 1e9) {
             timedOut();
         }
 
-        if (!GrimAPI.INSTANCE.getPlayerDataManager().shouldCheck(user)) {
-            GrimAPI.INSTANCE.getPlayerDataManager().remove(user);
+        if (!Yuki.getInstance().getPlayerDataManager().shouldCheck(user)) {
+            Yuki.getInstance().getPlayerDataManager().remove(user);
         }
 
         if (packetTracker == null && ViaVersionUtil.isAvailable() && playerUUID != null) {
@@ -508,7 +508,7 @@ public class GrimPlayer implements GrimUser {
     private int spamThreshold = 100;
 
     public void onReload() {
-        spamThreshold = GrimAPI.INSTANCE.getConfigManager().getConfig().getIntElse("packet-spam-threshold", 100);
+        spamThreshold = Yuki.getInstance().getConfigManager().getConfig().getIntElse("packet-spam-threshold", 100);
     }
 
     public boolean isPointThree() {

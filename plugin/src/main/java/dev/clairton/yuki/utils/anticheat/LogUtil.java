@@ -1,6 +1,6 @@
 package dev.clairton.yuki.utils.anticheat;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,7 +22,7 @@ public class LogUtil {
     }
 
     public Logger getLogger() {
-        return GrimAPI.INSTANCE.getPlugin().getLogger();
+        return Yuki.getInstance().getPlugin().getLogger();
     }
 
     public void console(final String info) {

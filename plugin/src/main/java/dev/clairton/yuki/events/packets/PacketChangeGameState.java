@@ -1,6 +1,6 @@
 package dev.clairton.yuki.events.packets;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.checks.Check;
 import dev.clairton.yuki.checks.type.PacketCheck;
 import dev.clairton.yuki.player.GrimPlayer;
@@ -35,7 +35,7 @@ public class PacketChangeGameState extends Check implements PacketCheck {
                     }
 
                     if (previous == GameMode.SPECTATOR && player.gamemode != GameMode.SPECTATOR) {
-                        GrimAPI.INSTANCE.getSpectateManager().handlePlayerStopSpectating(player.playerUUID);
+                        Yuki.getInstance().getSpectateManager().handlePlayerStopSpectating(player.playerUUID);
                     }
                 });
             }

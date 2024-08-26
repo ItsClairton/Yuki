@@ -1,6 +1,6 @@
 package dev.clairton.yuki.manager.init.load;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.manager.init.Initable;
 import dev.clairton.yuki.utils.anticheat.LogUtil;
 import com.github.retrooper.packetevents.PacketEvents;
@@ -10,7 +10,7 @@ public class PacketEventsInit implements Initable {
     @Override
     public void start() {
         LogUtil.info("Loading PacketEvents...");
-        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(GrimAPI.INSTANCE.getPlugin()));
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(Yuki.getInstance().getPlugin()));
         PacketEvents.getAPI().getSettings()
                 .bStats(true)
                 .fullStackTrace(true)

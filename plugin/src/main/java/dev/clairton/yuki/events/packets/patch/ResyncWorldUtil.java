@@ -1,6 +1,6 @@
 package dev.clairton.yuki.events.packets.patch;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.player.GrimPlayer;
 import dev.clairton.yuki.utils.collisions.datatypes.SimpleCollisionBox;
 import dev.clairton.yuki.utils.math.GrimMath;
@@ -37,7 +37,7 @@ public class ResyncWorldUtil {
 
         // Takes 0.15ms or so to complete. Not bad IMO. Unsure how I could improve this other than sending packets async.
         // But that's on PacketEvents.
-        FoliaScheduler.getEntityScheduler().execute(player.bukkitPlayer, GrimAPI.INSTANCE.getPlugin(), () -> {
+        FoliaScheduler.getEntityScheduler().execute(player.bukkitPlayer, Yuki.getInstance().getPlugin(), () -> {
             boolean flat = PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_13);
 
             if (player.bukkitPlayer == null) return;

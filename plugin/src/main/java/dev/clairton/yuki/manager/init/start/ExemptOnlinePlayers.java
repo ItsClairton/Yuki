@@ -1,6 +1,6 @@
 package dev.clairton.yuki.manager.init.start;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.manager.init.Initable;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.player.User;
@@ -12,7 +12,7 @@ public class ExemptOnlinePlayers implements Initable {
     public void start() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             User user = PacketEvents.getAPI().getPlayerManager().getUser(player);
-            GrimAPI.INSTANCE.getPlayerDataManager().exemptUsers.add(user);
+            Yuki.getInstance().getPlayerDataManager().exemptUsers.add(user);
         }
     }
 }

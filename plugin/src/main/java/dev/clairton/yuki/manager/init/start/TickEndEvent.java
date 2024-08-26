@@ -1,6 +1,6 @@
 package dev.clairton.yuki.manager.init.start;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.manager.init.Initable;
 import dev.clairton.yuki.player.GrimPlayer;
 import dev.clairton.yuki.utils.lists.HookedListWrapper;
@@ -18,7 +18,7 @@ public class TickEndEvent implements Initable {
     boolean hasTicked = true;
 
     private static void tickRelMove() {
-        for (GrimPlayer player : GrimAPI.INSTANCE.getPlayerDataManager().getEntries()) {
+        for (GrimPlayer player : Yuki.getInstance().getPlayerDataManager().getEntries()) {
             if (player.disableGrim) continue; // If we aren't active don't spam extra transactions
             player.checkManager.getEntityReplication().onEndOfTickEvent();
         }
@@ -26,7 +26,7 @@ public class TickEndEvent implements Initable {
 
     @Override
     public void start() {
-        if (!GrimAPI.INSTANCE.getConfigManager().getConfig().getBooleanElse("Reach.enable-post-packet", false)) {
+        if (!Yuki.getInstance().getConfigManager().getConfig().getBooleanElse("Reach.enable-post-packet", false)) {
             return;
         }
 

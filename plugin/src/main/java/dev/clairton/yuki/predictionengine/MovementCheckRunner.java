@@ -1,6 +1,6 @@
 package dev.clairton.yuki.predictionengine;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.checks.Check;
 import dev.clairton.yuki.checks.impl.movement.EntityControl;
 import dev.clairton.yuki.checks.impl.prediction.Phase;
@@ -543,7 +543,7 @@ public class MovementCheckRunner extends Check implements PositionCheck {
 
         // Patch sprint jumping with elytra exploit
         if (player.bukkitPlayer != null && player.isGliding && player.predictedVelocity.isJump() && player.isSprinting
-                && !GrimAPI.INSTANCE.getConfigManager().getConfig().getBooleanElse("exploit.allow-sprint-jumping-when-using-elytra", true)) {
+                && !Yuki.getInstance().getConfigManager().getConfig().getBooleanElse("exploit.allow-sprint-jumping-when-using-elytra", true)) {
             SetbackTeleportUtil.SetbackPosWithVector lastKnownGoodPosition = player.getSetbackTeleportUtil().lastKnownGoodPosition;
             lastKnownGoodPosition.setVector(lastKnownGoodPosition.getVector().multiply(new Vector(0.6 * 0.91, 1, 0.6 * 0.91)));
             player.getSetbackTeleportUtil().executeNonSimulatingSetback();

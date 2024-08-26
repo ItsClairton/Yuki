@@ -1,6 +1,6 @@
 package dev.clairton.yuki.commands;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.utils.anticheat.MessageUtil;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
@@ -15,7 +15,7 @@ public class GrimHelp extends BaseCommand {
     @Subcommand("help")
     @CommandPermission("grim.help")
     public void onHelp(CommandSender sender) {
-        for (String string : GrimAPI.INSTANCE.getConfigManager().getConfig().getStringList("help")) {
+        for (String string : Yuki.getInstance().getConfigManager().getConfig().getStringList("help")) {
             string = MessageUtil.format(string);
             sender.sendMessage(string);
         }

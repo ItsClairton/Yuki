@@ -1,6 +1,6 @@
 package dev.clairton.yuki.commands;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.utils.anticheat.MessageUtil;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
@@ -19,11 +19,11 @@ public class GrimStopSpectating extends BaseCommand {
         String string = args.length > 0 ? args[0] : null;
         if (!(sender instanceof Player)) return;
         Player player = (Player) sender;
-        if (GrimAPI.INSTANCE.getSpectateManager().isSpectating(player.getUniqueId())) {
+        if (Yuki.getInstance().getSpectateManager().isSpectating(player.getUniqueId())) {
             boolean teleportBack = string == null || !string.equalsIgnoreCase("here");
-            GrimAPI.INSTANCE.getSpectateManager().disable(player, teleportBack);
+            Yuki.getInstance().getSpectateManager().disable(player, teleportBack);
         } else {
-            String message = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("cannot-spectate-return", "%prefix% &cYou can only do this after spectating a player.");
+            String message = Yuki.getInstance().getConfigManager().getConfig().getStringElse("cannot-spectate-return", "%prefix% &cYou can only do this after spectating a player.");
             sender.sendMessage(MessageUtil.format(message));
         }
     }

@@ -1,6 +1,6 @@
 package dev.clairton.yuki.events.packets;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.checks.impl.badpackets.BadPacketsE;
 import dev.clairton.yuki.checks.impl.badpackets.BadPacketsF;
 import dev.clairton.yuki.player.GrimPlayer;
@@ -68,7 +68,7 @@ public class PacketPlayerRespawn extends PacketListenerAbstract {
         if (event.getPacketType() == PacketType.Play.Server.UPDATE_HEALTH) {
             WrapperPlayServerUpdateHealth health = new WrapperPlayServerUpdateHealth(event);
 
-            GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
+            GrimPlayer player = Yuki.getInstance().getPlayerDataManager().getPlayer(event.getUser());
             if (player == null) return;
             //
             if (player.packetStateData.lastFood == health.getFood()
@@ -98,7 +98,7 @@ public class PacketPlayerRespawn extends PacketListenerAbstract {
         }
 
         if (event.getPacketType() == PacketType.Play.Server.JOIN_GAME) {
-            GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
+            GrimPlayer player = Yuki.getInstance().getPlayerDataManager().getPlayer(event.getUser());
             if (player == null) return;
 
             WrapperPlayServerJoinGame joinGame = new WrapperPlayServerJoinGame(event);
@@ -113,7 +113,7 @@ public class PacketPlayerRespawn extends PacketListenerAbstract {
         if (event.getPacketType() == PacketType.Play.Server.RESPAWN) {
             WrapperPlayServerRespawn respawn = new WrapperPlayServerRespawn(event);
 
-            GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
+            GrimPlayer player = Yuki.getInstance().getPlayerDataManager().getPlayer(event.getUser());
             if (player == null) return;
 
             List<Runnable> tasks = event.getTasksAfterSend();

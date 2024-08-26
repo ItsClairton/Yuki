@@ -1,7 +1,7 @@
 package dev.clairton.yuki.manager;
 
 
-import dev.clairton.yuki.api.AbstractCheck;
+import ac.grim.grimac.api.AbstractCheck;
 import dev.clairton.yuki.checks.impl.aim.AimDuplicateLook;
 import dev.clairton.yuki.checks.impl.aim.AimModulo360;
 import dev.clairton.yuki.checks.impl.aim.processor.AimProcessor;

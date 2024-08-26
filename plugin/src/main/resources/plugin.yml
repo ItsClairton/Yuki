@@ -1,6 +1,6 @@
 name: Yuki
 version: ${version}
-main: dev.clairton.yuki.GrimAC
+main: dev.clairton.yuki.YukiPlugin
 description: A powerful anti-cheat based on Grim
 authors: [GrimAC, ItsClairton]
 permissions:

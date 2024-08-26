@@ -1,6 +1,6 @@
 package dev.clairton.yuki.commands;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.utils.anticheat.MessageUtil;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
@@ -16,7 +16,7 @@ public class GrimReload extends BaseCommand {
     public void onReload(CommandSender sender) {
         //reload config
         try {
-            GrimAPI.INSTANCE.getExternalAPI().reload();
+            Yuki.getInstance().getExternalAPI().reload();
         } catch (RuntimeException e) {
             sender.sendMessage(ChatColor.RED + e.getMessage());
             return;

@@ -1,6 +1,6 @@
 package dev.clairton.yuki.commands;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.player.GrimPlayer;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
@@ -38,7 +38,7 @@ public class GrimDebug extends BaseCommand {
             return null;
         }
 
-        GrimPlayer grimPlayer = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(targetPlayer);
+        GrimPlayer grimPlayer = Yuki.getInstance().getPlayerDataManager().getPlayer(targetPlayer);
         if (grimPlayer == null) {
             User user = PacketEvents.getAPI().getPlayerManager().getUser(targetPlayer);
             sender.sendMessage(ChatColor.RED + "This player is exempt from all checks!");
@@ -46,7 +46,7 @@ public class GrimDebug extends BaseCommand {
             if (user == null) {
                 sender.sendMessage(ChatColor.RED + "Unknown PacketEvents user");
             } else {
-                boolean isExempt = GrimAPI.INSTANCE.getPlayerDataManager().shouldCheck(user);
+                boolean isExempt = Yuki.getInstance().getPlayerDataManager().shouldCheck(user);
                 if (!isExempt) {
                     sender.sendMessage(ChatColor.RED + "User connection state: " + user.getConnectionState());
                 }

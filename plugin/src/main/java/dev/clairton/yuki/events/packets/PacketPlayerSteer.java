@@ -1,6 +1,6 @@
 package dev.clairton.yuki.events.packets;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.player.GrimPlayer;
 import dev.clairton.yuki.utils.collisions.datatypes.SimpleCollisionBox;
 import dev.clairton.yuki.utils.data.packetentity.PacketEntity;
@@ -26,7 +26,7 @@ public class PacketPlayerSteer extends PacketListenerAbstract {
         if (event.getPacketType() == PacketType.Play.Client.STEER_VEHICLE) {
             WrapperPlayClientSteerVehicle steer = new WrapperPlayClientSteerVehicle(event);
 
-            GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
+            GrimPlayer player = Yuki.getInstance().getPlayerDataManager().getPlayer(event.getUser());
             if (player == null) return;
 
             float forwards = steer.getForward();

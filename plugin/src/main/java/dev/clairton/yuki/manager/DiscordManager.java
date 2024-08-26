@@ -1,6 +1,6 @@
 package dev.clairton.yuki.manager;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.manager.init.Initable;
 import dev.clairton.yuki.player.GrimPlayer;
 import dev.clairton.yuki.utils.anticheat.LogUtil;
@@ -25,8 +25,8 @@ public class DiscordManager implements Initable {
     @Override
     public void start() {
         try {
-            if (!GrimAPI.INSTANCE.getConfigManager().getConfig().getBooleanElse("enabled", false)) return;
-            String webhook = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("webhook", "");
+            if (!Yuki.getInstance().getConfigManager().getConfig().getBooleanElse("enabled", false)) return;
+            String webhook = Yuki.getInstance().getConfigManager().getConfig().getStringElse("webhook", "");
             if (webhook.isEmpty()) {
                 LogUtil.warn("Discord webhook is empty, disabling Discord alerts");
                 client = null;
@@ -41,12 +41,12 @@ public class DiscordManager implements Initable {
             client.setTimeout(15000); // Requests expire after 15 seconds
 
             try {
-                embedColor = Color.decode(GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("embed-color", "#00FFFF")).getRGB();
+                embedColor = Color.decode(Yuki.getInstance().getConfigManager().getConfig().getStringElse("embed-color", "#00FFFF")).getRGB();
             } catch (NumberFormatException e) {
                 LogUtil.warn("Discord embed color is invalid");
             }
             StringBuilder sb = new StringBuilder();
-            for (String string : GrimAPI.INSTANCE.getConfigManager().getConfig().getStringListElse("violation-content", getDefaultContents())) {
+            for (String string : Yuki.getInstance().getConfigManager().getConfig().getStringListElse("violation-content", getDefaultContents())) {
                 sb.append(string).append("\n");
             }
             staticContent = sb.toString();
@@ -73,7 +73,7 @@ public class DiscordManager implements Initable {
             String content = staticContent + "";
             content = content.replace("%check%", checkName);
             content = content.replace("%violations%", violations);
-            content = GrimAPI.INSTANCE.getExternalAPI().replaceVariables(player, content, false);
+            content = Yuki.getInstance().getExternalAPI().replaceVariables(player, content, false);
             content = content.replace("_", "\\_");
 
             WebhookEmbedBuilder embed = new WebhookEmbedBuilder()

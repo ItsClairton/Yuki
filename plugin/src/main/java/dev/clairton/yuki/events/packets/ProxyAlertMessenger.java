@@ -1,6 +1,6 @@
 package dev.clairton.yuki.events.packets;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.utils.anticheat.LogUtil;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
@@ -28,7 +28,7 @@ public class ProxyAlertMessenger extends PacketListenerAbstract {
 
         if (usingProxy) {
             LogUtil.info("Registering an outgoing plugin channel...");
-            GrimAPI.INSTANCE.getPlugin().getServer().getMessenger().registerOutgoingPluginChannel(GrimAPI.INSTANCE.getPlugin(), "BungeeCord");
+            Yuki.getInstance().getPlugin().getServer().getMessenger().registerOutgoingPluginChannel(Yuki.getInstance().getPlugin(), "BungeeCord");
         }
     }
 
@@ -58,7 +58,7 @@ public class ProxyAlertMessenger extends PacketListenerAbstract {
             return;
         }
 
-        for (Player bukkitPlayer : GrimAPI.INSTANCE.getAlertManager().getEnabledAlerts())
+        for (Player bukkitPlayer : Yuki.getInstance().getAlertManager().getEnabledAlerts())
             bukkitPlayer.sendMessage(alert);
     }
 
@@ -83,15 +83,15 @@ public class ProxyAlertMessenger extends PacketListenerAbstract {
         out.writeShort(messageBytes.toByteArray().length);
         out.write(messageBytes.toByteArray());
 
-        Iterables.getFirst(Bukkit.getOnlinePlayers(), null).sendPluginMessage(GrimAPI.INSTANCE.getPlugin(), "BungeeCord", out.toByteArray());
+        Iterables.getFirst(Bukkit.getOnlinePlayers(), null).sendPluginMessage(Yuki.getInstance().getPlugin(), "BungeeCord", out.toByteArray());
     }
 
     public static boolean canSendAlerts() {
-        return usingProxy && GrimAPI.INSTANCE.getConfigManager().getConfig().getBooleanElse("alerts.proxy.send", false) && Bukkit.getOnlinePlayers().size() > 0;
+        return usingProxy && Yuki.getInstance().getConfigManager().getConfig().getBooleanElse("alerts.proxy.send", false) && Bukkit.getOnlinePlayers().size() > 0;
     }
 
     public static boolean canReceiveAlerts() {
-        return usingProxy && GrimAPI.INSTANCE.getConfigManager().getConfig().getBooleanElse("alerts.proxy.receive", false) && GrimAPI.INSTANCE.getAlertManager().getEnabledAlerts().size() > 0;
+        return usingProxy && Yuki.getInstance().getConfigManager().getConfig().getBooleanElse("alerts.proxy.receive", false) && Yuki.getInstance().getAlertManager().getEnabledAlerts().size() > 0;
     }
 
     private static boolean getBooleanFromFile(String pathToFile, String pathToValue) {

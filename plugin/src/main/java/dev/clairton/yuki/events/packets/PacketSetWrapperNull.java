@@ -1,6 +1,6 @@
 package dev.clairton.yuki.events.packets;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.player.GrimPlayer;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
@@ -40,7 +40,7 @@ public class PacketSetWrapperNull extends PacketListenerAbstract {
             if (PacketEvents.getAPI().getServerManager().getVersion().isOlderThanOrEquals(ServerVersion.V_1_12_2))
                 return;
 
-            GrimPlayer receiver = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
+            GrimPlayer receiver = Yuki.getInstance().getPlayerDataManager().getPlayer(event.getUser());
 
             if (receiver == null) { // Exempt
                 return;
@@ -53,7 +53,7 @@ public class PacketSetWrapperNull extends PacketListenerAbstract {
 
                 int hideCount = 0;
                 for (WrapperPlayServerPlayerInfo.PlayerData playerData : nmsPlayerInfoDataList) {
-                    if (GrimAPI.INSTANCE.getSpectateManager().shouldHidePlayer(receiver, playerData)) {
+                    if (Yuki.getInstance().getSpectateManager().shouldHidePlayer(receiver, playerData)) {
                         hideCount++;
                         if (playerData.getGameMode() == GameMode.SPECTATOR) playerData.setGameMode(GameMode.SURVIVAL);
                     }
@@ -67,7 +67,7 @@ public class PacketSetWrapperNull extends PacketListenerAbstract {
                 }
             }
         } else if (event.getPacketType() == PacketType.Play.Server.PLAYER_INFO_UPDATE) {
-            GrimPlayer receiver = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
+            GrimPlayer receiver = Yuki.getInstance().getPlayerDataManager().getPlayer(event.getUser());
             if (receiver == null) return;
             //create wrappers
             WrapperPlayServerPlayerInfoUpdate wrapper = new WrapperPlayServerPlayerInfoUpdate(event);
@@ -81,7 +81,7 @@ public class PacketSetWrapperNull extends PacketListenerAbstract {
                 for (WrapperPlayServerPlayerInfoUpdate.PlayerInfo entry : wrapper.getEntries()) {
                     //check if the player should be hidden
                     WrapperPlayServerPlayerInfoUpdate.PlayerInfo modifiedPacket = null;
-                    if (GrimAPI.INSTANCE.getSpectateManager().shouldHidePlayer(receiver, entry.getProfileId())) {
+                    if (Yuki.getInstance().getSpectateManager().shouldHidePlayer(receiver, entry.getProfileId())) {
                         hideCount++;
                         //modify & create a new packet from pre-existing one if they are a spectator
                         if (entry.getGameMode() == GameMode.SPECTATOR) {

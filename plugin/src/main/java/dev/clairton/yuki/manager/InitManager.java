@@ -1,6 +1,6 @@
 package dev.clairton.yuki.manager;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.GrimExternalAPI;
 import dev.clairton.yuki.manager.init.Initable;
 import dev.clairton.yuki.manager.init.load.PacketEventsInit;
@@ -29,9 +29,9 @@ public class InitManager {
                 .put(CommandRegister.class, new CommandRegister())
                 .put(BStats.class, new BStats())
                 .put(PacketLimiter.class, new PacketLimiter())
-                .put(DiscordManager.class, GrimAPI.INSTANCE.getDiscordManager())
-                .put(SpectateManager.class, GrimAPI.INSTANCE.getSpectateManager())
-                .put(GrimExternalAPI.class, GrimAPI.INSTANCE.getExternalAPI())
+                .put(DiscordManager.class, Yuki.getInstance().getDiscordManager())
+                .put(SpectateManager.class, Yuki.getInstance().getSpectateManager())
+                .put(GrimExternalAPI.class, Yuki.getInstance().getExternalAPI())
                 .put(JavaVersion.class, new JavaVersion())
                 .build();
 

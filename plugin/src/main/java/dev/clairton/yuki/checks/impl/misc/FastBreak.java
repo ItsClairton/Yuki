@@ -1,6 +1,6 @@
 package dev.clairton.yuki.checks.impl.misc;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.checks.Check;
 import dev.clairton.yuki.checks.CheckData;
 import dev.clairton.yuki.checks.type.PacketCheck;
@@ -107,7 +107,7 @@ public class FastBreak extends Check implements PacketCheck {
                 }
 
                 if (blockBreakBalance > 1000) { // If more than a second of advantage
-                    FoliaScheduler.getEntityScheduler().execute(player.bukkitPlayer, GrimAPI.INSTANCE.getPlugin(), () -> {
+                    FoliaScheduler.getEntityScheduler().execute(player.bukkitPlayer, Yuki.getInstance().getPlugin(), () -> {
                         Player bukkitPlayer = player.bukkitPlayer;
                         if (bukkitPlayer == null || !bukkitPlayer.isOnline()) return;
 

@@ -1,6 +1,6 @@
 package dev.clairton.yuki.checks.impl.prediction;
 
-import dev.clairton.yuki.api.events.CompletePredictionEvent;
+import ac.grim.grimac.api.events.CompletePredictionEvent;
 import dev.clairton.yuki.checks.Check;
 import dev.clairton.yuki.checks.CheckData;
 import dev.clairton.yuki.checks.type.PostPredictionCheck;

@@ -1,6 +1,6 @@
 package dev.clairton.yuki.manager;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.manager.init.Initable;
 import dev.clairton.yuki.player.GrimPlayer;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfo;
@@ -21,7 +21,7 @@ public class SpectateManager implements Initable {
     @Override
     public void start() {
         allowedWorlds.clear();
-        allowedWorlds.addAll(GrimAPI.INSTANCE.getConfigManager().getConfig().getStringListElse("spectators.allowed-worlds", new ArrayList<>()));
+        allowedWorlds.addAll(Yuki.getInstance().getConfigManager().getConfig().getStringListElse("spectators.allowed-worlds", new ArrayList<>()));
         checkWorld = !(allowedWorlds.isEmpty() || new ArrayList<>(allowedWorlds).get(0).isEmpty());
     }
 

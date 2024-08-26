@@ -1,6 +1,6 @@
 package dev.clairton.yuki.events.packets;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.checks.impl.badpackets.BadPacketsX;
 import dev.clairton.yuki.checks.impl.badpackets.BadPacketsZ;
 import dev.clairton.yuki.events.packets.patch.ResyncWorldUtil;
@@ -348,7 +348,7 @@ public class CheckManagerListener extends PacketListenerAbstract {
             // Additionally, only yaw/pitch matters: https://github.com/GrimAnticheat/Grim/issues/1275#issuecomment-1872444018
             // 1.9+ isn't impacted by this packet as much.
             if (PacketEvents.getAPI().getServerManager().getVersion().isOlderThanOrEquals(ServerVersion.V_1_9)) {
-                if (GrimAPI.INSTANCE.getConfigManager().getConfig().getBooleanElse("cancel-duplicate-packet", true)) {
+                if (Yuki.getInstance().getConfigManager().getConfig().getBooleanElse("cancel-duplicate-packet", true)) {
                     player.packetStateData.cancelDuplicatePacket = true;
                 }
             } else {
@@ -358,7 +358,7 @@ public class CheckManagerListener extends PacketListenerAbstract {
 
             player.packetStateData.lastPacketWasOnePointSeventeenDuplicate = true;
 
-            if (!GrimAPI.INSTANCE.getConfigManager().isIgnoreDuplicatePacketRotation()) {
+            if (!Yuki.getInstance().getConfigManager().isIgnoreDuplicatePacketRotation()) {
                 if (player.xRot != location.getYaw() || player.yRot != location.getPitch()) {
                     player.lastXRot = player.xRot;
                     player.lastYRot = player.yRot;
@@ -378,7 +378,7 @@ public class CheckManagerListener extends PacketListenerAbstract {
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
         if (event.getConnectionState() != ConnectionState.PLAY) return;
-        GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
+        GrimPlayer player = Yuki.getInstance().getPlayerDataManager().getPlayer(event.getUser());
         if (player == null) return;
 
         // Determine if teleport BEFORE we call the pre-prediction vehicle
@@ -428,7 +428,7 @@ public class CheckManagerListener extends PacketListenerAbstract {
         if (WrapperPlayClientPlayerFlying.isFlying(event.getPacketType())) {
             WrapperPlayClientPlayerFlying flying = new WrapperPlayClientPlayerFlying(event);
             Location pos = flying.getLocation();
-            boolean ignoreRotation = player.packetStateData.lastPacketWasOnePointSeventeenDuplicate && GrimAPI.INSTANCE.getConfigManager().isIgnoreDuplicatePacketRotation();
+            boolean ignoreRotation = player.packetStateData.lastPacketWasOnePointSeventeenDuplicate && Yuki.getInstance().getConfigManager().isIgnoreDuplicatePacketRotation();
             handleFlying(player, pos.getX(), pos.getY(), pos.getZ(), ignoreRotation ? player.xRot : pos.getYaw(), ignoreRotation ? player.yRot : pos.getPitch(), flying.hasPositionChanged(), flying.hasRotationChanged(), flying.isOnGround(), teleportData, event);
         }
 
@@ -831,7 +831,7 @@ public class CheckManagerListener extends PacketListenerAbstract {
     @Override
     public void onPacketSend(PacketSendEvent event) {
         if (event.getConnectionState() != ConnectionState.PLAY) return;
-        GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
+        GrimPlayer player = Yuki.getInstance().getPlayerDataManager().getPlayer(event.getUser());
         if (player == null) return;
 
         player.checkManager.onPacketSend(event);

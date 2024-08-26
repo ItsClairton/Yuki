@@ -1,6 +1,6 @@
 package dev.clairton.yuki.checks.impl.velocity;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.checks.Check;
 import dev.clairton.yuki.checks.CheckData;
 import dev.clairton.yuki.checks.type.PostPredictionCheck;
@@ -45,7 +45,7 @@ public class KnockbackHandler extends Check implements PostPredictionCheck {
             WrapperPlayServerEntityVelocity velocity = new WrapperPlayServerEntityVelocity(event);
             int entityId = velocity.getEntityId();
 
-            GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
+            GrimPlayer player = Yuki.getInstance().getPlayerDataManager().getPlayer(event.getUser());
             if (player == null) return;
 
             // Detect whether this knockback packet affects the player or if it is useless

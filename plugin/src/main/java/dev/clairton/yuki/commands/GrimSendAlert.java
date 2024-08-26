@@ -1,6 +1,6 @@
 package dev.clairton.yuki.commands;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.utils.anticheat.LogUtil;
 import dev.clairton.yuki.utils.anticheat.MessageUtil;
 import co.aikar.commands.BaseCommand;
@@ -16,11 +16,11 @@ public class GrimSendAlert extends BaseCommand {
     public void sendAlert(String string) {
         string = MessageUtil.format(string);
 
-        for (Player bukkitPlayer : GrimAPI.INSTANCE.getAlertManager().getEnabledAlerts()) {
+        for (Player bukkitPlayer : Yuki.getInstance().getAlertManager().getEnabledAlerts()) {
             bukkitPlayer.sendMessage(string);
         }
 
-        if (GrimAPI.INSTANCE.getConfigManager().getConfig().getBooleanElse("alerts.print-to-console", true)) {
+        if (Yuki.getInstance().getConfigManager().getConfig().getBooleanElse("alerts.print-to-console", true)) {
             LogUtil.console(string); // Print alert to console
         }
     }

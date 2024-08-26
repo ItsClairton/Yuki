@@ -1,7 +1,7 @@
 package dev.clairton.yuki.checks.type;
 
 
-import dev.clairton.yuki.api.AbstractCheck;
+import ac.grim.grimac.api.AbstractCheck;
 import dev.clairton.yuki.utils.anticheat.update.PositionUpdate;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.event.PacketSendEvent;

@@ -1,6 +1,6 @@
 package dev.clairton.yuki.commands;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.player.GrimPlayer;
 import dev.clairton.yuki.utils.anticheat.MessageUtil;
 import dev.clairton.yuki.utils.anticheat.MultiLibUtil;
@@ -27,21 +27,21 @@ public class GrimSpectate extends BaseCommand {
         Player player = (Player) sender;
 
         if (target != null && target.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-            String message = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("cannot-run-on-self", "%prefix% &cYou cannot use this command on yourself!");
+            String message = Yuki.getInstance().getConfigManager().getConfig().getStringElse("cannot-run-on-self", "%prefix% &cYou cannot use this command on yourself!");
             sender.sendMessage(MessageUtil.format(message));
             return;
         }
 
         if (target == null || (PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_18) && MultiLibUtil.isExternalPlayer(target.getPlayer()))) {
-            String message = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("player-not-this-server", "%prefix% &cThis player isn't on this server!");
+            String message = Yuki.getInstance().getConfigManager().getConfig().getStringElse("player-not-this-server", "%prefix% &cThis player isn't on this server!");
             sender.sendMessage(MessageUtil.format(message));
             return;
         }
         //hide player from tab list
-        if (GrimAPI.INSTANCE.getSpectateManager().enable(player)) {
-            GrimPlayer grimPlayer = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(player);
+        if (Yuki.getInstance().getSpectateManager().enable(player)) {
+            GrimPlayer grimPlayer = Yuki.getInstance().getPlayerDataManager().getPlayer(player);
             if (grimPlayer != null) {
-                String message = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("spectate-return", "\n%prefix% &fClick here to return to previous location\n");
+                String message = Yuki.getInstance().getConfigManager().getConfig().getStringElse("spectate-return", "\n%prefix% &fClick here to return to previous location\n");
                 grimPlayer.user.sendMessage(
                         LegacyComponentSerializer.legacy('&')
                                 .deserialize(MessageUtil.formatWithNoColor(message))

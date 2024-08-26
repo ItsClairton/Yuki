@@ -1,6 +1,6 @@
 package dev.clairton.yuki.events.packets;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.checks.impl.movement.NoSlowD;
 import dev.clairton.yuki.player.GrimPlayer;
 import dev.clairton.yuki.utils.nmsutil.WatchableIndexUtil;
@@ -33,7 +33,7 @@ public class PacketSelfMetadataListener extends PacketListenerAbstract {
         if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
             WrapperPlayServerEntityMetadata entityMetadata = new WrapperPlayServerEntityMetadata(event);
 
-            GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
+            GrimPlayer player = Yuki.getInstance().getPlayerDataManager().getPlayer(event.getUser());
             if (player == null)
                 return;
 
@@ -226,7 +226,7 @@ public class PacketSelfMetadataListener extends PacketListenerAbstract {
         if (event.getPacketType() == PacketType.Play.Server.USE_BED) {
             WrapperPlayServerUseBed bed = new WrapperPlayServerUseBed(event);
 
-            GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
+            GrimPlayer player = Yuki.getInstance().getPlayerDataManager().getPlayer(event.getUser());
             if (player != null && player.entityID == bed.getEntityId()) {
                 // Split so packet received after transaction
                 player.latencyUtils.addRealTimeTask(player.lastTransactionSent.get(), () -> {
@@ -239,7 +239,7 @@ public class PacketSelfMetadataListener extends PacketListenerAbstract {
         if (event.getPacketType() == PacketType.Play.Server.ENTITY_ANIMATION) {
             WrapperPlayServerEntityAnimation animation = new WrapperPlayServerEntityAnimation(event);
 
-            GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
+            GrimPlayer player = Yuki.getInstance().getPlayerDataManager().getPlayer(event.getUser());
             if (player != null && player.entityID == animation.getEntityId()
                     && animation.getType() == WrapperPlayServerEntityAnimation.EntityAnimationType.WAKE_UP) {
                 // Split so packet received before transaction

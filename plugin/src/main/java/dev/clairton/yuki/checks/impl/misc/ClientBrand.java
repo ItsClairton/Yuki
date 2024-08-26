@@ -1,6 +1,6 @@
 package dev.clairton.yuki.checks.impl.misc;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.checks.Check;
 import dev.clairton.yuki.checks.impl.exploit.ExploitA;
 import dev.clairton.yuki.checks.type.PacketCheck;
@@ -39,9 +39,9 @@ public class ClientBrand extends Check implements PacketCheck {
 
                 brand = new String(minusLength).replace(" (Velocity)", ""); //removes velocity's brand suffix
                 if (player.checkManager.getPrePredictionCheck(ExploitA.class).checkString(brand)) brand = "sent log4j";
-                if (!GrimAPI.INSTANCE.getConfigManager().isIgnoredClient(brand)) {
-                    String message = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("client-brand-format", "%prefix% &f%player% joined using %brand%");
-                    message = GrimAPI.INSTANCE.getExternalAPI().replaceVariables(getPlayer(), message, true);
+                if (!Yuki.getInstance().getConfigManager().isIgnoredClient(brand)) {
+                    String message = Yuki.getInstance().getConfigManager().getConfig().getStringElse("client-brand-format", "%prefix% &f%player% joined using %brand%");
+                    message = Yuki.getInstance().getExternalAPI().replaceVariables(getPlayer(), message, true);
                     // sendMessage is async safe while broadcast isn't due to adventure
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         if (player.hasPermission("grim.brand")) {

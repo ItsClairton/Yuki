@@ -1,6 +1,6 @@
 package dev.clairton.yuki.events.packets;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.checks.impl.badpackets.BadPacketsW;
 import dev.clairton.yuki.player.GrimPlayer;
 import dev.clairton.yuki.utils.data.packetentity.PacketEntity;
@@ -29,7 +29,7 @@ public class PacketPlayerAttack extends PacketListenerAbstract {
     public void onPacketReceive(PacketReceiveEvent event) {
         if (event.getPacketType() == PacketType.Play.Client.INTERACT_ENTITY) {
             WrapperPlayClientInteractEntity interact = new WrapperPlayClientInteractEntity(event);
-            GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
+            GrimPlayer player = Yuki.getInstance().getPlayerDataManager().getPlayer(event.getUser());
 
             if (player == null) return;
 
@@ -80,7 +80,7 @@ public class PacketPlayerAttack extends PacketListenerAbstract {
         }
 
         if (WrapperPlayClientPlayerFlying.isFlying(event.getPacketType())) {
-            GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
+            GrimPlayer player = Yuki.getInstance().getPlayerDataManager().getPlayer(event.getUser());
             if (player == null) return;
 
             player.minPlayerAttackSlow = 0;

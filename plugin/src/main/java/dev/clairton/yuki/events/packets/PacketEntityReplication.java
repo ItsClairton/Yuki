@@ -1,6 +1,6 @@
 package dev.clairton.yuki.events.packets;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.checks.Check;
 import dev.clairton.yuki.checks.type.PacketCheck;
 import dev.clairton.yuki.player.GrimPlayer;
@@ -53,7 +53,7 @@ public class PacketEntityReplication extends Check implements PacketCheck {
     private final List<Integer> despawnedEntitiesThisTransaction = new ArrayList<>();
 
     // Maximum ping when a firework boost is removed from the player.
-    private final int maxFireworkBoostPing = GrimAPI.INSTANCE.getConfigManager().getConfig().getIntElse("max-ping-firework-boost", 1000);
+    private final int maxFireworkBoostPing = Yuki.getInstance().getConfigManager().getConfig().getIntElse("max-ping-firework-boost", 1000);
 
     public PacketEntityReplication(GrimPlayer player) {
         super(player);

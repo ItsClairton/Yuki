@@ -1,6 +1,6 @@
 package dev.clairton.yuki.commands;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
@@ -12,6 +12,6 @@ public class GrimAlerts extends BaseCommand {
     @Subcommand("alerts")
     @CommandPermission("grim.alerts")
     public void onAlerts(Player player) {
-        GrimAPI.INSTANCE.getAlertManager().toggleAlerts(player);
+        Yuki.getInstance().getAlertManager().toggleAlerts(player);
     }
 }

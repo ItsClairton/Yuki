@@ -1,6 +1,6 @@
 package dev.clairton.yuki.manager.init.start;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.events.bukkit.PistonEvent;
 import dev.clairton.yuki.manager.init.Initable;
 import dev.clairton.yuki.utils.anticheat.LogUtil;
@@ -10,6 +10,6 @@ public class EventManager implements Initable {
     public void start() {
         LogUtil.info("Registering singular bukkit event... (PistonEvent)");
 
-        Bukkit.getPluginManager().registerEvents(new PistonEvent(), GrimAPI.INSTANCE.getPlugin());
+        Bukkit.getPluginManager().registerEvents(new PistonEvent(), Yuki.getInstance().getPlugin());
     }
 }

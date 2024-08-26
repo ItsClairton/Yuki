@@ -1,8 +1,8 @@
 package dev.clairton.yuki.checks;
 
-import dev.clairton.yuki.GrimAPI;
-import dev.clairton.yuki.api.AbstractCheck;
-import dev.clairton.yuki.api.events.FlagEvent;
+import dev.clairton.yuki.Yuki;
+import ac.grim.grimac.api.AbstractCheck;
+import ac.grim.grimac.api.events.FlagEvent;
 import dev.clairton.yuki.player.GrimPlayer;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
@@ -72,7 +72,7 @@ public class Check implements AbstractCheck {
     }
 
     public final boolean flag() {
-        if (player.disableGrim || (experimental && !GrimAPI.INSTANCE.getConfigManager().isExperimentalChecks()))
+        if (player.disableGrim || (experimental && !Yuki.getInstance().getConfigManager().isExperimentalChecks()))
             return false; // Avoid calling event if disabled
 
         FlagEvent event = new FlagEvent(player, this);
@@ -110,7 +110,7 @@ public class Check implements AbstractCheck {
     }
 
     public DynamicConfig getConfig() {
-        return GrimAPI.INSTANCE.getConfigManager().getConfig();
+        return Yuki.getInstance().getConfigManager().getConfig();
     }
 
     public boolean setbackIfAboveSetbackVL() {

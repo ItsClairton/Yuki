@@ -1,6 +1,6 @@
 package dev.clairton.yuki.commands;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import dev.clairton.yuki.player.GrimPlayer;
 import dev.clairton.yuki.utils.anticheat.MessageUtil;
 import dev.clairton.yuki.utils.anticheat.MultiLibUtil;
@@ -26,20 +26,20 @@ public class GrimProfile extends BaseCommand {
 
         // Short circuit due to minimum java requirements for MultiLib
         if (PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_18) && MultiLibUtil.isExternalPlayer(target.getPlayer())) {
-            String alertString = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("player-not-this-server", "%prefix% &cThis player isn't on this server!");
+            String alertString = Yuki.getInstance().getConfigManager().getConfig().getStringElse("player-not-this-server", "%prefix% &cThis player isn't on this server!");
             sender.sendMessage(MessageUtil.format(alertString));
             return;
         }
 
-        GrimPlayer grimPlayer = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(target.getPlayer());
+        GrimPlayer grimPlayer = Yuki.getInstance().getPlayerDataManager().getPlayer(target.getPlayer());
         if (grimPlayer == null) {
-            String message = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("player-not-found", "%prefix% &cPlayer is exempt or offline!");
+            String message = Yuki.getInstance().getConfigManager().getConfig().getStringElse("player-not-found", "%prefix% &cPlayer is exempt or offline!");
             sender.sendMessage(MessageUtil.format(message));
             return;
         }
 
-        for (String message : GrimAPI.INSTANCE.getConfigManager().getConfig().getStringList("profile")) {
-            message = GrimAPI.INSTANCE.getExternalAPI().replaceVariables(grimPlayer, message, true);
+        for (String message : Yuki.getInstance().getConfigManager().getConfig().getStringList("profile")) {
+            message = Yuki.getInstance().getExternalAPI().replaceVariables(grimPlayer, message, true);
             sender.sendMessage(message);
         }
     }

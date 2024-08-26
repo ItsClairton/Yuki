@@ -1,6 +1,6 @@
 package dev.clairton.yuki.utils.anticheat;
 
-import dev.clairton.yuki.GrimAPI;
+import dev.clairton.yuki.Yuki;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import lombok.experimental.UtilityClass;
@@ -20,7 +20,7 @@ public class MessageUtil {
     }
 
     public String formatWithNoColor(String string) {
-        return string.replace("%prefix%", GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("prefix", "&bGrim &8»"));
+        return string.replace("%prefix%", Yuki.getInstance().getConfigManager().getConfig().getStringElse("prefix", "&bGrim &8»"));
     }
 
     private String translateHexCodes(String message) {

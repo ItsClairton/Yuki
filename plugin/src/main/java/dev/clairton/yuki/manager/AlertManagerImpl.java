@@ -1,7 +1,7 @@
 package dev.clairton.yuki.manager;
 
-import dev.clairton.yuki.GrimAPI;
-import dev.clairton.yuki.api.alerts.AlertManager;
+import dev.clairton.yuki.Yuki;
+import ac.grim.grimac.api.alerts.AlertManager;
 import dev.clairton.yuki.utils.anticheat.MessageUtil;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -24,12 +24,12 @@ public class AlertManagerImpl implements AlertManager {
     @Override
     public void toggleAlerts(Player player) {
         if (!enabledAlerts.remove(player)) {
-            String alertString = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("alerts-enabled", "%prefix% &fAlerts enabled");
+            String alertString = Yuki.getInstance().getConfigManager().getConfig().getStringElse("alerts-enabled", "%prefix% &fAlerts enabled");
             alertString = MessageUtil.format(alertString);
             player.sendMessage(alertString);
             enabledAlerts.add(player);
         } else {
-            String alertString = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("alerts-disabled", "%prefix% &fAlerts disabled");
+            String alertString = Yuki.getInstance().getConfigManager().getConfig().getStringElse("alerts-disabled", "%prefix% &fAlerts disabled");
             alertString = MessageUtil.format(alertString);
             player.sendMessage(alertString);
         }
@@ -43,12 +43,12 @@ public class AlertManagerImpl implements AlertManager {
     @Override
     public void toggleVerbose(Player player) {
         if (!enabledVerbose.remove(player)) {
-            String alertString = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("verbose-enabled", "%prefix% &fVerbose enabled");
+            String alertString = Yuki.getInstance().getConfigManager().getConfig().getStringElse("verbose-enabled", "%prefix% &fVerbose enabled");
             alertString = MessageUtil.format(alertString);
             player.sendMessage(alertString);
             enabledVerbose.add(player);
         } else {
-            String alertString = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("verbose-disabled", "%prefix% &fVerbose disabled");
+            String alertString = Yuki.getInstance().getConfigManager().getConfig().getStringElse("verbose-disabled", "%prefix% &fVerbose disabled");
             alertString = MessageUtil.format(alertString);
             player.sendMessage(alertString);
         }
