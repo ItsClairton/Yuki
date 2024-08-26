@@ -1,11 +1,11 @@
 package ac.grim.grimac.api;
 
 import ac.grim.grimac.api.alerts.AlertManager;
-import org.bukkit.entity.Player;
-
-import javax.annotation.Nullable;
 import java.util.function.Function;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings({"checkstyle:AbbreviationAsWordInName", "checkstyle:MissingJavadocType"})
 public interface GrimAbstractAPI {
 
   /**

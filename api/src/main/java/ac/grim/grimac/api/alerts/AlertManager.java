@@ -2,6 +2,7 @@ package ac.grim.grimac.api.alerts;
 
 import org.bukkit.entity.Player;
 
+@SuppressWarnings("checkstyle:MissingJavadocType")
 public interface AlertManager {
 
   /**

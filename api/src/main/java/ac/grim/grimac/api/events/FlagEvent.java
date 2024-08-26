@@ -2,14 +2,17 @@ package ac.grim.grimac.api.events;
 
 import ac.grim.grimac.api.AbstractCheck;
 import ac.grim.grimac.api.GrimUser;
+import lombok.Getter;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings({"checkstyle:MissingJavadocType", "checkstyle:MissingJavadocMethod"})
 public class FlagEvent extends Event implements Cancellable {
   private static final HandlerList handlers = new HandlerList();
   private final GrimUser grimUser;
+  @Getter
   private final AbstractCheck check;
   private boolean cancelled;
 
@@ -31,10 +34,6 @@ public class FlagEvent extends Event implements Cancellable {
 
   public GrimUser getPlayer() {
     return grimUser;
-  }
-
-  public AbstractCheck getCheck() {
-    return check;
   }
 
   public double getViolations() {

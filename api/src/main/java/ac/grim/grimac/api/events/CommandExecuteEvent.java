@@ -2,9 +2,12 @@ package ac.grim.grimac.api.events;
 
 import ac.grim.grimac.api.AbstractCheck;
 import ac.grim.grimac.api.GrimUser;
+import lombok.Getter;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@SuppressWarnings({"checkstyle:MissingJavadocType", "checkstyle:MissingJavadocMethod"})
 public class CommandExecuteEvent extends FlagEvent {
   private static final HandlerList handlers = new HandlerList();
 
@@ -17,10 +20,6 @@ public class CommandExecuteEvent extends FlagEvent {
     this.command = command;
   }
 
-  public AbstractCheck getCheck() {
-    return check;
-  }
-
   public static HandlerList getHandlerList() {
     return handlers;
   }
@@ -29,10 +28,6 @@ public class CommandExecuteEvent extends FlagEvent {
   @Override
   public HandlerList getHandlers() {
     return handlers;
-  }
-
-  public String getCommand() {
-    return command;
   }
 
 }

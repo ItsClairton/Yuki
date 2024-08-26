@@ -1,5 +1,6 @@
 package ac.grim.grimac.api;
 
+@SuppressWarnings("checkstyle:MissingJavadocType")
 public interface AbstractCheck {
 
   String getCheckName();

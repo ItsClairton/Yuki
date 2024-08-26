@@ -3,6 +3,7 @@ package ac.grim.grimac.api;
 import java.util.Collection;
 import java.util.UUID;
 
+@SuppressWarnings("checkstyle:MissingJavadocType")
 public interface GrimUser {
 
   String getName();

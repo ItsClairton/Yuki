@@ -2,13 +2,16 @@ package ac.grim.grimac.api.events;
 
 import ac.grim.grimac.api.AbstractCheck;
 import ac.grim.grimac.api.GrimUser;
+import lombok.Getter;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("checkstyle:MissingJavadocType")
 public class CompletePredictionEvent extends FlagEvent implements Cancellable {
 
   private static final HandlerList handlers = new HandlerList();
+  @Getter
   private final double offset;
   private boolean cancelled;
 
@@ -19,10 +22,6 @@ public class CompletePredictionEvent extends FlagEvent implements Cancellable {
 
   public static HandlerList getHandlerList() {
     return handlers;
-  }
-
-  public double getOffset() {
-    return offset;
   }
 
   @NotNull
