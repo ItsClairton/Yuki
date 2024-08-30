@@ -497,15 +497,8 @@ public class GrimPlayer implements GrimUser {
         }
     }
 
-    public boolean noModifyPacketPermission = false;
-    public boolean noSetbackPermission = false;
-
-    //TODO: Create a configurable timer for this
     @Override
     public void updatePermissions() {
-        if (bukkitPlayer == null) return;
-        this.noModifyPacketPermission = bukkitPlayer.hasPermission("grim.nomodifypacket");
-        this.noSetbackPermission = bukkitPlayer.hasPermission("grim.nosetback");
     }
 
     private int spamThreshold = 100;

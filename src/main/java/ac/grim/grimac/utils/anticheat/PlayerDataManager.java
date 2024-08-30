@@ -40,13 +40,6 @@ public class PlayerDataManager {
                 return false;
             }
 
-            // Has exempt permission
-            Player player = Bukkit.getPlayer(user.getUUID());
-            if (player != null && player.hasPermission("grim.exempt")) {
-                exemptUsers.add(user);
-                return false;
-            }
-
             // Geyser formatted player string
             // This will never happen for Java players, as the first character in the 3rd group is always 4 (xxxxxxxx-xxxx-4xxx-xxxx-xxxxxxxxxxxx)
             if (user.getUUID().toString().startsWith("00000000-0000-0000-0009")) {

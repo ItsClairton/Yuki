@@ -60,7 +60,7 @@ public class Check implements AbstractCheck {
     }
 
     public boolean shouldModifyPackets() {
-        return isEnabled && !player.disableGrim && !player.noModifyPacketPermission;
+        return isEnabled && !player.disableGrim;
     }
 
     @SafeVarargs

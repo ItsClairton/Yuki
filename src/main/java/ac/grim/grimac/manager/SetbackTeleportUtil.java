@@ -109,10 +109,7 @@ public class SetbackTeleportUtil extends Check implements PostPredictionCheck {
         // Player hasn't spawned yet
         if (lastKnownGoodPosition == null) return true;
         // Setbacks aren't allowed
-        if (player.disableGrim) return true;
-        // Player has permission to cheat, permission not given to OP by default.
-        if (player.bukkitPlayer != null && player.noSetbackPermission) return true;
-        return false;
+        return player.disableGrim;
     }
 
     private void simulateFriction(Vector vector) {
@@ -137,7 +134,6 @@ public class SetbackTeleportUtil extends Check implements PostPredictionCheck {
 
     private void blockMovementsUntilResync(boolean simulateNextTickPosition, boolean isResync) {
         if (requiredSetBack == null) return; // Hasn't spawned
-        if (player.bukkitPlayer != null && player.noSetbackPermission) return; // The player has permission to cheat
         requiredSetBack.setPlugin(false); // The player has illegal movement, block from vanilla ac override
         if (isPendingSetback()) return; // Don't spam setbacks
 
