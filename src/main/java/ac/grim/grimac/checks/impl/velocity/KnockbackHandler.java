@@ -205,13 +205,7 @@ public class KnockbackHandler extends Check implements PostPredictionCheck {
                         player.getSetbackTeleportUtil().executeViolationSetback();
                     }
 
-                    String formatOffset = "o: " + formatOffset(player.likelyKB.offset);
-
-                    if (player.likelyKB.offset == Integer.MAX_VALUE) {
-                        formatOffset = "ignored knockback";
-                    }
-
-                    alert(formatOffset);
+                    alert(new Pair<>("offset", player.likelyKB.offset == Integer.MAX_VALUE ? -1 : formatOffset(player.likelyKB.offset)));
                 } else {
                     reward();
                 }

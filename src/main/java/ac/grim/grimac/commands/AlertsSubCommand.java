@@ -7,10 +7,11 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Subcommand;
 import org.bukkit.entity.Player;
 
-@CommandAlias("grim|grimac")
-public class GrimAlerts extends BaseCommand {
+@CommandAlias("ac")
+public class AlertsSubCommand extends BaseCommand {
+
     @Subcommand("alerts")
-    @CommandPermission("grim.alerts")
+    @CommandPermission("ac.alerts")
     public void onAlerts(Player player) {
         GrimAPI.INSTANCE.getAlertManager().toggleAlerts(player);
     }

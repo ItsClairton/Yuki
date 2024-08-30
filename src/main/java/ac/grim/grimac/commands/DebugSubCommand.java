@@ -12,10 +12,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-@CommandAlias("grim|grimac")
-public class GrimDebug extends BaseCommand {
+@CommandAlias("ac")
+public class DebugSubCommand extends BaseCommand {
+
     @Subcommand("debug")
-    @CommandPermission("grim.debug")
+    @CommandPermission("ac.debug")
     @CommandCompletion("@players")
     public void onDebug(CommandSender sender, @Optional OnlinePlayer target) {
         Player player = null;
@@ -57,7 +58,7 @@ public class GrimDebug extends BaseCommand {
     }
 
     @Subcommand("consoledebug")
-    @CommandPermission("grim.consoledebug")
+    @CommandPermission("ac.consoledebug")
     @CommandCompletion("@players")
     public void onConsoleDebug(CommandSender sender, @Optional OnlinePlayer target) {
         Player player = null;
@@ -70,4 +71,5 @@ public class GrimDebug extends BaseCommand {
 
         sender.sendMessage("Console output for " + (grimPlayer.bukkitPlayer == null ? grimPlayer.user.getProfile().getName() : grimPlayer.bukkitPlayer.getName()) + " is now " + isOutput);
     }
+
 }

@@ -7,11 +7,13 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Subcommand;
 import org.bukkit.entity.Player;
 
-@CommandAlias("grim|grimac")
-public class GrimVerbose extends BaseCommand {
+@CommandAlias("ac")
+public class VerboseSubCommand extends BaseCommand {
+
     @Subcommand("verbose")
-    @CommandPermission("grim.verbose")
+    @CommandPermission("ac.verbose")
     public void onVerbose(Player player) {
         GrimAPI.INSTANCE.getAlertManager().toggleVerbose(player);
     }
+
 }

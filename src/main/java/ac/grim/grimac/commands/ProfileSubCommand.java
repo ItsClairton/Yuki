@@ -1,12 +1,9 @@
 package ac.grim.grimac.commands;
 
 import ac.grim.grimac.GrimAPI;
-import ac.grim.grimac.checks.impl.aim.processor.AimProcessor;
-import ac.grim.grimac.checks.impl.misc.ClientBrand;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.MessageUtil;
 import ac.grim.grimac.utils.anticheat.MultiLibUtil;
-import ac.grim.grimac.utils.math.GrimMath;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandCompletion;
@@ -18,10 +15,11 @@ import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@CommandAlias("grim|grimac")
-public class GrimProfile extends BaseCommand {
+@CommandAlias("ac")
+public class ProfileSubCommand extends BaseCommand {
+
     @Subcommand("profile")
-    @CommandPermission("grim.profile")
+    @CommandPermission("ac.profile")
     @CommandCompletion("@players")
     public void onConsoleDebug(CommandSender sender, OnlinePlayer target) {
         Player player = null;
@@ -46,4 +44,5 @@ public class GrimProfile extends BaseCommand {
             sender.sendMessage(message);
         }
     }
+
 }
