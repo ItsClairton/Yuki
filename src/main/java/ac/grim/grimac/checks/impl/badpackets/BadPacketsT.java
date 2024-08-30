@@ -4,6 +4,7 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import ac.grim.grimac.utils.data.packetentity.PacketEntity;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.attribute.Attributes;
@@ -56,11 +57,12 @@ public class BadPacketsT extends Check implements PacketCheck {
                     return;
                 }
 
-                // Log the vector
-                final String verbose = String.format("%.5f/%.5f/%.5f",
-                        targetVector.x, targetVector.y, targetVector.z);
                 // We could pretty much ban the player at this point
-                flagAndAlert(verbose);
+                flagAndAlert(
+                        new Pair<>("target-vector-x", String.format("%.5f", targetVector.x)),
+                        new Pair<>("target-vector-y", String.format("%.5f", targetVector.y)),
+                        new Pair<>("target-vector-z", String.format("%.5f", targetVector.z))
+                );
             });
         }
     }

@@ -5,6 +5,7 @@ import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PostPredictionCheck;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.update.PredictionComplete;
+import ac.grim.grimac.utils.data.Pair;
 import ac.grim.grimac.utils.data.VectorData;
 import ac.grim.grimac.utils.data.VelocityData;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
@@ -199,13 +200,7 @@ public class ExplosionHandler extends Check implements PostPredictionCheck {
                     }
                 }
 
-                String formatOffset = "o: " + formatOffset(offset);
-
-                if (player.likelyExplosions.offset == Integer.MAX_VALUE) {
-                    formatOffset = "ignored explosion";
-                }
-
-                alert(formatOffset);
+                alert(new Pair<>("offset", player.likelyExplosions.offset == Integer.MAX_VALUE ? -1 : formatOffset(offset)));
             } else {
                 reward();
             }

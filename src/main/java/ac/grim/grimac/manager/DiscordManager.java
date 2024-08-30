@@ -4,6 +4,7 @@ import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.manager.init.Initable;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.LogUtil;
+import ac.grim.grimac.utils.data.Pair;
 import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
@@ -11,9 +12,11 @@ import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import java.awt.*;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class DiscordManager implements Initable {
     private static WebhookClient client;
@@ -67,7 +70,11 @@ public class DiscordManager implements Initable {
         return list;
     }
 
-    public void sendAlert(GrimPlayer player, String verbose, String checkName, String violations) {
+    public void sendAlert(GrimPlayer player, String checkName, String violations, Pair<String, String>... verboseEntries) {
+        String verbose = Arrays.stream(verboseEntries)
+                .map(detail -> detail.getFirst() + ": " + detail.getSecond())
+                .collect(Collectors.joining("\n"));
+
         if (client != null) {
 
             String content = staticContent + "";

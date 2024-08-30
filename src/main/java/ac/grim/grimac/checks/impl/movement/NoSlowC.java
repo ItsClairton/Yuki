@@ -6,6 +6,7 @@ import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.checks.type.PostPredictionCheck;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.update.PredictionComplete;
+import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
@@ -46,7 +47,7 @@ public class NoSlowC extends Check implements PostPredictionCheck, PacketCheck {
                     && (!player.isSwimming || client.isNewerThan(ClientVersion.V_1_14_1) || client.isOlderThan(ClientVersion.V_1_13))
                     && player.sneakingSpeedMultiplier < 0.8f
             ) {
-                if (flagWithSetback()) alert("");
+                if (flagWithSetback()) alert(new Pair<>("sneaking-speed-multiplier", player.sneakingSpeedMultiplier));
             } else reward();
         }
     }

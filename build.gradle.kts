@@ -16,14 +16,14 @@ java.targetCompatibility = JavaVersion.VERSION_1_8
 
 // Set to false for debug builds
 // You cannot live reload classes if the jar relocates dependencies
-var relocate = true;
+var relocate = false;
 
 repositories {
     mavenLocal()
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") // Spigot
     maven("https://jitpack.io/") { // Grim API
         content {
-            includeGroup("com.github.grimanticheat")
+            includeGroup("com.github.ItsClairton")
         }
     }
     maven("https://repo.viaversion.com") // ViaVersion
@@ -44,7 +44,7 @@ dependencies {
     implementation("it.unimi.dsi:fastutil:8.5.13")
     implementation("github.scarsz:configuralize:1.4.0")
 
-    implementation("com.github.grimanticheat:grimapi:1193c4fa41")
+    implementation("com.github.ItsClairton:GrimAPI:3787ed6e85")
     // Used for local testing: implementation("ac.grim.grimac:grimapi:1.0")
 
     implementation("org.jetbrains:annotations:24.1.0")
@@ -137,6 +137,7 @@ publishing.publications.create<MavenPublication>("maven") {
 tasks.shadowJar {
     minimize()
     archiveFileName.set("${project.name}-${project.version}.jar")
+    destinationDirectory.set(file("C:\\Users\\clairton\\dev\\personal\\demo\\plugins"))
     if (relocate) {
         relocate("io.github.retrooper.packetevents", "ac.grim.grimac.shaded.io.github.retrooper.packetevents")
         relocate("com.github.retrooper.packetevents", "ac.grim.grimac.shaded.com.github.retrooper.packetevents")

@@ -5,6 +5,7 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import ac.grim.grimac.utils.math.GrimMath;
 import ac.grim.grimac.utils.nmsutil.BlockBreakSpeed;
 import com.github.retrooper.packetevents.PacketEvents;
@@ -83,7 +84,7 @@ public class FastBreak extends Check implements PacketCheck {
                 }
 
                 if (blockDelayBalance > 1000) { // If more than a second of advantage
-                    flagAndAlert("Delay=" + breakDelay);
+                    flagAndAlert(new Pair<>("delay", breakDelay));
                     if (shouldModifyPackets()) {
                         event.setCancelled(true); // Cancelling start digging will cause server to reject block break
                         player.onPacketCancel();
@@ -136,7 +137,7 @@ public class FastBreak extends Check implements PacketCheck {
                         }
                     }, null, 0);
 
-                    if (flagAndAlert("Diff=" + diff + ",Balance=" + blockBreakBalance) && shouldModifyPackets()) {
+                    if (flagAndAlert(new Pair<>("difference", diff), new Pair<>("balance", blockBreakBalance)) && shouldModifyPackets()) {
                         event.setCancelled(true);
                         player.onPacketCancel();
                     }

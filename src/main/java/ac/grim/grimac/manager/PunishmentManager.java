@@ -2,20 +2,27 @@ package ac.grim.grimac.manager;
 
 import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.api.AbstractCheck;
+import ac.grim.grimac.api.events.AlertEvent;
 import ac.grim.grimac.api.events.CommandExecuteEvent;
 import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.events.packets.ProxyAlertMessenger;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.LogUtil;
 import ac.grim.grimac.utils.anticheat.MessageUtil;
+import ac.grim.grimac.utils.data.Pair;
 import github.scarsz.configuralize.DynamicConfig;
 import io.github.retrooper.packetevents.util.folia.FoliaScheduler;
 import lombok.Getter;
 import lombok.Setter;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PunishmentManager {
     GrimPlayer player;
@@ -91,9 +98,36 @@ public class PunishmentManager {
         }
     }
 
-    private String replaceAlertPlaceholders(String original, PunishGroup group, Check check, String alertString, String verbose) {
+    private String replaceAlertPlaceholders(String original,
+                                            PunishGroup group,
+                                            Check check,
+                                            String alertString,
+                                            boolean hover,
+                                            Pair<String, String>... verboseEntries) {
         // Streams are slow but this isn't a hot path... it's fine.
         String vl = group.violations.values().stream().filter((e) -> e == check).count() + "";
+
+        String verbose;
+
+        if (hover) {
+            String format = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("hover-verbose-format",
+                    "%key%: %value%");
+
+            verbose = Arrays.stream(verboseEntries)
+                    .map(detail -> format
+                            .replace("%key%", StringUtils.capitalize(detail.getFirst()))
+                            .replace("%value%", detail.getSecond()))
+                    .collect(Collectors.joining("\n"));
+        } else {
+            String format = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("alert-verbose-format",
+                    "%key%: %value%");
+
+            verbose = Arrays.stream(verboseEntries)
+                    .map(detail -> format
+                            .replace("%key%", StringUtils.capitalize(detail.getFirst()))
+                            .replace("%value%", detail.getSecond()))
+                    .collect(Collectors.joining(","));
+        }
 
         original = MessageUtil.format(original
                 .replace("[alert]", alertString)
@@ -103,6 +137,7 @@ public class PunishmentManager {
                 .replace("%vl%", vl)
                 .replace("%verbose%", verbose)
                 .replace("%description%", check.getDescription())
+                .replace("%server%", Bukkit.getName())
         );
 
         original = GrimAPI.INSTANCE.getExternalAPI().replaceVariables(player, original, true);
@@ -110,9 +145,8 @@ public class PunishmentManager {
         return original;
     }
 
-    public boolean handleAlert(GrimPlayer player, String verbose, Check check) {
-        String alertString = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("alerts-format", "%prefix% &f%player% &bfailed &f%check_name% &f(x&c%vl%&f) &7%verbose%");
-        boolean testMode = GrimAPI.INSTANCE.getConfigManager().getConfig().getBooleanElse("test-mode", false);
+    public boolean handleAlert(GrimPlayer player, Check check, Pair<String, String>... verboseEntries) {
+        String alertString = GrimAPI.INSTANCE.getConfigManager().getConfig().getString("alerts-format");
         boolean sentDebug = false;
 
         // Check commands
@@ -120,17 +154,47 @@ public class PunishmentManager {
             if (group.getChecks().contains(check)) {
                 int violationCount = group.getViolations().size();
                 for (ParsedCommand command : group.getCommands()) {
-                    String cmd = replaceAlertPlaceholders(command.getCommand(), group, check, alertString, verbose);
+                    String cmd = replaceAlertPlaceholders(command.getCommand(), group, check, alertString, false, verboseEntries);
+
+                    String baseHover = replaceAlertPlaceholders(command.getCommand(),
+                            group,
+                            check,
+                            GrimAPI.INSTANCE.getConfigManager()
+                                    .getConfig()
+                                    .getStringElse("alerts-format-hover", ""),
+                            true,
+                            verboseEntries);
+
+                    BaseComponent[] components = TextComponent.fromLegacyText(cmd);
+                    for (BaseComponent component : components) {
+                        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(baseHover)));
+                    }
 
                     // Verbose that prints all flags
-                    if (GrimAPI.INSTANCE.getAlertManager().getEnabledVerbose().size() > 0 && command.command.equals("[alert]")) {
+                    if (command.command.equals("[alert]")) {
                         sentDebug = true;
-                        for (Player bukkitPlayer : GrimAPI.INSTANCE.getAlertManager().getEnabledVerbose()) {
-                            bukkitPlayer.sendMessage(cmd);
+
+                        AlertEvent event = new AlertEvent(
+                                player,
+                                check,
+                                Arrays.stream(verboseEntries).collect(Collectors.toMap(Pair::getFirst, Pair::getSecond)),
+                                new ArrayList<>(GrimAPI.INSTANCE.getAlertManager().getEnabledVerbose()),
+                                true);
+
+                        if (!event.isCancelled()) {
+                            for (Player receiver : event.getReceivers()) {
+                                receiver.spigot().sendMessage(components);
+                            }
+
+                            if (GrimAPI.INSTANCE.getConfigManager().getConfig().getBooleanElse("verbose.print-to-console", false)) {
+                                LogUtil.console(String.format("%s Verbose: (%s).",
+                                        cmd,
+                                        Arrays.stream(verboseEntries)
+                                                .map(vb -> vb.getFirst() + ": " + vb.getSecond())
+                                                .collect(Collectors.joining(", ")))); // Print verbose to console
+                            }
                         }
-                        if (GrimAPI.INSTANCE.getConfigManager().getConfig().getBooleanElse("verbose.print-to-console", false)) {
-                            LogUtil.console(cmd); // Print verbose to console
-                        }
+
                     }
 
                     if (violationCount >= command.getThreshold()) {
@@ -143,26 +207,31 @@ public class PunishmentManager {
                             if (executeEvent.isCancelled()) continue;
 
                             if (command.command.equals("[webhook]")) {
-                                String vl = group.violations.values().stream().filter((e) -> e == check).count() + "";
-                                GrimAPI.INSTANCE.getDiscordManager().sendAlert(player, verbose, check.getCheckName(), vl);
+                                String vl = String.valueOf(group.violations.values().stream().filter((e) -> e == check).count());
+                                GrimAPI.INSTANCE.getDiscordManager().sendAlert(player, check.getCheckName(), vl, verboseEntries);
                             } else if (command.command.equals("[proxy]")) {
-                                String proxyAlertString = GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("alerts-format-proxy", "%prefix% &f[&cproxy&f] &f%player% &bfailed &f%check_name% &f(x&c%vl%&f) &7%verbose%");
-                                proxyAlertString = replaceAlertPlaceholders(command.getCommand(), group, check, proxyAlertString, verbose);
+                                String proxyAlertString = GrimAPI.INSTANCE.getConfigManager().getConfig().getString("alerts-format-proxy");
+                                proxyAlertString = replaceAlertPlaceholders(command.getCommand(), group, check, proxyAlertString, false, verboseEntries);
                                 ProxyAlertMessenger.sendPluginMessage(proxyAlertString);
                             } else {
                                 if (command.command.equals("[alert]")) {
-                                    sentDebug = true;
-                                    if (testMode) { // secret test mode
-                                        player.user.sendMessage(cmd);
-                                        continue;
-                                    }
-                                    cmd = "grim sendalert " + cmd; // Not test mode, we can add the command prefix
-                                }
+                                    AlertEvent event = new AlertEvent(
+                                            player,
+                                            check,
+                                            Arrays.stream(verboseEntries).collect(Collectors.toMap(Pair::getFirst, Pair::getSecond)),
+                                            new ArrayList<>(GrimAPI.INSTANCE.getAlertManager().getEnabledAlerts()),
+                                            false);
 
-                                String finalCmd = cmd;
-                                FoliaScheduler.getGlobalRegionScheduler().run(GrimAPI.INSTANCE.getPlugin(), (dummy) -> {
-                                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCmd);
-                                });
+                                    if (!event.isCancelled()) {
+                                        for (Player receiver : event.getReceivers()) {
+                                            receiver.sendMessage(cmd);
+                                        }
+                                    }
+                                } else {
+                                    FoliaScheduler.getGlobalRegionScheduler().run(GrimAPI.INSTANCE.getPlugin(), (dummy) -> {
+                                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                                    });
+                                }
                             }
                         }
 

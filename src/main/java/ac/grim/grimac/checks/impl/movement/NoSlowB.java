@@ -27,7 +27,7 @@ public class NoSlowB extends Check implements PacketCheck {
                         event.setCancelled(true);
                         player.onPacketCancel();
                     }
-                    alert("");
+                    alert();
                     player.getSetbackTeleportUtil().executeNonSimulatingSetback();
                 }
             } else {

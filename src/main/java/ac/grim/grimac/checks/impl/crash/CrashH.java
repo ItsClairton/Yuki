@@ -4,6 +4,7 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientTabComplete;
@@ -27,7 +28,7 @@ public class CrashH extends Check implements PacketCheck {
                     event.setCancelled(true);
                     player.onPacketCancel();
                 }
-                flagAndAlert("(length) length=" + length);
+                flagAndAlert(new Pair<>("cause", "length"), new Pair<>("length", length));
                 return;
             }
             // paper's patch
@@ -37,7 +38,8 @@ public class CrashH extends Check implements PacketCheck {
                     event.setCancelled(true);
                     player.onPacketCancel();
                 }
-                flagAndAlert("(invalid) length=" + length);
+
+                flagAndAlert(new Pair<>("cause", "space"), new Pair<>("length", length));
                 return;
             }
         }

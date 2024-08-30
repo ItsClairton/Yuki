@@ -3,6 +3,7 @@ package ac.grim.grimac.events.packets;
 import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.checks.impl.badpackets.BadPacketsW;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import ac.grim.grimac.utils.data.packetentity.PacketEntity;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
@@ -35,7 +36,7 @@ public class PacketPlayerAttack extends PacketListenerAbstract {
 
             // The entity does not exist
             if (!player.compensatedEntities.entityMap.containsKey(interact.getEntityId()) && !player.compensatedEntities.serverPositionsMap.containsKey(interact.getEntityId())) {
-                if (player.checkManager.getPacketCheck(BadPacketsW.class).flagAndAlert("entityId=" + interact.getEntityId()) && player.checkManager.getPacketCheck(BadPacketsW.class).shouldModifyPackets()) {
+                if (player.checkManager.getPacketCheck(BadPacketsW.class).flagAndAlert(new Pair<>("entity-id", interact.getEntityId())) && player.checkManager.getPacketCheck(BadPacketsW.class).shouldModifyPackets()) {
                     event.setCancelled(true);
                     player.onPacketCancel();
                 }

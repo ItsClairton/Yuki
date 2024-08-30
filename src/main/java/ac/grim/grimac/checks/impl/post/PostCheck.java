@@ -6,6 +6,7 @@ import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.checks.type.PostPredictionCheck;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.update.PredictionComplete;
+import ac.grim.grimac.utils.data.Pair;
 import ac.grim.grimac.utils.lists.EvictingQueue;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
@@ -20,7 +21,6 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 
 import java.util.ArrayDeque;
 import java.util.List;
-import java.util.Locale;
 
 import static com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Client.*;
 
@@ -29,7 +29,7 @@ public class PostCheck extends Check implements PacketCheck, PostPredictionCheck
     private final ArrayDeque<PacketTypeCommon> post = new ArrayDeque<>();
     // Due to 1.9+ missing the idle packet, we must queue flags
     // 1.8 clients will have the same logic for simplicity, although it's not needed
-    private final List<String> flags = new EvictingQueue<>(10);
+    private final List<Pair<String, Object>> flags = new EvictingQueue<>(10);
     private boolean sentFlying = false;
     private int isExemptFromSwingingCheck = Integer.MIN_VALUE;
 
@@ -44,7 +44,7 @@ public class PostCheck extends Check implements PacketCheck, PostPredictionCheck
             // 1.8 clients have the idle packet, and this shouldn't false on 1.8 clients
             // 1.9+ clients have predictions, which will determine if hidden tick skipping occurred
             if (player.isTickingReliablyFor(3)) {
-                for (String flag : flags) {
+                for (Pair<String, Object> flag : flags) {
                     flagAndAlert(flag);
                 }
             }
@@ -81,7 +81,7 @@ public class PostCheck extends Check implements PacketCheck, PostPredictionCheck
             PacketTypeCommon packetType = event.getPacketType();
             if (isTransaction(packetType) && player.packetStateData.lastTransactionPacketWasValid) {
                 if (sentFlying && !post.isEmpty()) {
-                    flags.add(post.getFirst().toString().toLowerCase(Locale.ROOT).replace("_", " ") + " v" + player.getClientVersion().getReleaseName());
+                    flags.add(new Pair<>("packet", post.getFirst().toString().replace("_", " ")));
                 }
                 post.clear();
                 sentFlying = false;

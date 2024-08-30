@@ -4,6 +4,7 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerFlying;
@@ -22,7 +23,7 @@ public class BadPacketsD extends Check implements PacketCheck {
             final float pitch = new WrapperPlayClientPlayerFlying(event).getLocation().getPitch();
             if (pitch > 90 || pitch < -90) {
                 // Ban.
-                if (flagAndAlert("pitch=" + pitch)) {
+                if (flagAndAlert(new Pair<>("pitch", pitch))) {
                     if (shouldModifyPackets()) {
                         // prevent other checks from using an invalid pitch
                         if (player.yRot > 90) player.yRot = 90;

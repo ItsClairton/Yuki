@@ -4,14 +4,14 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.DiggingAction;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
+import com.github.retrooper.packetevents.util.Vector3i;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging;
-
-import java.util.Locale;
 
 // checks for impossible dig packets
 @CheckData(name = "BadPacketsL")
@@ -39,10 +39,15 @@ public class BadPacketsL extends Check implements PacketCheck {
                     || packet.getBlockPosition().getZ() != 0
                     || packet.getSequence() != 0
             ) {
-                if (flagAndAlert("xyzF="
-                        + packet.getBlockPosition().getX() + ", " + packet.getBlockPosition().getY() + ", " + packet.getBlockPosition().getZ() + ", " + packet.getBlockFace()
-                        + ", sequence=" + packet.getSequence()
-                        + ", action=" + packet.getAction().toString().toLowerCase(Locale.ROOT).replace("_", " ") + " v" + player.getVersionName()
+                Vector3i blockPos = packet.getBlockPosition();
+
+                if (flagAndAlert(
+                        new Pair<>("x", blockPos.getX()),
+                        new Pair<>("y", blockPos.getY()),
+                        new Pair<>("z", blockPos.getZ()),
+                        new Pair<>("face", packet.getBlockFace()),
+                        new Pair<>("sequence", packet.getSequence()),
+                        new Pair<>("action", packet.getAction())
                 ) && shouldModifyPackets() && packet.getAction() != DiggingAction.RELEASE_USE_ITEM) {
                     event.setCancelled(true);
                     player.onPacketCancel();

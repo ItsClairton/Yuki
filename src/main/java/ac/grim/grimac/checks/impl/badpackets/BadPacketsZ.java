@@ -4,6 +4,7 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.DiggingAction;
@@ -42,7 +43,7 @@ public class BadPacketsZ extends Check implements PacketCheck {
     }
 
     private String formatted(Vector3i vec) {
-        return vec == null ? "null" : vec.x + ", " + vec.y + ", " + vec.z;
+        return vec == null ? "N/A" : vec.x + ", " + vec.y + ", " + vec.z;
     }
 
     public void handle(PacketReceiveEvent event, WrapperPlayClientPlayerDigging dig) {
@@ -68,7 +69,7 @@ public class BadPacketsZ extends Check implements PacketCheck {
             if (!pos.equals(lastBlock)) {
                 // https://github.com/GrimAnticheat/Grim/issues/1512
                 if (player.getClientVersion().isOlderThan(ClientVersion.V_1_14_4) || (!lastBlockWasInstantBreak && pos.equals(lastCancelledBlock))) {
-                    if (flagAndAlert("action=CANCELLED_DIGGING" + ", last=" + formatted(lastBlock) + ", pos=" + formatted(pos))) {
+                    if (flagAndAlert(new Pair<>("action", "CANCELLED_DIGGING"), new Pair<>("last-block", formatted(lastBlock)), new Pair<>("position", formatted(pos)))) {
                         if (shouldModifyPackets()) {
                             event.setCancelled(true);
                             player.onPacketCancel();
@@ -89,7 +90,7 @@ public class BadPacketsZ extends Check implements PacketCheck {
 
             // when a player looks away from the mined block, they send a cancel, and if they look at it again, they don't send another start. (thanks mojang!)
             if (!pos.equals(lastCancelledBlock) && (!lastBlockWasInstantBreak || player.getClientVersion().isOlderThan(ClientVersion.V_1_14_4)) && !pos.equals(lastBlock)) {
-                if (flagAndAlert("action=FINISHED_DIGGING" + ", last=" + formatted(lastBlock) + ", pos=" + formatted(pos))) {
+                if (flagAndAlert(new Pair<>("action", "FINISHED_DIGGING"), new Pair<>("last-block", formatted(lastBlock)), new Pair<>("position", formatted(pos)))) {
                     if (shouldModifyPackets()) {
                         event.setCancelled(true);
                         player.onPacketCancel();

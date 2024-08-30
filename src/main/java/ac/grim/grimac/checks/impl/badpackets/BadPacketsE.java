@@ -4,6 +4,7 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerFlying;
@@ -28,7 +29,7 @@ public class BadPacketsE extends Check implements PacketCheck {
         }
 
         if (noReminderTicks > 20) {
-            flagAndAlert("ticks=" + noReminderTicks); // ban?  I don't know how this would false
+            flagAndAlert(new Pair<>("ticks", noReminderTicks)); // ban?  I don't know how this would false
         }
     }
 

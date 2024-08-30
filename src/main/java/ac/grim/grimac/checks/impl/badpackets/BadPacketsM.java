@@ -4,6 +4,7 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import ac.grim.grimac.utils.data.packetentity.PacketEntity;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
@@ -39,7 +40,7 @@ public class BadPacketsM extends Check implements PacketCheck {
                 // INTERACT_AT then INTERACT
                 case INTERACT:
                     if (!sentInteractAt) {
-                        if (flagAndAlert("Missed Interact-At") && shouldModifyPackets()) {
+                        if (flagAndAlert(new Pair<>("type", "interact-at")) && shouldModifyPackets()) {
                             event.setCancelled(true);
                             player.onPacketCancel();
                         }
@@ -48,7 +49,7 @@ public class BadPacketsM extends Check implements PacketCheck {
                     break;
                 case INTERACT_AT:
                     if (sentInteractAt) {
-                        if (flagAndAlert("Missed Interact") && shouldModifyPackets()) {
+                        if (flagAndAlert(new Pair<>("type", "interact")) && shouldModifyPackets()) {
                             event.setCancelled(true);
                             player.onPacketCancel();
                         }

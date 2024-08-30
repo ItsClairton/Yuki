@@ -4,6 +4,8 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
+import ac.grim.grimac.utils.math.GrimMath;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
@@ -92,7 +94,8 @@ public class TimerCheck extends Check implements PacketCheck {
 
                 if (wouldFailNormal) {
                     // Only alert if we would fail without adjusted limit
-                    alert("");
+                    alert(new Pair<>("difference", timerBalanceRealTime - System.nanoTime() + " ns")
+                    );
                 }
             }
 

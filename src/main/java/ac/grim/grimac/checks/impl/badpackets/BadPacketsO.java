@@ -46,7 +46,7 @@ public class BadPacketsO extends Check implements PacketCheck {
             }
 
             if (!hasID) {
-                if (flagAndAlert("id=" + id) && shouldModifyPackets()) {
+                if (flagAndAlert(new Pair<>("id", id)) && shouldModifyPackets()) {
                     event.setCancelled(true);
                     player.onPacketCancel();
                 }

@@ -4,6 +4,7 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import ac.grim.grimac.utils.nmsutil.BlockBreakSpeed;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
@@ -37,7 +38,7 @@ public class BadPacketsX extends Check implements PacketCheck {
                 || block == StateTypes.MOVING_PISTON
                 || (block == StateTypes.FIRE && noFireHitbox);
 
-        if (invalid && flagAndAlert("block=" + block.getName() + ", type=" + dig.getAction()) && shouldModifyPackets()) {
+        if (invalid && flagAndAlert(new Pair<>("block-type", block.getName()), new Pair<>("digging-action", dig.getAction())) && shouldModifyPackets()) {
             event.setCancelled(true);
             player.onPacketCancel();
         }

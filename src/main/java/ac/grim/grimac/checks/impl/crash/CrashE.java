@@ -5,6 +5,7 @@ import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.impl.exploit.ExploitA;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientSettings;
@@ -23,7 +24,7 @@ public class CrashE extends Check implements PacketCheck {
             int viewDistance = wrapper.getViewDistance();
             boolean invalidLocale = player.checkManager.getPrePredictionCheck(ExploitA.class).checkString(wrapper.getLocale());
             if (viewDistance < 2) {
-                flagAndAlert("distance=" + viewDistance);
+                flagAndAlert(new Pair<>("view-distance", viewDistance));
                 wrapper.setViewDistance(2);
             }
             if (invalidLocale) wrapper.setLocale("en_us");

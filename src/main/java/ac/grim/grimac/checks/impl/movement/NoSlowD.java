@@ -42,7 +42,7 @@ public class NoSlowD extends Check implements PostPredictionCheck, PacketCheck {
             }
 
             if (player.isSprinting) {
-                if (flaggedLastTick && flagWithSetback()) alert("");
+                if (flaggedLastTick && flagWithSetback()) alert();
                 flaggedLastTick = true;
             } else {
                 reward();

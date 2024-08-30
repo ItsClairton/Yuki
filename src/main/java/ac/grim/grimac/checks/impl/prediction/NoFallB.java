@@ -5,6 +5,7 @@ import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PostPredictionCheck;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.update.PredictionComplete;
+import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.player.GameMode;
@@ -33,8 +34,12 @@ public class NoFallB extends Check implements PostPredictionCheck {
 
         if (invalid) {
             if (flagWithSetback()) {
-                alert("claimed " + player.clientClaimsLastOnGround);
+                alert(
+                        new Pair<>("server", player.onGround),
+                        new Pair<>("client", player.clientClaimsLastOnGround)
+                );
             }
+
             player.checkManager.getNoFall().flipPlayerGroundStatus = true;
         }
     }

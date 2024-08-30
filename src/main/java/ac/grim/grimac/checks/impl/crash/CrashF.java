@@ -4,6 +4,7 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClickWindow;
@@ -25,14 +26,14 @@ public class CrashF extends Check implements PacketCheck {
             int slot = click.getSlot();
 
             if ((clickType == 1 || clickType == 2) && windowId >= 0 && button < 0) {
-                if (flagAndAlert("clickType=" + clickType + " button=" + button)) {
+                if (flagAndAlert(new Pair<>("click-type", clickType), new Pair<>("button", button))) {
                     event.setCancelled(true);
                     player.onPacketCancel();
                 }
             }
 
             else if (windowId >= 0 && clickType == 2 && slot < 0) {
-                if (flagAndAlert("clickType=" + clickType + " button=" + button + " slot=" + slot)) {
+                if (flagAndAlert(new Pair<>("click-type", clickType), new Pair<>("button", button), new Pair<>("slot", slot))) {
                     event.setCancelled(true);
                     player.onPacketCancel();
                 }

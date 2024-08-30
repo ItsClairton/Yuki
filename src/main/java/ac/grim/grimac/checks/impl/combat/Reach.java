@@ -20,6 +20,7 @@ import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.collisions.datatypes.SimpleCollisionBox;
+import ac.grim.grimac.utils.data.Pair;
 import ac.grim.grimac.utils.data.packetentity.PacketEntity;
 import ac.grim.grimac.utils.data.packetentity.dragon.PacketEntityEnderDragonPart;
 import ac.grim.grimac.utils.nmsutil.ReachUtils;
@@ -33,6 +34,8 @@ import com.github.retrooper.packetevents.protocol.player.GameMode;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerFlying;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -146,10 +149,24 @@ public class Reach extends Check implements PacketCheck {
             if (reachEntity != null) {
                 String result = checkReach(reachEntity, attack.getValue(), false);
                 if (result != null) {
-                    if (reachEntity.getType() == EntityTypes.PLAYER) {
-                        flagAndAlert(result);
+                    if (reachEntity.getType() == EntityTypes.PLAYER && reachEntity.getUuid() != null) {
+                        String targetDetails = reachEntity.getUuid().toString();
+
+                        Player target = Bukkit.getPlayer(reachEntity.getUuid());
+                        if (target != null) {
+                            targetDetails = target.getName() + " (" + target.getUniqueId() + ")";
+                        }
+
+                        flagAndAlert(
+                                new Pair<>("type", reachEntity.getType().getName().getKey().toUpperCase()),
+                                new Pair<>("target", targetDetails),
+                                new Pair<>("distance", result)
+                        );
                     } else {
-                        flagAndAlert(result + " type=" + reachEntity.getType().getName().getKey());
+                        flagAndAlert(
+                                new Pair<>("type", reachEntity.getType().getName().getKey().toUpperCase()),
+                                new Pair<>("distance", result)
+                        );
                     }
                 }
             }
@@ -223,10 +240,10 @@ public class Reach extends Check implements PacketCheck {
         if ((!blacklisted.contains(reachEntity.getType()) && reachEntity.isLivingEntity()) || reachEntity.getType() == EntityTypes.END_CRYSTAL) {
             if (minDistance == Double.MAX_VALUE) {
                 cancelBuffer = 1;
-                return "Missed hitbox";
+                return "∞";
             } else if (minDistance > player.compensatedEntities.getSelf().getAttributeValue(Attributes.PLAYER_ENTITY_INTERACTION_RANGE)) {
                 cancelBuffer = 1;
-                return String.format("%.5f", minDistance) + " blocks";
+                return String.format("%.5f", minDistance);
             } else {
                 cancelBuffer = Math.max(0, cancelBuffer - 0.25);
             }

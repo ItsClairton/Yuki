@@ -4,6 +4,7 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.world.Location;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerFlying;
@@ -24,7 +25,15 @@ public class CrashC extends Check implements PacketCheck {
                         || Double.isInfinite(pos.getX()) || Double.isInfinite(pos.getY()) || Double.isInfinite(pos.getZ()) ||
                         Float.isNaN(pos.getYaw()) || Float.isNaN(pos.getPitch()) ||
                         Float.isInfinite(pos.getYaw()) || Float.isInfinite(pos.getPitch())) {
-                    flagAndAlert("xyzYP: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ", " + pos.getYaw() + ", " + pos.getPitch());
+
+                    flagAndAlert(
+                            new Pair<>("x", pos.getX()),
+                            new Pair<>("y", pos.getY()),
+                            new Pair<>("z", pos.getZ()),
+                            new Pair<>("yaw", pos.getYaw()),
+                            new Pair<>("pitch", pos.getPitch())
+                    );
+
                     player.getSetbackTeleportUtil().executeViolationSetback();
                     event.setCancelled(true);
                     player.onPacketCancel();

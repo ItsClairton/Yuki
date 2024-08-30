@@ -4,9 +4,9 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.item.ItemStack;
-import com.github.retrooper.packetevents.protocol.item.type.ItemType;
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
@@ -48,11 +48,15 @@ public class BadPacketsU extends Check implements PacketCheck {
                         || cursor.z != 0
                         || packet.getSequence() != 0
                 ) {
-                    final String verbose = String.format(
-                            "xyz=%s, %s, %s, cursor=%s, %s, %s, item=%s, sequence=%s",
-                            pos.x, pos.y, pos.z, cursor.x, cursor.y, cursor.z, !failedItemCheck, packet.getSequence()
-                    );
-                    if (flagAndAlert(verbose) && shouldModifyPackets()) {
+                    if (flagAndAlert(
+                            new Pair<>("x", pos.x),
+                            new Pair<>("y", pos.y),
+                            new Pair<>("z", pos.z),
+                            new Pair<>("cursor-x", cursor.x),
+                            new Pair<>("cursor-y", cursor.y),
+                            new Pair<>("cursor-z", cursor.z),
+                            new Pair<>("item", failedItemCheck),
+                            new Pair<>("sequence", packet.getSequence())) && shouldModifyPackets()) {
                         player.onPacketCancel();
                         event.setCancelled(true);
                     }

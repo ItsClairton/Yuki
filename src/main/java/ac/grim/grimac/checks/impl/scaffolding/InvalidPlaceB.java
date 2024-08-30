@@ -4,6 +4,7 @@ import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.BlockPlaceCheck;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.update.BlockPlace;
+import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 
@@ -21,7 +22,7 @@ public class InvalidPlaceB extends BlockPlaceCheck {
 
         if (place.getFaceId() < 0 || place.getFaceId() > 5) {
             // ban
-            if (flagAndAlert("direction=" + place.getFaceId()) && shouldModifyPackets() && shouldCancel()) {
+            if (flagAndAlert(new Pair<>("direction", place.getFaceId())) && shouldModifyPackets() && shouldCancel()) {
                 place.resync();
             }
         }

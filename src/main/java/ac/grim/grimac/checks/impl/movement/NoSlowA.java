@@ -5,6 +5,7 @@ import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PostPredictionCheck;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.update.PredictionComplete;
+import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 
 @CheckData(name = "NoSlowA (Prediction)", configName = "NoSlowA", setback = 5)
@@ -35,7 +36,7 @@ public class NoSlowA extends Check implements PostPredictionCheck {
             if (bestOffset > offsetToFlag) {
                 if (flaggedLastTick) {
                     flagWithSetback();
-                    alert("");
+                    alert(new Pair<>("offset", formatOffset(bestOffset)));
                 }
                 flaggedLastTick = true;
             } else {

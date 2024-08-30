@@ -51,20 +51,7 @@ public class ConfigManager {
     }
 
     public void reload() {
-        String languageCode = System.getProperty("user.language").toUpperCase();
-
-        try {
-            config.setLanguage(Language.valueOf(languageCode));
-        } catch (IllegalArgumentException ignored) { // not a valid language code
-        }
-
-        // Logic for system language
-        if (!config.isLanguageAvailable(config.getLanguage())) {
-            String lang = languageCode.toUpperCase();
-            LogUtil.info("Unknown user language " + lang + ".");
-            LogUtil.info("If you fluently speak " + lang + " as well as English, see the GitHub repo to translate it!");
-            config.setLanguage(Language.EN);
-        }
+        config.setLanguage(Language.EN);
 
         try {
             config.saveAllDefaults(false);

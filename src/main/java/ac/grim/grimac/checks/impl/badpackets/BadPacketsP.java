@@ -4,6 +4,7 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
@@ -61,7 +62,11 @@ public class BadPacketsP extends Check implements PacketCheck {
 
             //Allowing this to false flag to debug and find issues faster
             if (flag) {
-                if (flagAndAlert("clickType=" + clickType + " button=" + button + (wrapper.getWindowId() == containerId ? " container=" + containerType : "")) && shouldModifyPackets()) {
+                if (flagAndAlert(
+                        new Pair<>("click-type", clickType),
+                        new Pair<>("button", button),
+                        new Pair<>("container-type", containerType)
+                ) && shouldModifyPackets()) {
                     event.setCancelled(true);
                     player.onPacketCancel();
                 }

@@ -4,12 +4,16 @@ import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.api.AbstractCheck;
 import ac.grim.grimac.api.events.FlagEvent;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
+import com.github.retrooper.packetevents.protocol.world.Location;
 import github.scarsz.configuralize.DynamicConfig;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+
+import java.util.Arrays;
 
 // Class from https://github.com/Tecnio/AntiCheatBase/blob/master/src/main/java/me/tecnio/anticheat/check/Check.java
 @Getter
@@ -59,16 +63,13 @@ public class Check implements AbstractCheck {
         return isEnabled && !player.disableGrim && !player.noModifyPacketPermission;
     }
 
-    public final boolean flagAndAlert(String verbose) {
+    @SafeVarargs
+    public final boolean flagAndAlert(Pair<String, Object>... verbose) {
         if (flag()) {
             alert(verbose);
             return true;
         }
         return false;
-    }
-
-    public final boolean flagAndAlert() {
-        return flagAndAlert("");
     }
 
     public final boolean flag() {
@@ -78,7 +79,6 @@ public class Check implements AbstractCheck {
         FlagEvent event = new FlagEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return false;
-
 
         player.punishmentManager.handleViolation(this);
 
@@ -105,8 +105,20 @@ public class Check implements AbstractCheck {
         if (setbackVL == -1) setbackVL = Double.MAX_VALUE;
     }
 
-    public boolean alert(String verbose) {
-        return player.punishmentManager.handleAlert(player, verbose, this);
+    @SafeVarargs
+    @SuppressWarnings("unchecked")
+    public final boolean alert(Pair<String, Object>... verboseEntries) {
+        Pair<String, String>[] serializedEntries = Arrays.stream(verboseEntries)
+                .map(entry -> {
+                    if (entry.getSecond() instanceof String) {
+                        return entry;
+                    }
+
+                    String value = entry.getSecond().toString();
+                    return new Pair<>(entry.getFirst(), value);
+                }).toArray(Pair[]::new);
+
+        return player.punishmentManager.handleAlert(player, this, serializedEntries);
     }
 
     public DynamicConfig getConfig() {

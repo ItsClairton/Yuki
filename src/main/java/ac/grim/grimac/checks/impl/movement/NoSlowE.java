@@ -35,7 +35,7 @@ public class NoSlowE extends Check implements PostPredictionCheck, PacketCheck {
 
         if (player.compensatedEntities.getSelf().hasPotionEffect(BLINDNESS)) {
             if (player.isSprinting && !startedSprintingBeforeBlind) {
-                if (flagWithSetback()) alert("");
+                if (flagWithSetback()) alert();
             } else reward();
         }
     }

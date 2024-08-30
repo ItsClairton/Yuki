@@ -4,6 +4,7 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.Pair;
 import ac.grim.grimac.utils.inventory.inventory.MenuType;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
@@ -41,7 +42,7 @@ public class CrashD extends Check implements PacketCheck {
             int windowId = click.getWindowId();
 
             if (type == MenuType.LECTERN && windowId > 0 && windowId == lecternId) {
-                if (flagAndAlert("clickType=" + clickType + " button=" + button)) {
+                if (flagAndAlert(new Pair<>("clickType", clickType), new Pair<>("button", button))) {
                     event.setCancelled(true);
                     player.onPacketCancel();
                 }

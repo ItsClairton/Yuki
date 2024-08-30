@@ -5,6 +5,7 @@ import ac.grim.grimac.checks.type.BlockPlaceCheck;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.update.BlockPlace;
 import ac.grim.grimac.utils.anticheat.update.RotationUpdate;
+import ac.grim.grimac.utils.data.Pair;
 
 @CheckData(name = "DuplicateRotPlace", experimental = true)
 public class DuplicateRotPlace extends BlockPlaceCheck {
@@ -36,7 +37,7 @@ public class DuplicateRotPlace extends BlockPlaceCheck {
                 double xDiffDots = Math.abs(deltaDotsX - lastPlacedDeltaDotsX);
 
                 if (xDiff < 0.0001) {
-                    flagAndAlert("x=" + xDiff + " xdots=" + xDiffDots + " y=" + deltaY);
+                    flagAndAlert(new Pair<>("x", xDiff), new Pair<>("x-dots", xDiffDots), new Pair<>("y-delta", deltaY));
                 } else {
                     reward();
                 }
