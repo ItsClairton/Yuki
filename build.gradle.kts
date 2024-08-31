@@ -10,7 +10,7 @@ plugins {
 
 group = "ac.grim.grimac"
 version = "2.3.67"
-description = "Libre simulation anticheat designed for 1.21 with 1.8-1.21 support, powered by PacketEvents 2.0."
+description = "Powerful anticheat based on Grim"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 java.targetCompatibility = JavaVersion.VERSION_1_8
 
@@ -56,7 +56,7 @@ dependencies {
 }
 
 bukkit {
-    name = "GrimAC"
+    name = "Shi"
     author = "GrimAC"
     main = "ac.grim.grimac.GrimAC"
     apiVersion = "1.13"
