@@ -3,6 +3,7 @@ package ac.grim.grimac.player;
 import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.api.AbstractCheck;
 import ac.grim.grimac.api.GrimUser;
+import ac.grim.grimac.api.mod.UserMod;
 import ac.grim.grimac.checks.impl.aim.processor.AimProcessor;
 import ac.grim.grimac.checks.impl.misc.ClientBrand;
 import ac.grim.grimac.checks.impl.misc.TransactionOrder;
@@ -47,6 +48,7 @@ import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyCompon
 import io.github.retrooper.packetevents.util.folia.FoliaScheduler;
 import io.github.retrooper.packetevents.util.viaversion.ViaVersionUtil;
 import io.netty.channel.Channel;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
 import org.bukkit.Bukkit;
@@ -72,6 +74,7 @@ public class GrimPlayer implements GrimUser {
     public int entityID;
     @Nullable
     public Player bukkitPlayer;
+    private @Getter List<UserMod> modList = new ArrayList<>();
     // Start transaction handling stuff
     // Determining player ping
     // The difference between keepalive and transactions is that keepalive is async while transactions are sync

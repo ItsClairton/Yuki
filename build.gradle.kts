@@ -44,7 +44,7 @@ dependencies {
     implementation("it.unimi.dsi:fastutil:8.5.13")
     implementation("github.scarsz:configuralize:1.4.0")
 
-    implementation("com.github.ItsClairton:GrimAPI:3787ed6e85")
+    implementation("com.github.ItsClairton:GrimAPI:e9a87abbcc")
     // Used for local testing: implementation("ac.grim.grimac:grimapi:1.0")
 
     implementation("org.jetbrains:annotations:24.1.0")

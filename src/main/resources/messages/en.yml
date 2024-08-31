@@ -51,3 +51,5 @@ profile:
   - "&f * Sensibilidade Horizontal: &7%h_sensitivity%%"
   - "&f * Sensibilidade Vertical: &7%v_sensitivity%%"
   - "&a &b"
+  - "&f * Lista de Mods: &7%mods%"
+  - "&e &b"

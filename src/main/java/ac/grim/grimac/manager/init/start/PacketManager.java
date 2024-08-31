@@ -1,5 +1,6 @@
 package ac.grim.grimac.manager.init.start;
 
+import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.events.packets.*;
 import ac.grim.grimac.events.packets.worldreader.BasePacketWorldReader;
 import ac.grim.grimac.events.packets.worldreader.PacketWorldReaderEight;
@@ -14,9 +15,10 @@ import com.github.retrooper.packetevents.manager.server.ServerVersion;
 public class PacketManager implements Initable {
     @Override
     public void start() {
+        GrimAPI.INSTANCE.getPlugin().getServer().getMessenger().registerOutgoingPluginChannel(GrimAPI.INSTANCE.getPlugin(), "FML|HS");
+
         LogUtil.info("Registering packets...");
 
-        PacketEvents.getAPI().getEventManager().registerListener(new PacketConfigurationListener());
         PacketEvents.getAPI().getEventManager().registerListener(new PacketPlayerJoinQuit());
         PacketEvents.getAPI().getEventManager().registerListener(new PacketPingListener());
         PacketEvents.getAPI().getEventManager().registerListener(new PacketPlayerDigging());

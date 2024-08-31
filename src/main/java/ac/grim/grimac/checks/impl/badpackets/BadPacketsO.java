@@ -45,7 +45,7 @@ public class BadPacketsO extends Check implements PacketCheck {
                 }
             }
 
-            if (!hasID) {
+            if (!hasID && System.currentTimeMillis() - player.joinTime > 5000) {
                 if (flagAndAlert(new Pair<>("id", id)) && shouldModifyPackets()) {
                     event.setCancelled(true);
                     player.onPacketCancel();

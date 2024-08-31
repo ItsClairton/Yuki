@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 //This is used for grim's external API. It has its own class just for organization.
 public class GrimExternalAPI implements GrimAbstractAPI, Initable {
@@ -116,6 +117,16 @@ public class GrimExternalAPI implements GrimAbstractAPI, Initable {
         variableReplacements.put("%fast_math%", user -> !user.isVanillaMath() + "");
         variableReplacements.put("%tps%", user -> String.format("%.2f", SpigotReflectionUtil.getTPS()));
         variableReplacements.put("%version%", GrimUser::getVersionName);
-        variableReplacements.put("%prefix%", user -> ChatColor.translateAlternateColorCodes('&', GrimAPI.INSTANCE.getConfigManager().getConfig().getStringElse("prefix", "&bGrim &8»")));
+        variableReplacements.put("%mods%", user -> {
+            if (user.getModList().isEmpty()) {
+                return "§cN/A";
+            }
+
+            return user.getModList()
+                    .stream()
+                    .map(modInfo -> "§7" + modInfo.getId() + " §8(" + modInfo.getVersion() + ")")
+                    .collect(Collectors.joining(" "));
+        });
+        variableReplacements.put("%prefix%", user -> ChatColor.translateAlternateColorCodes('&', GrimAPI.INSTANCE.getConfigManager().getConfig().getString("prefix")));
     }
 }
