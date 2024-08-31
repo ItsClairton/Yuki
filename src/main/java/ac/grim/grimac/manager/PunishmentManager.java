@@ -224,7 +224,7 @@ public class PunishmentManager {
 
                                     if (!event.isCancelled()) {
                                         for (Player receiver : event.getReceivers()) {
-                                            receiver.sendMessage(cmd);
+                                            receiver.spigot().sendMessage(components);
                                         }
                                     }
                                 } else {
