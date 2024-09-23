@@ -1,6 +1,5 @@
 package ac.grim.grimac.checks.impl.misc;
 
-import ac.grim.grimac.api.mod.UserMod;
 import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
@@ -9,12 +8,7 @@ import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPluginMessage;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPluginMessage;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class ClientBrand extends Check implements PacketCheck {
 
@@ -54,15 +48,15 @@ public class ClientBrand extends Check implements PacketCheck {
             System.arraycopy(data, 1, dataWithoutPrefix, 0, dataWithoutPrefix.length);
 
             brand = new String(dataWithoutPrefix).replace(" (Velocity)", "");
-            if (legacyChannel) {
+            /*if (legacyChannel) {
                 sendForgeHandshake();
-            }
+            }*/
 
             hasBrand = true;
             return;
         }
 
-        if (channel.equals(legacyChannel ? "FML|HS" : "")) {
+        /*if (channel.equals(legacyChannel ? "FML|HS" : "")) {
             List<UserMod> mods = new ArrayList<>();
 
             byte[] data = packet.getData();
@@ -88,16 +82,16 @@ public class ClientBrand extends Check implements PacketCheck {
                 player.getModList().addAll(mods);
             }
 
-        }
+        }*/
 
     }
 
-    private void sendForgeHandshake() {
+    /*private void sendForgeHandshake() {
         player.runNettyTaskInMs(() -> {
             player.user.writePacket(new WrapperPlayServerPluginMessage("FML|HS", new byte[] { -2, 0 }));
             player.user.writePacket(new WrapperPlayServerPluginMessage("FML|HS", new byte[] { 0, 2, 0, 0, 0, 0 }));
             player.user.writePacket(new WrapperPlayServerPluginMessage("FML|HS", new byte[] { 2, 0, 0, 0, 0 }));
         }, 100);
-    }
+    }*/
 
 }

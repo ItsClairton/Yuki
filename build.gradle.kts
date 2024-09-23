@@ -14,10 +14,6 @@ description = "Powerful anticheat based on Grim"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 java.targetCompatibility = JavaVersion.VERSION_1_8
 
-// Set to false for debug builds
-// You cannot live reload classes if the jar relocates dependencies
-var relocate = false;
-
 repositories {
     mavenLocal()
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") // Spigot
@@ -137,8 +133,9 @@ publishing.publications.create<MavenPublication>("maven") {
 tasks.shadowJar {
     minimize()
     archiveFileName.set("${project.name}-${project.version}.jar")
-    destinationDirectory.set(file("C:\\Users\\clairton\\dev\\personal\\demo\\plugins"))
-    if (relocate) {
+    destinationDirectory.set(project.findProperty("outputJar")?.let { file(it) })
+
+    if (System.getProperty("dev") == null) { // You can't use hotswap with relocate =(
         relocate("io.github.retrooper.packetevents", "ac.grim.grimac.shaded.io.github.retrooper.packetevents")
         relocate("com.github.retrooper.packetevents", "ac.grim.grimac.shaded.com.github.retrooper.packetevents")
         relocate("co.aikar.commands", "ac.grim.grimac.shaded.acf")
