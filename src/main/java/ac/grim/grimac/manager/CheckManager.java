@@ -137,6 +137,7 @@ public class CheckManager {
                 .put(InvalidPlaceA.class, new InvalidPlaceA(player))
                 .put(InvalidPlaceB.class, new InvalidPlaceB(player))
                 .put(AirLiquidPlace.class, new AirLiquidPlace(player))
+                .put(MultiPlace.class, new MultiPlace(player))
                 .put(FarPlace.class, new FarPlace(player))
                 .put(FabricatedPlace.class, new FabricatedPlace(player))
                 .put(PositionPlace.class, new PositionPlace(player))
@@ -199,6 +200,9 @@ public class CheckManager {
         for (PostPredictionCheck check : postPredictionCheck.values()) {
             check.onPacketReceive(packet);
         }
+        for (BlockPlaceCheck check : blockPlaceCheck.values()) {
+            check.onPacketReceive(packet);
+        }
     }
 
     public void onPacketSend(final PacketSendEvent packet) {
@@ -209,6 +213,9 @@ public class CheckManager {
             check.onPacketSend(packet);
         }
         for (PostPredictionCheck check : postPredictionCheck.values()) {
+            check.onPacketSend(packet);
+        }
+        for (BlockPlaceCheck check : blockPlaceCheck.values()) {
             check.onPacketSend(packet);
         }
     }
@@ -236,6 +243,9 @@ public class CheckManager {
 
     public void onPredictionFinish(final PredictionComplete complete) {
         for (PostPredictionCheck check : postPredictionCheck.values()) {
+            check.onPredictionComplete(complete);
+        }
+        for (BlockPlaceCheck check : blockPlaceCheck.values()) {
             check.onPredictionComplete(complete);
         }
     }

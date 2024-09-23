@@ -5,7 +5,9 @@ import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.data.Pair;
+import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.DiggingAction;
 import com.github.retrooper.packetevents.util.Vector3i;
@@ -16,13 +18,22 @@ import static ac.grim.grimac.utils.nmsutil.BlockBreakSpeed.getBlockDamage;
 
 @CheckData(name = "BadPacketsZ", experimental = true)
 public class BadPacketsZ extends Check implements PacketCheck {
-    public BadPacketsZ(final GrimPlayer player) {
-        super(player);
-    }
 
     private boolean lastBlockWasInstantBreak = false;
     private Vector3i lastBlock, lastCancelledBlock, lastLastBlock = null;
-    private final int exemptedY = player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_8) ? 4095 : 255;
+    private final int exemptedY;
+
+    public BadPacketsZ(final GrimPlayer player) {
+        super(player);
+
+        ClientVersion clientVersion = player.getClientVersion();
+        if (clientVersion.isOlderThan(ClientVersion.V_1_8)) {
+            exemptedY = 255;
+        } else {
+            ServerVersion serverVersion = PacketEvents.getAPI().getServerManager().getVersion();
+            exemptedY = serverVersion.isNewerThanOrEquals(ServerVersion.V_1_14) ? -1 : 4095;
+        }
+    }
 
     // The client sometimes sends a wierd cancel packet
     private boolean shouldExempt(final Vector3i pos) {
