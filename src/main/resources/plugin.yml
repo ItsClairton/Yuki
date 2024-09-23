@@ -1,0 +1,25 @@
+name: Yuki
+
+authors:
+  - ItsClairton
+  - GrimAC
+
+version: ${version}
+description: Powerful anticheat based on Grim
+
+main: ac.grim.grimac.GrimAC
+
+api-version: '1.13'
+
+folia-supported: true
+
+softdepend:
+  - ProtocolLib
+  - ProtocolSupport
+  - Essentials
+  - ViaVersion
+  - ViaBackwards
+  - ViaRewind
+  - Geyser-Spigot
+  - floodgate
+  - FastLogin

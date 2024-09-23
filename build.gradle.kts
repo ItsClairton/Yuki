@@ -1,36 +1,32 @@
-import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission
-
 plugins {
     id("java")
     id("maven-publish")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.freefair.lombok") version "8.6"
-    id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
+    id("com.gradleup.shadow") version "8.3.2"
+    id("io.freefair.lombok") version "8.10"
 }
 
 group = "ac.grim.grimac"
 version = "2.3.67"
-description = "Powerful anticheat based on Grim"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
-java.targetCompatibility = JavaVersion.VERSION_1_8
+
+java.sourceCompatibility = JavaVersion.VERSION_21
+java.targetCompatibility = JavaVersion.VERSION_21
 
 repositories {
-    mavenLocal()
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") // Spigot
+
     maven("https://jitpack.io/") { // Grim API
         content {
             includeGroup("com.github.ItsClairton")
         }
     }
+
     maven("https://repo.viaversion.com") // ViaVersion
     maven("https://repo.aikar.co/content/groups/aikar/") // ACF
     maven("https://nexus.scarsz.me/content/repositories/releases") // Configuralize
     maven("https://repo.opencollab.dev/maven-snapshots/") // Floodgate
     maven("https://repo.opencollab.dev/maven-releases/") // Cumulus (for Floodgate)
-    maven("https://repo.codemc.io/repository/maven-releases/") // PacketEvents
-    maven("https://repo.codemc.io/repository/maven-snapshots/")
-    mavenCentral()
-    // FastUtil, Discord-Webhooks
+    maven("https://repo.codemc.io/repository/maven-snapshots/") // Packetevents
+    mavenCentral() // FastUtil, Discord-Webhooks
 }
 
 dependencies {
@@ -41,7 +37,6 @@ dependencies {
     implementation("github.scarsz:configuralize:1.4.0")
 
     implementation("com.github.ItsClairton:GrimAPI:e9a87abbcc")
-    // Used for local testing: implementation("ac.grim.grimac:grimapi:1.0")
 
     implementation("org.jetbrains:annotations:24.1.0")
     compileOnly("org.geysermc.floodgate:api:2.0-SNAPSHOT")
@@ -49,73 +44,6 @@ dependencies {
     compileOnly("com.viaversion:viaversion-api:4.9.4-SNAPSHOT")
     //
     compileOnly("io.netty:netty-all:4.1.85.Final")
-}
-
-bukkit {
-    name = "Shi"
-    author = "GrimAC"
-    main = "ac.grim.grimac.GrimAC"
-    apiVersion = "1.13"
-    foliaSupported = true
-
-    softDepend = listOf(
-        "ProtocolLib",
-        "ProtocolSupport",
-        "Essentials",
-        "ViaVersion",
-        "ViaBackwards",
-        "ViaRewind",
-        "Geyser-Spigot",
-        "floodgate",
-        "FastLogin"
-    )
-
-    permissions {
-        register("grim.alerts") {
-            description = "Receive alerts for violations"
-            default = Permission.Default.OP
-        }
-
-        register("grim.alerts.enable-on-join") {
-            description = "Enable alerts on join"
-            default = Permission.Default.OP
-        }
-
-        register("grim.performance") {
-            description = "Check performance metrics"
-            default = Permission.Default.OP
-        }
-
-        register("grim.profile") {
-            description = "Check user profile"
-            default = Permission.Default.OP
-        }
-
-        register("grim.brand") {
-            description = "Show client brands on join"
-            default = Permission.Default.OP
-        }
-
-        register("grim.sendalert") {
-            description = "Send cheater alert"
-            default = Permission.Default.OP
-        }
-
-        register("grim.nosetback") {
-            description = "Disable setback"
-            default = Permission.Default.FALSE
-        }
-
-        register("grim.nomodifypacket") {
-            description = "Disable modifying packets"
-            default = Permission.Default.FALSE
-        }
-
-        register("grim.exempt") {
-            description = "Exempt from all checks"
-            default = Permission.Default.FALSE
-        }
-    }
 }
 
 tasks.build {
@@ -132,7 +60,8 @@ publishing.publications.create<MavenPublication>("maven") {
 
 tasks.shadowJar {
     minimize()
-    archiveFileName.set("${project.name}-${project.version}.jar")
+
+    archiveFileName.set("${project.name}.jar")
     destinationDirectory.set(project.findProperty("outputJar")?.let { file(it) })
 
     if (System.getProperty("dev") == null) { // You can't use hotswap with relocate =(
@@ -153,5 +82,17 @@ tasks.shadowJar {
         relocate("org.json", "ac.grim.grimac.shaded.json")
         relocate("org.intellij", "ac.grim.grimac.shaded.intellij")
         relocate("org.jetbrains", "ac.grim.grimac.shaded.jetbrains")
+    }
+}
+
+tasks.processResources {
+    if (gradle.startParameter.taskNames.contains("build")) {
+        outputs.upToDateWhen { false }
+    }
+
+    val version = project.version
+
+    filesMatching("plugin.yml") {
+        expand(mapOf("version" to version))
     }
 }
