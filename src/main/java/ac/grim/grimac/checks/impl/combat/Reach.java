@@ -49,7 +49,12 @@ public class Reach extends Check implements PacketCheck {
     private static final List<EntityType> blacklisted = Arrays.asList(
             EntityTypes.BOAT,
             EntityTypes.CHEST_BOAT,
-            EntityTypes.SHULKER);
+            EntityTypes.SHULKER,
+            EntityTypes.HORSE,
+            EntityTypes.ABSTRACT_HORSE,
+            EntityTypes.CHESTED_HORSE,
+            EntityTypes.ZOMBIE_HORSE,
+            EntityTypes.SKELETON_HORSE);
 
     private boolean cancelImpossibleHits;
     private double threshold;
