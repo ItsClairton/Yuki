@@ -193,3 +193,9 @@ checks:
     description: "Verifica se o jogador tomou a repulsão causada pelo servidor."
   Simulation:
     description: "Verifica se o jogador fez a movimentação esperada pela Simulação do anti-cheat."
+  InventoryA:
+    description: "Verifica se o jogador está com o inventário fechado antes de interagir com uma entidade."
+  InventoryB:
+    description: "Verifica se o jogador está com o inventário fechado antes de colocar um bloco ou utilizar um item."
+  InventoryC:
+    description: "Verifica se o inventário aberto pelo jogador é o mesmo inventário que ele está tentando interagir."

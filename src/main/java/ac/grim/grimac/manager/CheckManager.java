@@ -10,6 +10,10 @@ import ac.grim.grimac.checks.impl.crash.*;
 import ac.grim.grimac.checks.impl.exploit.ExploitA;
 import ac.grim.grimac.checks.impl.exploit.ExploitB;
 import ac.grim.grimac.checks.impl.groundspoof.NoFallA;
+import ac.grim.grimac.checks.impl.inventory.InventoryA;
+import ac.grim.grimac.checks.impl.inventory.InventoryB;
+import ac.grim.grimac.checks.impl.inventory.InventoryC;
+import ac.grim.grimac.checks.impl.inventory.InventoryHandler;
 import ac.grim.grimac.checks.impl.misc.ClientBrand;
 import ac.grim.grimac.checks.impl.misc.FastBreak;
 import ac.grim.grimac.checks.impl.misc.GhostBlockMitigation;
@@ -96,6 +100,10 @@ public class CheckManager {
                 .put(FastBreak.class, new FastBreak(player))
                 .put(TransactionOrder.class, new TransactionOrder(player))
                 .put(NoSlowB.class, new NoSlowB(player))
+                .put(InventoryHandler.class, new InventoryHandler(player))
+                .put(InventoryA.class, new InventoryA(player))
+                .put(InventoryB.class, new InventoryB(player))
+                .put(InventoryC.class, new InventoryC(player))
                 .put(SetbackBlocker.class, new SetbackBlocker(player)) // Must be last class otherwise we can't check while blocking packets
                 .build();
         positionCheck = new ImmutableClassToInstanceMap.Builder<PositionCheck>()
