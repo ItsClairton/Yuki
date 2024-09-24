@@ -34,9 +34,9 @@ public class DuplicateRotPlace extends BlockPlaceCheck {
         if (rotated) {
             if (deltaX > 2) {
                 float xDiff = Math.abs(deltaX - lastPlacedDeltaX);
-                double xDiffDots = Math.abs(deltaDotsX - lastPlacedDeltaDotsX);
 
                 if (xDiff < 0.0001) {
+                    double xDiffDots = Math.abs(deltaDotsX - lastPlacedDeltaDotsX);
                     flagAndAlert(new Pair<>("x", xDiff), new Pair<>("x-dots", xDiffDots), new Pair<>("y-delta", deltaY));
                 } else {
                     reward();
@@ -44,6 +44,7 @@ public class DuplicateRotPlace extends BlockPlaceCheck {
             } else {
                 reward();
             }
+
             this.lastPlacedDeltaX = deltaX;
             this.lastPlacedDeltaDotsX = deltaDotsX;
             rotated = false;

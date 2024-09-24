@@ -27,7 +27,6 @@ public class Check implements AbstractCheck {
     private String checkName;
     private String configName;
     private String alternativeName;
-    private String description;
 
     private boolean experimental;
     @Setter
@@ -53,7 +52,6 @@ public class Check implements AbstractCheck {
             this.setbackVL = checkData.setback();
             this.alternativeName = checkData.alternativeName();
             this.experimental = checkData.experimental();
-            this.description = checkData.description();
         }
 
         reload();
@@ -69,6 +67,7 @@ public class Check implements AbstractCheck {
             alert(verbose);
             return true;
         }
+
         return false;
     }
 
@@ -143,6 +142,11 @@ public class Check implements AbstractCheck {
     public boolean isTransaction(PacketTypeCommon packetType) {
         return packetType == PacketType.Play.Client.PONG ||
                 packetType == PacketType.Play.Client.WINDOW_CONFIRMATION;
+    }
+
+    @Override
+    public String getDescription() {
+        return getConfig().getString("checks." + getConfigName() + ".description");
     }
 
 }

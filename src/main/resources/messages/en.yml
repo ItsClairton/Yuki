@@ -25,7 +25,7 @@ reload: "%prefix% &aConfiguração recarregada com sucesso."
 # %experimental%
 # %vl% - violations
 # %verbose% - extra information from the check such as offsets, not all checks will add information
-# // &f%player% &bfailed &f%check_name%%experimental% &f(x&c%vl%&f) &7%verbose%
+
 alerts-format: "%prefix% &e%player% &dfalhou em &e%check_name%%experimental% &d(&e%vl%x&d)."
 alerts-format-proxy: "%prefix% &e%player%&d@&e%server% &dfalhou em &e%check_name%%experimental% &d(&e%vl%x&d)."
 experimental-symbol: "*"
@@ -40,6 +40,7 @@ alerts-format-hover: |
     &f- Cliente: &7%brand% (%version%)
   &e &d
   &eDetalhes técnicos: 
+  &f  - Descrição: &7%description% 
   %verbose%
 
 profile:
@@ -53,3 +54,140 @@ profile:
   - "&a &b"
   - "&f * Lista de Mods: &7%mods%"
   - "&e &b"
+
+checks:
+  AimDuplicateLook:
+    description: "Verifica se o jogador está enviando pacote de rotação diferente do anterior."
+  AimModulo360:
+    description: "Verifica se o jogador está rotacionando a cabeça dentro dos padrões do jogo."
+  BadPacketsA:
+    description: "Verifica se o jogador está enviando pacote de troca de slot diferente do anterior."
+  BadPacketsB:
+    description: "Verifica se o jogador está fazendo a montaria se movimentar dentro dos limites do jogo."
+  BadPacketsC:
+    description: "Verifica se o jogador está interagindo com outras entidades que não sejam ele mesmo."
+  BadPacketsD:
+    description: "Verifica se o jogador está enviando valores de rotação Pitch dentro dos limites do jogo."
+  BadPacketsE:
+    description: "Verifica se o jogador está enviando pelo menos um pacote de atualização do estado de Flying a cada 
+    20 pacotes de posição ou rotação."
+  BadPacketsF:
+    description: "Verifica se o jogador está alterando o estado de Sprinting de forma distinta."
+  BadPacketsG:
+    description: "Verifica se o jogador está alterando o estado de Sneaking de forma distinta."
+  BadPacketsH:
+    description: "Verifica se o jogador enviou o pacote de animação antes de atacar uma entidade."
+  BadPacketsI:
+    description: "Verifica se o jogador pode voar antes de informar ao servidor que está voando."
+  BadPacketsJ:
+    description: "Verifica se o jogador está em um veículo quando ele está tentando controlar um veículo."
+  BadPacketsK:
+    description: "Verifica se o jogador está no modo Espectador antes de tentar espectar alguém."
+  BadPacketsL:
+    description: "Verifica se o jogador está enviando de forma correta os estados de Digging."
+  BadPacketsM:
+    description: "Verifica se o jogador está enviando a sequência de interação com outra entidade de forma correta."
+  BadPacketsN:
+    description: "Verifica se o jogador aceitou o teletransporte do servidor na ordem correta."
+  BadPacketsO:
+    description: "Verifica se o jogador está respondendo de forma correta os pacotes de keep-alive enviados pelo servidor."
+  BadPacketsP:
+    description: "Verifica se o jogador está enviando ações válidas para o inventário atual aberto."
+  BadPacketsQ:
+    description: "Verifica se o jogador está enviando valores de controle válidos no ENTITY_ACTION."
+  BadPacketsR:
+    description: "Verifica se o jogador respondeu a alguma transação a pelo menos 2 segundos atrás antes 
+    de fazer alguma movimentação."
+  BadPacketsS:
+    description: "Verifica se o cliente aceitou a última transação enviada pelo anticheat."
+  BadPacketsT:
+    description: "Verifica se a Hitbox enviada pelo cliente do jogador para interagir com outra entidade é válido."
+  BadPacketsU:
+    description: "Verifica se o jogador enviou um pacote de utilização de item de forma correta."
+  BadPacketsV:
+    description: "Verifica se o jogador tentou atacar outra entidade enquanto ao mesmo tempo 
+    utilizava um item (comendo, etc)."
+  BadPacketsW:
+    description: "Verifica se o jogador está interagindo com uma entidade existente."
+  BadPacketsX:
+    description: "Verifica se o jogador está interagindo com blocos que possuem Hitbox."
+  BadPacketsY:
+    description: "Verifica se o jogador enviou o pacote de troca de slot atual dentro dos limites do jogo (1-9)."
+  BadPacketsZ:
+    description: "Verifica se o jogador está iniciando e finalizando a animação de Digging na sequência correta, 
+    com o mesmo bloco."
+  Reach:
+    description: "Verifica se o jogador tem alcance para interagir com a outra entidade."
+  CrashA:
+    description: "Verifica se o jogador enviou valores de posição dentro dos limites pré-estabelecidos pelo anti-cheat."
+  CrashB:
+    description: "Verifica se o jogador está no modo criativo quando o jogador envia um pacote de criação de item."
+  CrashC:
+    description: "Verifica se o jogador enviou valores de posição finitos."
+  CrashD:
+    description: "Verifica se o jogador abriu um Púlpito quando o jogador envia pacotes de interação com Púlpito."
+  CrashE:
+    description: "Verifica se o jogador enviou as configurações do cliente de forma válida."
+  CrashF:
+    description: "Verifica se o inventário aberto atualmente pelo jogador suporta a interação enviada por ele."
+  CrashG:
+    description: "Verifica se a sequência enviada pelo jogador é maior que zero nos pacotes de Colocar bloco, Digging, 
+    ou de utilização de um item."
+  CrashH:
+    description: "Verifica se o tamanho dos argumentos enviados pelo jogador na ação de tab-complete estão dentro dos 
+    limites do jogo (256)."
+  ExploitA:
+    description: "Verifica se as mensagens enviadas pelo jogador não exploram a falha de segurança CVE-2021-44228."
+  ExploitB:
+    description: "Verifica se o jogador enviou algum conteúdo depois da \"/\" na interação de tab-completer."
+  NoFall:
+    description: "Verifica se o ground-state enviado pelo jogador é válido nos pacotes de movimentação e rotação."
+  FastBreak:
+    description: "Verifica se o jogador está quebrando o bloco atual na velocidade correta."
+  TransactionOrder:
+    description: "Verifica se o cliente do jogador está respondendo as transações do anti-cheat na ordem."
+  EntityControl:
+    description: "Verifica se o jogador possui os itens necessários para controlar a entidade atual."
+  NoSlowA:
+    description: "Verifica se o jogador está se movimentando de forma lenta enquanto utiliza um item."
+  NoSlowB:
+    description: "Verifica se o jogador possui pontos de comida suficiente ao utilizar o Sprint."
+  NoSlowC:
+    description: "Verifica se o jogador não está se esgueirando ao utilizar o Sprint."
+  NoSlowD:
+    description: "Verifica se o jogador não está utilizando nenhum item ao utilizar o Sprint."
+  NoSlowE:
+    description: "Verifica se o jogador não está cego ao utilizar o Sprint."
+  Timer:
+    description: "Verifica se o jogador não está acelerando ou desacelerando o jogo dele."
+  TimerVehicle:
+    description: "Verifica se o jogador não está acelerando ou desacelerando o jogo dele enquanto está em uma montaria."
+  Post:
+    description: "Verifica se o jogador enviou o pacote especifico dentro do tick-loop do jogo."
+  GroundSpoof:
+    description: "Verifica se o ground-state enviado pelo jogador é válido de acordo com a Simulação do anti-cheat."
+  Phase:
+    description: "Verifica se o jogador não está atravessando blocos enquanto se movimenta."
+  AirLiquidPlace:
+    description: "Verifica se o bloco que o jogador quer colocar, tem base de apoio."
+  DuplicateRotPlace:
+    description: "Verifica se o jogador colocou um bloco utilizando rotação de cabeça diferente da anterior após rotacionar."
+  FabricatedPlace:
+    description: "Verifica se os vetores de cursor enviado pelo jogador na ação de colocar um bloco permitem ele colocar 
+    o bloco."
+  FarPlace:
+    description: "Verifica se o jogador tem alcance para colocar aquele bloco."
+  InvalidPlaceA:
+    description: "Verifica se nenhum vetor do cursor retornado pelo jogador ao colocar um bloco é infinito."
+  InvalidPlaceB:
+    description: "Verifica se o lado do bloco retornado pelo jogador ao colocar um bloco é válido."
+  MultiPlace:
+    description: "Verifica se o jogador está colocando um bloco por tick."
+  PositionPlace:
+    description: "Verifica se o bloco que o jogador quer colocar está dentro da visão dele."
+  RotationPlace:
+    description: "Verifica se a rotação da cabeça do jogador permite que ele coloque o bloco desejado."
+  Explosion:
+    description: "Verifica se o jogador tomou a repulsão causada por uma explosão."
+  Knockback:
+    description: "Verifica se o jogador tomou a repulsão causada pelo servidor."
