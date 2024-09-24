@@ -146,7 +146,7 @@ public class Check implements AbstractCheck {
 
     @Override
     public String getDescription() {
-        return getConfig().getString("checks." + getConfigName() + ".description");
+        return getConfig().getStringElse("checks." + getConfigName() + ".description", "N/A");
     }
 
 }

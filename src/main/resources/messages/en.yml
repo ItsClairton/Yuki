@@ -191,3 +191,5 @@ checks:
     description: "Verifica se o jogador tomou a repulsão causada por uma explosão."
   Knockback:
     description: "Verifica se o jogador tomou a repulsão causada pelo servidor."
+  Simulation:
+    description: "Verifica se o jogador fez a movimentação esperada pela Simulação do anti-cheat."
