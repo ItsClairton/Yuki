@@ -221,6 +221,8 @@ public class PunishmentManager {
                                         new ArrayList<>(GrimAPI.INSTANCE.getAlertManager().getEnabledAlerts()),
                                         false);
 
+                                Bukkit.getPluginManager().callEvent(event);
+
                                 if (!event.isCancelled()) {
                                     for (Player receiver : event.getReceivers()) {
                                         receiver.spigot().sendMessage(components);
