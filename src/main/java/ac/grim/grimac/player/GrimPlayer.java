@@ -713,4 +713,9 @@ public class GrimPlayer implements GrimUser {
         channel.eventLoop().schedule(runnable, ms, TimeUnit.MILLISECONDS);
     }
 
+    @Override
+    public Player getPlayer() {
+        return bukkitPlayer;
+    }
+
 }

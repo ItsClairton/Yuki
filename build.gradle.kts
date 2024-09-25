@@ -36,7 +36,7 @@ dependencies {
     implementation("it.unimi.dsi:fastutil:8.5.13")
     implementation("github.scarsz:configuralize:1.4.0")
 
-    implementation("com.github.ItsClairton:GrimAPI:e3b22f757d")
+    implementation("com.github.ItsClairton:GrimAPI:e691d1ae36")
 
     implementation("org.jetbrains:annotations:24.1.0")
     compileOnly("org.geysermc.floodgate:api:2.0-SNAPSHOT")

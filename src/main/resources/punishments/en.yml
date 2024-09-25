@@ -13,13 +13,13 @@ Punishments:
       - "NoFall"
       - "GroundSpoof"
     commands:
-      - "60:60 crash %player%"
+      - "60:60 [punish]"
   Simulation:
     remove-violations-after: 120
     checks:
       - "Simulation"
     commands:
-      - "120:120 crash %player%"
+      - "120:120 [punish]"
   Knockback:
     remove-violations-after: 120
     checks:
@@ -27,28 +27,28 @@ Punishments:
       - "Knockback"
     commands:
       - "5:5 [alert]"
-      - "30:30 crash %player%"
+      - "30:30 [punish]"
   Timer:
     remove-violations-after: 120
     checks:
       - "Timer"
     commands:
       - "10:10 [alert]"
-      - "30:30 crash %player%"
+      - "30:30 [punish]"
   Inventory:
     remove-violations-after: 120
     checks:
       - "Inventory"
     commands:
       - "1:1 [alert]"
-      - "25:25 crash %player%"
+      - "25:25 [punish]"
   Post:
     remove-violations-after: 120
     checks:
       - "Post"
     commands:
       - "10:10 [alert]"
-      - "90:90 crash %player%"
+      - "90:90 [punish]"
   BadPackets:
     remove-violations-after: 120
     checks:
@@ -57,14 +57,14 @@ Punishments:
       - "Crash"
     commands:
       - "10:10 [alert]"
-      - "40:40 crash %player%"
+      - "40:40 [punish]"
   Reach:
     remove-violations-after: 120
     checks:
       - "Reach"
     commands:
       - "1:1 [alert]"
-      - "15:15 crash %player%"
+      - "15:15 [punish]"
   Misc:
     remove-violations-after: 120
     checks:
@@ -75,7 +75,7 @@ Punishments:
       - "FastBreak"
     commands:
       - "1:1 [alert]"
-      - "25:25 crash %player%"
+      - "25:25 [punish]"
   Combat:
     remove-violations-after: 120
     checks:
@@ -83,4 +83,4 @@ Punishments:
       - "Aim"
     commands:
       - "1:1 [alert]"
-      - "25:25 crash %player%"
+      - "25:25 [punish]"

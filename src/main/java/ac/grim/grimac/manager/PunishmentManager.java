@@ -4,6 +4,7 @@ import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.api.AbstractCheck;
 import ac.grim.grimac.api.events.AlertEvent;
 import ac.grim.grimac.api.events.CommandExecuteEvent;
+import ac.grim.grimac.api.events.PunishEvent;
 import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.events.packets.ProxyAlertMessenger;
 import ac.grim.grimac.player.GrimPlayer;
@@ -194,7 +195,6 @@ public class PunishmentManager {
                                                 .collect(Collectors.joining(", ")))); // Print verbose to console
                             }
                         }
-
                     }
 
                     if (violationCount >= command.getThreshold()) {
@@ -213,25 +213,26 @@ public class PunishmentManager {
                                 String proxyAlertString = GrimAPI.INSTANCE.getConfigManager().getConfig().getString("alerts-format-proxy");
                                 proxyAlertString = replaceAlertPlaceholders(command.getCommand(), group, check, proxyAlertString, false, verboseEntries);
                                 ProxyAlertMessenger.sendPluginMessage(proxyAlertString);
-                            } else {
-                                if (command.command.equals("[alert]")) {
-                                    AlertEvent event = new AlertEvent(
-                                            player,
-                                            check,
-                                            Arrays.stream(verboseEntries).collect(Collectors.toMap(Pair::getFirst, Pair::getSecond)),
-                                            new ArrayList<>(GrimAPI.INSTANCE.getAlertManager().getEnabledAlerts()),
-                                            false);
+                            } else if (command.command.equals("[alert]")) {
+                                AlertEvent event = new AlertEvent(
+                                        player,
+                                        check,
+                                        Arrays.stream(verboseEntries).collect(Collectors.toMap(Pair::getFirst, Pair::getSecond)),
+                                        new ArrayList<>(GrimAPI.INSTANCE.getAlertManager().getEnabledAlerts()),
+                                        false);
 
-                                    if (!event.isCancelled()) {
-                                        for (Player receiver : event.getReceivers()) {
-                                            receiver.spigot().sendMessage(components);
-                                        }
+                                if (!event.isCancelled()) {
+                                    for (Player receiver : event.getReceivers()) {
+                                        receiver.spigot().sendMessage(components);
                                     }
-                                } else {
-                                    FoliaScheduler.getGlobalRegionScheduler().run(GrimAPI.INSTANCE.getPlugin(), (dummy) -> {
-                                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
-                                    });
                                 }
+                            } else if (command.command.equals("[punish]")) {
+                                PunishEvent event = new PunishEvent(player, check);
+                                Bukkit.getPluginManager().callEvent(event);
+                            } else {
+                                FoliaScheduler.getGlobalRegionScheduler().run(GrimAPI.INSTANCE.getPlugin(), (dummy) -> {
+                                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                                });
                             }
                         }
 
