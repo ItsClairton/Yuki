@@ -13,12 +13,14 @@ Punishments:
       - "NoFall"
       - "GroundSpoof"
     commands:
+      - "10:10 [alert]"
       - "60:60 [punish]"
   Simulation:
     remove-violations-after: 120
     checks:
       - "Simulation"
     commands:
+      - "10:10 [alert]"
       - "120:120 [punish]"
   Knockback:
     remove-violations-after: 120

@@ -77,6 +77,11 @@ public class InventoryHandler extends Check implements PacketCheck {
             player.latencyUtils.addRealTimeTask(player.lastTransactionSent.get(), () -> windowId = wrapper.getWindowId());
         }
 
+        if (event.getPacketType() == PacketType.Play.Server.CLOSE_WINDOW) {
+            player.sendTransaction();
+            player.latencyUtils.addRealTimeTask(player.lastTransactionSent.get(), () -> windowId = -1);
+        }
+
     }
 
     public void handleRespawn() {
