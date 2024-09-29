@@ -50,7 +50,6 @@ public class PacketPlayerJoinQuit extends PacketListenerAbstract {
         Player player = Bukkit.getPlayer(event.getUser().getProfile().getUUID());
         if (player != null) {
             GrimAPI.INSTANCE.getAlertManager().handlePlayerQuit(player);
-            GrimAPI.INSTANCE.getSpectateManager().onQuit(player);
         }
     }
 }

@@ -29,7 +29,6 @@ public class InitManager {
                 .put(CommandRegister.class, new CommandRegister())
                 .put(BStats.class, new BStats())
                 .put(PacketLimiter.class, new PacketLimiter())
-                .put(SpectateManager.class, GrimAPI.INSTANCE.getSpectateManager())
                 .put(GrimExternalAPI.class, GrimAPI.INSTANCE.getExternalAPI())
                 .put(JavaVersion.class, new JavaVersion())
                 .build();

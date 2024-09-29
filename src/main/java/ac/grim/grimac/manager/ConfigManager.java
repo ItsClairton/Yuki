@@ -24,8 +24,6 @@ public class ConfigManager {
     @Getter
     private final File messagesFile = new File(GrimAPI.INSTANCE.getPlugin().getDataFolder(), "messages.yml");
     @Getter
-    private final File discordFile = new File(GrimAPI.INSTANCE.getPlugin().getDataFolder(), "discord.yml");
-    @Getter
     private final File punishFile = new File(GrimAPI.INSTANCE.getPlugin().getDataFolder(), "punishments.yml");
     @Getter
     private int maxPingTransaction = 60; // This is just a really hot variable so cache it.
@@ -45,7 +43,6 @@ public class ConfigManager {
         config = new DynamicConfig();
         config.addSource(GrimAC.class, "config", getConfigFile());
         config.addSource(GrimAC.class, "messages", getMessagesFile());
-        config.addSource(GrimAC.class, "discord", getDiscordFile());
         config.addSource(GrimAC.class, "punishments", getPunishFile());
 
         reload();
@@ -131,9 +128,6 @@ public class ConfigManager {
         }
         if (configVersion < 3) {
             addBaritoneCheck();
-        }
-        if (configVersion < 4) {
-            newOffsetNewDiscordConf(config, configString);
         }
         if (configVersion < 5) {
             fixBadPacketsAndAdjustPingConfig(config, configString);
@@ -232,34 +226,6 @@ public class ConfigManager {
                 configString = new String(Files.readAllBytes(config.toPath()));
                 configString = configString.replace("      - \"EntityControl\"\n", "      - \"EntityControl\"\n      - \"Baritone\"\n      - \"FastBreak\"\n");
                 Files.write(config.toPath(), configString.getBytes());
-            } catch (IOException ignored) {
-            }
-        }
-    }
-
-    private void newOffsetNewDiscordConf(File config, String configString) throws IOException {
-        configString = configString.replace("threshold: 0.0001", "threshold: 0.001"); // 1e-5 -> 1e-4 default flag level
-        configString = configString.replace("threshold: 0.00001", "threshold: 0.001"); // 1e-6 -> 1e-4 antikb flag
-        Files.write(config.toPath(), configString.getBytes());
-
-        File discordFile = new File(GrimAPI.INSTANCE.getPlugin().getDataFolder(), "discord.yml");
-
-        if (discordFile.exists()) {
-            try {
-                String discordString = new String(Files.readAllBytes(discordFile.toPath()));
-                discordString += """
-                        
-                        embed-color: "#00FFFF"
-                        violation-content:
-                          - "**Player**: %player%"
-                          - "**Check**: %check%"
-                          - "**Violations**: %violations%"
-                          - "**Client Version**: %version%"
-                          - "**Brand**: %brand%"
-                          - "**Ping**: %ping%"
-                          - "**TPS**: %tps%"
-                        """;
-                Files.write(discordFile.toPath(), discordString.getBytes());
             } catch (IOException ignored) {
             }
         }
