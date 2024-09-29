@@ -1,8 +1,8 @@
 plugins {
     id("java")
-    id("maven-publish")
     id("com.gradleup.shadow") version "8.3.2"
-    id("io.freefair.lombok") version "8.10"
+    id("io.freefair.lombok") version "8.7.1"
+    id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
 group = "ac.grim.grimac"
@@ -46,53 +46,55 @@ dependencies {
     compileOnly("io.netty:netty-all:4.1.85.Final")
 }
 
-tasks.build {
-    dependsOn(tasks.shadowJar)
-}
-
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 
-publishing.publications.create<MavenPublication>("maven") {
-    artifact(tasks["shadowJar"])
-}
-
-tasks.shadowJar {
-    minimize()
-
-    archiveFileName.set("${project.name}.jar")
-    destinationDirectory.set(project.findProperty("outputJar")?.let { file(it) })
-
-    if (System.getProperty("dev") == null) { // You can't use hotswap with relocate =(
-        relocate("io.github.retrooper.packetevents", "ac.grim.grimac.shaded.io.github.retrooper.packetevents")
-        relocate("com.github.retrooper.packetevents", "ac.grim.grimac.shaded.com.github.retrooper.packetevents")
-        relocate("co.aikar.commands", "ac.grim.grimac.shaded.acf")
-        relocate("co.aikar.locale", "ac.grim.grimac.shaded.locale")
-        relocate("club.minnced", "ac.grim.grimac.shaded.discord-webhooks")
-        relocate("github.scarsz.configuralize", "ac.grim.grimac.shaded.configuralize")
-        relocate("com.github.puregero", "ac.grim.grimac.shaded.com.github.puregero")
-        relocate("com.google.code.gson", "ac.grim.grimac.shaded.gson")
-        relocate("alexh", "ac.grim.grimac.shaded.maps")
-        relocate("it.unimi.dsi.fastutil", "ac.grim.grimac.shaded.fastutil")
-        relocate("net.kyori", "ac.grim.grimac.shaded.kyori")
-        relocate("okhttp3", "ac.grim.grimac.shaded.okhttp3")
-        relocate("okio", "ac.grim.grimac.shaded.okio")
-        relocate("org.yaml.snakeyaml", "ac.grim.grimac.shaded.snakeyaml")
-        relocate("org.json", "ac.grim.grimac.shaded.json")
-        relocate("org.intellij", "ac.grim.grimac.shaded.intellij")
-        relocate("org.jetbrains", "ac.grim.grimac.shaded.jetbrains")
-    }
-}
-
-tasks.processResources {
-    if (gradle.startParameter.taskNames.contains("build")) {
-        outputs.upToDateWhen { false }
+tasks {
+    build {
+        dependsOn(shadowJar)
     }
 
-    val version = project.version
+    shadowJar {
+        minimize()
+        archiveFileName.set("${project.name}.jar")
 
-    filesMatching("plugin.yml") {
-        expand(mapOf("version" to version))
+        if (!gradle.startParameter.taskNames.contains("runServer")) { // You can't use hotswap with relocate =(
+            relocate("io.github.retrooper.packetevents", "ac.grim.grimac.shaded.io.github.retrooper.packetevents")
+            relocate("com.github.retrooper.packetevents", "ac.grim.grimac.shaded.com.github.retrooper.packetevents")
+            relocate("co.aikar.commands", "ac.grim.grimac.shaded.acf")
+            relocate("co.aikar.locale", "ac.grim.grimac.shaded.locale")
+            relocate("club.minnced", "ac.grim.grimac.shaded.discord-webhooks")
+            relocate("github.scarsz.configuralize", "ac.grim.grimac.shaded.configuralize")
+            relocate("com.github.puregero", "ac.grim.grimac.shaded.com.github.puregero")
+            relocate("com.google.code.gson", "ac.grim.grimac.shaded.gson")
+            relocate("alexh", "ac.grim.grimac.shaded.maps")
+            relocate("it.unimi.dsi.fastutil", "ac.grim.grimac.shaded.fastutil")
+            relocate("net.kyori", "ac.grim.grimac.shaded.kyori")
+            relocate("okhttp3", "ac.grim.grimac.shaded.okhttp3")
+            relocate("okio", "ac.grim.grimac.shaded.okio")
+            relocate("org.yaml.snakeyaml", "ac.grim.grimac.shaded.snakeyaml")
+            relocate("org.json", "ac.grim.grimac.shaded.json")
+            relocate("org.intellij", "ac.grim.grimac.shaded.intellij")
+            relocate("org.jetbrains", "ac.grim.grimac.shaded.jetbrains")
+        }
     }
+
+    processResources {
+        if (gradle.startParameter.taskNames.contains("build")) {
+            outputs.upToDateWhen { false }
+        }
+
+        val version = project.version
+
+        filesMatching("plugin.yml") {
+            expand(mapOf("version" to version))
+        }
+    }
+
+    runServer {
+        minecraftVersion("1.8.8")
+        jvmArgs("-XX:+AllowEnhancedClassRedefinition -Dfile.encoding=UTF-8")
+    }
+
 }
