@@ -121,9 +121,8 @@ public class PacketSelfMetadataListener extends PacketListenerAbstract {
                     if (frozen != null) {
                         if (!hasSendTransaction) player.sendTransaction();
                         hasSendTransaction = true;
-                        player.latencyUtils.addRealTimeTask(player.lastTransactionSent.get(), () -> {
-                            player.powderSnowFrozenTicks = (int) frozen.getValue();
-                        });
+                        player.latencyUtils.addRealTimeTask(player.lastTransactionSent.get(), () ->
+                                player.powderSnowFrozenTicks = (int) frozen.getValue());
                     }
                 }
 
@@ -167,9 +166,8 @@ public class PacketSelfMetadataListener extends PacketListenerAbstract {
                         if (!hasSendTransaction) player.sendTransaction();
                         hasSendTransaction = true;
 
-                        player.latencyUtils.addRealTimeTask(player.lastTransactionSent.get(), () -> {
-                            player.isRiptidePose = isRiptiding;
-                        });
+                        player.latencyUtils.addRealTimeTask(player.lastTransactionSent.get(), () ->
+                                player.isRiptidePose = isRiptiding);
 
                         // 1.9 eating:
                         // - Client: I am starting to eat

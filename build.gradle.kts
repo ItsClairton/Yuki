@@ -8,8 +8,9 @@ plugins {
 group = "ac.grim.grimac"
 version = "2.3.67"
 
-java.sourceCompatibility = JavaVersion.VERSION_17
-java.targetCompatibility = JavaVersion.VERSION_17
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
 
 repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") // Spigot

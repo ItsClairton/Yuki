@@ -73,8 +73,7 @@ public class CompensatedEntities {
         PacketEntity entity = entityMap.remove(entityID);
         if (entity == null) return;
 
-        if (entity instanceof PacketEntityEnderDragon) {
-            PacketEntityEnderDragon dragon = (PacketEntityEnderDragon) entity;
+        if (entity instanceof PacketEntityEnderDragon dragon) {
             for (int i = 1; i < dragon.getParts().size() + 1; i++) {
                 entityMap.remove(entityID + i);
             }
@@ -374,8 +373,7 @@ public class CompensatedEntities {
 
                 // track camel dashing
                 if (PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_20)) {
-                    if (entity instanceof PacketEntityCamel) {
-                        PacketEntityCamel camel = (PacketEntityCamel) entity;
+                    if (entity instanceof PacketEntityCamel camel) {
                         EntityData entityData = WatchableIndexUtil.getIndex(watchableObjects, 18);
                         if (entityData != null) {
                             camel.dashing = (boolean) entityData.getValue();

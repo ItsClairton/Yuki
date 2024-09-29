@@ -158,9 +158,12 @@ public class ConfigManager {
     }
 
     private void addMaxPing(File config, String configString) throws IOException {
-        configString += "\n\n\n" +
-                "# How long should players have until we keep them for timing out? Default = 2 minutes\n" +
-                "max-ping: 120";
+        configString += """
+                
+                
+                
+                # How long should players have until we keep them for timing out? Default = 2 minutes
+                max-ping: 120""";
 
         Files.write(config.toPath(), configString.getBytes());
     }
@@ -178,20 +181,22 @@ public class ConfigManager {
                 if (commentIndex != -1) {
 
                     configString = configString.substring(0, commentIndex);
-                    configString += "  Combat:\n" +
-                            "    remove-violations-after: 300\n" +
-                            "    checks:\n" +
-                            "      - \"Killaura\"\n" +
-                            "      - \"Aim\"\n" +
-                            "    commands:\n" +
-                            "      - \"20:40 [alert]\"\n" +
-                            "  # As of 2.2.10, there are no AutoClicker checks and this is a placeholder. 2.3 will include AutoClicker checks.\n" +
-                            "  Autoclicker:\n" +
-                            "    remove-violations-after: 300\n" +
-                            "    checks:\n" +
-                            "      - \"Autoclicker\"\n" +
-                            "    commands:\n" +
-                            "      - \"20:40 [alert]\"\n";
+                    configString += """
+                              Combat:
+                                remove-violations-after: 300
+                                checks:
+                                  - "Killaura"
+                                  - "Aim"
+                                commands:
+                                  - "20:40 [alert]"
+                              # As of 2.2.10, there are no AutoClicker checks and this is a placeholder. 2.3 will include AutoClicker checks.
+                              Autoclicker:
+                                remove-violations-after: 300
+                                checks:
+                                  - "Autoclicker"
+                                commands:
+                                  - "20:40 [alert]"
+                            """;
                 }
 
                 Files.write(config.toPath(), configString.getBytes());
@@ -242,15 +247,18 @@ public class ConfigManager {
         if (discordFile.exists()) {
             try {
                 String discordString = new String(Files.readAllBytes(discordFile.toPath()));
-                discordString += "\nembed-color: \"#00FFFF\"\n" +
-                        "violation-content:\n" +
-                        "  - \"**Player**: %player%\"\n" +
-                        "  - \"**Check**: %check%\"\n" +
-                        "  - \"**Violations**: %violations%\"\n" +
-                        "  - \"**Client Version**: %version%\"\n" +
-                        "  - \"**Brand**: %brand%\"\n" +
-                        "  - \"**Ping**: %ping%\"\n" +
-                        "  - \"**TPS**: %tps%\"\n";
+                discordString += """
+                        
+                        embed-color: "#00FFFF"
+                        violation-content:
+                          - "**Player**: %player%"
+                          - "**Check**: %check%"
+                          - "**Violations**: %violations%"
+                          - "**Client Version**: %version%"
+                          - "**Brand**: %brand%"
+                          - "**Ping**: %ping%"
+                          - "**TPS**: %tps%"
+                        """;
                 Files.write(discordFile.toPath(), discordString.getBytes());
             } catch (IOException ignored) {
             }
@@ -261,21 +269,33 @@ public class ConfigManager {
         // The default config didn't have this change
         configString = configString.replace("threshold: 0.0001", "threshold: 0.001"); // 1e-5 -> 1e-4 default flag level
         if (!configString.contains("experimental-checks")) {
-            configString += "\n\n# Enables experimental checks\n" +
-                    "experimental-checks: false\n\n";
+            configString += """
+                    
+                    
+                    # Enables experimental checks
+                    experimental-checks: false
+                    
+                    """;
         }
-        configString += "\nverbose:\n" +
-                "  print-to-console: false\n";
+        configString += """
+                
+                verbose:
+                  print-to-console: false
+                """;
         Files.write(config.toPath(), configString.getBytes());
 
         File messageFile = new File(GrimAPI.INSTANCE.getPlugin().getDataFolder(), "messages.yml");
         if (messageFile.exists()) {
             try {
                 String messagesString = new String(Files.readAllBytes(messageFile.toPath()));
-                messagesString += "\n\nupload-log: \"%prefix% &fUploaded debug to: %url%\"\n" +
-                        "upload-log-start: \"%prefix% &fUploading log... please wait\"\n" +
-                        "upload-log-not-found: \"%prefix% &cUnable to find that log\"\n" +
-                        "upload-log-upload-failure: \"%prefix% &cSomething went wrong while uploading this log, see console for more info\"\n";
+                messagesString += """
+                        
+                        
+                        upload-log: "%prefix% &fUploaded debug to: %url%"
+                        upload-log-start: "%prefix% &fUploading log... please wait"
+                        upload-log-not-found: "%prefix% &cUnable to find that log"
+                        upload-log-upload-failure: "%prefix% &cSomething went wrong while uploading this log, see console for more info"
+                        """;
                 Files.write(messageFile.toPath(), messagesString.getBytes());
             } catch (IOException ignored) {
             }
@@ -289,9 +309,12 @@ public class ConfigManager {
     }
 
     private void addPacketSpamThreshold(File config, String configString) throws IOException {
-        configString += "\n# Grim sometimes cancels illegal packets such as with timer, after X packets in a second cancelled, when should\n" +
-                "# we simply kick the player? This is required as some packet limiters don't count packets cancelled by grim.\n" +
-                "packet-spam-threshold: 150\n";
+        configString += """
+                
+                # Grim sometimes cancels illegal packets such as with timer, after X packets in a second cancelled, when should
+                # we simply kick the player? This is required as some packet limiters don't count packets cancelled by grim.
+                packet-spam-threshold: 150
+                """;
         Files.write(config.toPath(), configString.getBytes());
     }
 

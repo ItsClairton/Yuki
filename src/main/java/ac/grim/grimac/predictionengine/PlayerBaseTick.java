@@ -363,22 +363,12 @@ public class PlayerBaseTick {
             double d7 = direction2 == BlockFace.WEST || direction2 == BlockFace.EAST ? relativeXMovement : relativeZMovement;
             d6 = direction2 == BlockFace.EAST || direction2 == BlockFace.SOUTH ? 1.0 - d7 : d7;
             // d7 and d6 flip the movement direction based on desired movement direction
-            boolean doesSuffocate;
-            switch (direction2) {
-                case EAST:
-                    doesSuffocate = this.suffocatesAt(blockX + 1, blockZ);
-                    break;
-                case WEST:
-                    doesSuffocate = this.suffocatesAt(blockX - 1, blockZ);
-                    break;
-                case NORTH:
-                    doesSuffocate = this.suffocatesAt(blockX, blockZ - 1);
-                    break;
-                default:
-                case SOUTH:
-                    doesSuffocate = this.suffocatesAt(blockX, blockZ + 1);
-                    break;
-            }
+            boolean doesSuffocate = switch (direction2) {
+                case EAST -> this.suffocatesAt(blockX + 1, blockZ);
+                case WEST -> this.suffocatesAt(blockX - 1, blockZ);
+                case NORTH -> this.suffocatesAt(blockX, blockZ - 1);
+                default -> this.suffocatesAt(blockX, blockZ + 1);
+            };
 
             if (d6 >= lowestValue || doesSuffocate) continue;
             lowestValue = d6;

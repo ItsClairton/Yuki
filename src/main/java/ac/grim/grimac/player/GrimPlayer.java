@@ -36,7 +36,6 @@ import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.GameMode;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
-import com.github.retrooper.packetevents.protocol.world.Dimension;
 import com.github.retrooper.packetevents.protocol.world.dimension.DimensionType;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
@@ -308,7 +307,7 @@ public class GrimPlayer implements GrimUser {
         boolean hasID = false;
         int skipped = 0;
         for (Pair<Short, Long> iterator : transactionsSent) {
-            if (iterator.getFirst() == id) {
+            if (iterator.first() == id) {
                 hasID = true;
                 break;
             }
@@ -330,9 +329,9 @@ public class GrimPlayer implements GrimUser {
 
                 lastTransactionReceived.incrementAndGet();
                 lastTransReceived = System.currentTimeMillis();
-                transactionPing = (System.nanoTime() - data.getSecond());
-                playerClockAtLeast = data.getSecond();
-            } while (data.getFirst() != id);
+                transactionPing = (System.nanoTime() - data.second());
+                playerClockAtLeast = data.second();
+            } while (data.first() != id);
 
             // A transaction means a new tick, so apply any block places
             CheckManagerListener.handleQueuedPlaces(this, false, 0, 0, System.currentTimeMillis());
@@ -340,7 +339,7 @@ public class GrimPlayer implements GrimUser {
         }
 
         // Were we the ones who sent the packet?
-        return data != null && data.getFirst() == id;
+        return data != null && data.first() == id;
     }
 
     public void baseTickAddWaterPushing(Vector vector) {
@@ -426,8 +425,7 @@ public class GrimPlayer implements GrimUser {
 
     public void disconnect(Component reason) {
         String textReason;
-        if (reason instanceof TranslatableComponent) {
-            TranslatableComponent translatableComponent = (TranslatableComponent) reason;
+        if (reason instanceof TranslatableComponent translatableComponent) {
             textReason = translatableComponent.key();
         } else {
             textReason = LegacyComponentSerializer.legacySection().serialize(reason);
@@ -440,9 +438,8 @@ public class GrimPlayer implements GrimUser {
         }
         user.closeConnection();
         if (bukkitPlayer != null) {
-            FoliaScheduler.getEntityScheduler().execute(bukkitPlayer, GrimAPI.INSTANCE.getPlugin(), () -> {
-                bukkitPlayer.kickPlayer(textReason);
-            }, null, 1);
+            FoliaScheduler.getEntityScheduler().execute(bukkitPlayer, GrimAPI.INSTANCE.getPlugin(), () ->
+                    bukkitPlayer.kickPlayer(textReason), null, 1);
         }
     }
 
@@ -520,11 +517,12 @@ public class GrimPlayer implements GrimUser {
 
     public ClientVersion getClientVersion() {
         ClientVersion ver = user.getClientVersion();
-        if (ver == null) {
-            // If temporarily null, assume server version...
-            return ClientVersion.getById(PacketEvents.getAPI().getServerManager().getVersion().getProtocolVersion());
-        }
-        return ver;
+
+        // If temporarily null, assume server version...
+        return Objects.requireNonNullElseGet(ver, () -> PacketEvents.getAPI()
+                .getServerManager()
+                .getVersion()
+                .toClientVersion());
     }
 
     // Alright, someone at mojang decided to not send a flying packet every tick with 1.9
@@ -623,9 +621,7 @@ public class GrimPlayer implements GrimUser {
         // Help prevent transaction split
         sendTransaction();
 
-        latencyUtils.addRealTimeTask(lastTransactionSent.get(), () -> {
-            this.vehicleData.wasVehicleSwitch = true;
-        });
+        latencyUtils.addRealTimeTask(lastTransactionSent.get(), () -> this.vehicleData.wasVehicleSwitch = true);
     }
 
     public int getRidingVehicleId() {

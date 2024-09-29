@@ -7,7 +7,6 @@ import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
-import com.github.retrooper.packetevents.protocol.world.Location;
 import github.scarsz.configuralize.DynamicConfig;
 import lombok.Getter;
 import lombok.Setter;
@@ -109,12 +108,12 @@ public class Check implements AbstractCheck {
     public final boolean alert(Pair<String, Object>... verboseEntries) {
         Pair<String, String>[] serializedEntries = Arrays.stream(verboseEntries)
                 .map(entry -> {
-                    if (entry.getSecond() instanceof String) {
+                    if (entry.second() instanceof String) {
                         return entry;
                     }
 
-                    String value = entry.getSecond().toString();
-                    return new Pair<>(entry.getFirst(), value);
+                    String value = entry.second().toString();
+                    return new Pair<>(entry.first(), value);
                 }).toArray(Pair[]::new);
 
         return player.punishmentManager.handleAlert(player, this, serializedEntries);

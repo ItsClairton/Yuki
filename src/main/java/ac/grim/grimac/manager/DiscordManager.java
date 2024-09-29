@@ -73,9 +73,10 @@ public class DiscordManager implements Initable {
         return list;
     }
 
-    public void sendAlert(GrimPlayer player, String checkName, String violations, Pair<String, String>... verboseEntries) {
+    @SafeVarargs
+    public final void sendAlert(GrimPlayer player, String checkName, String violations, Pair<String, String>... verboseEntries) {
         String verbose = Arrays.stream(verboseEntries)
-                .map(detail -> detail.getFirst() + ": " + detail.getSecond())
+                .map(detail -> detail.first() + ": " + detail.second())
                 .collect(Collectors.joining("\n"));
 
         if (client != null) {
