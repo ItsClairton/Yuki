@@ -209,10 +209,6 @@ public class PunishmentManager {
                             if (executeEvent.isCancelled()) continue;
 
                             switch (command.command) {
-                                case "[webhook]" -> {
-                                    String vl = String.valueOf(group.violations.values().stream().filter((e) -> e == check).count());
-                                    GrimAPI.INSTANCE.getDiscordManager().sendAlert(player, check.getCheckName(), vl, verboseEntries);
-                                }
                                 case "[proxy]" -> {
                                     String proxyAlertString = GrimAPI.INSTANCE.getConfigManager().getConfig().getString("alerts-format-proxy");
                                     proxyAlertString = replaceAlertPlaceholders(command.getCommand(), group, check, proxyAlertString, false, verboseEntries);

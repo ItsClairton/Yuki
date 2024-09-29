@@ -27,13 +27,12 @@ repositories {
     maven("https://repo.opencollab.dev/maven-snapshots/") // Floodgate
     maven("https://repo.opencollab.dev/maven-releases/") // Cumulus (for Floodgate)
     maven("https://repo.codemc.io/repository/maven-snapshots/") // Packetevents
-    mavenCentral() // FastUtil, Discord-Webhooks
+    mavenCentral() // FastUtil
 }
 
 dependencies {
     implementation("com.github.retrooper:packetevents-spigot:2.5.1-SNAPSHOT")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
-    implementation("club.minnced:discord-webhooks:0.8.0") // Newer versions include kotlin-stdlib, which leads to incompatibility with plugins that use Kotlin
     implementation("it.unimi.dsi:fastutil:8.5.13")
     implementation("github.scarsz:configuralize:1.4.0")
 
@@ -65,7 +64,6 @@ tasks {
             relocate("com.github.retrooper.packetevents", "ac.grim.grimac.shaded.com.github.retrooper.packetevents")
             relocate("co.aikar.commands", "ac.grim.grimac.shaded.acf")
             relocate("co.aikar.locale", "ac.grim.grimac.shaded.locale")
-            relocate("club.minnced", "ac.grim.grimac.shaded.discord-webhooks")
             relocate("github.scarsz.configuralize", "ac.grim.grimac.shaded.configuralize")
             relocate("com.github.puregero", "ac.grim.grimac.shaded.com.github.puregero")
             relocate("com.google.code.gson", "ac.grim.grimac.shaded.gson")

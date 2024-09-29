@@ -14,7 +14,6 @@ public enum GrimAPI {
 
     private final AlertManagerImpl alertManager = new AlertManagerImpl();
     private final SpectateManager spectateManager = new SpectateManager();
-    private final DiscordManager discordManager = new DiscordManager();
     private final PlayerDataManager playerDataManager = new PlayerDataManager();
     private final TickManager tickManager = new TickManager();
     private final GrimExternalAPI externalAPI = new GrimExternalAPI(this);

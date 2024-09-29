@@ -96,7 +96,6 @@ public class GrimExternalAPI implements GrimAbstractAPI, Initable {
             });
         }
         //Restart
-        GrimAPI.INSTANCE.getDiscordManager().start();
         GrimAPI.INSTANCE.getSpectateManager().start();
         GrimAPI.INSTANCE.getExternalAPI().start();
     }
