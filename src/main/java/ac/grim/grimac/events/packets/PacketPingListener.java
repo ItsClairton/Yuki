@@ -4,6 +4,7 @@ import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.checks.impl.badpackets.BadPacketsS;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.data.Pair;
+import ac.grim.grimac.utils.data.Short2LongPair;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
@@ -20,7 +21,6 @@ public class PacketPingListener extends PacketListenerAbstract {
     public PacketPingListener() {
         super(PacketListenerPriority.LOWEST);
     }
-
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
@@ -81,7 +81,7 @@ public class PacketPingListener extends PacketListenerAbstract {
             if (id <= 0) {
                 if (player.didWeSendThatTrans.remove(id)) {
                     player.packetStateData.lastServerTransWasValid = true;
-                    player.transactionsSent.add(new Pair<>(id, System.nanoTime()));
+                    player.transactionsSent.add(new Short2LongPair(id, System.nanoTime()));
                     player.lastTransactionSent.getAndIncrement();
                 }
             }
@@ -95,17 +95,16 @@ public class PacketPingListener extends PacketListenerAbstract {
             if (player == null) return;
             player.packetStateData.lastServerTransWasValid = false;
             // Check if in the short range, we only use short range
-            if (id == (short) id) {
-                // Cast ID twice so we can use the list
-                Short shortID = ((short) id);
-                if (player.didWeSendThatTrans.remove(shortID)) {
+
+            final var shortId = (short) id;
+            if (id == shortId) {
+                if (player.didWeSendThatTrans.remove(shortId)) {
                     player.packetStateData.lastServerTransWasValid = true;
-                    player.transactionsSent.add(new Pair<>(shortID, System.nanoTime()));
+                    player.transactionsSent.add(new Short2LongPair(shortId, System.nanoTime()));
                     player.lastTransactionSent.getAndIncrement();
                 }
             }
         }
     }
-
 
 }

@@ -9,19 +9,26 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 
 @CheckData(name = "BadPacketsJ")
 public class BadPacketsJ extends Check implements PacketCheck {
+
     public BadPacketsJ(GrimPlayer player) {
         super(player);
     }
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        if (event.getPacketType() == PacketType.Play.Client.STEER_VEHICLE) {
-            if (!player.compensatedEntities.getSelf().inVehicle()) {
-                if (flagAndAlert() && shouldModifyPackets()) {
-                    event.setCancelled(true);
-                    player.onPacketCancel();
-                }
-            }
+        if (event.getPacketType() != PacketType.Play.Client.STEER_VEHICLE) {
+            return;
         }
+
+        if (player.compensatedEntities.getSelf().inVehicle()) {
+            return;
+        }
+
+        if (!flagAndAlert() || !shouldModifyPackets()) {
+            return;
+        }
+
+        event.setCancelled(true);
     }
+
 }

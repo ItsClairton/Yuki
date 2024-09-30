@@ -11,7 +11,8 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientHe
 
 @CheckData(name = "BadPacketsA")
 public class BadPacketsA extends Check implements PacketCheck {
-    int lastSlot = -1;
+
+    private int lastSlot = -1;
 
     public BadPacketsA(final GrimPlayer player) {
         super(player);
@@ -19,15 +20,25 @@ public class BadPacketsA extends Check implements PacketCheck {
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        if (event.getPacketType() == PacketType.Play.Client.HELD_ITEM_CHANGE) {
-            final int slot = new WrapperPlayClientHeldItemChange(event).getSlot();
-
-            if (slot == lastSlot && flagAndAlert(new Pair<>("slot", slot)) && shouldModifyPackets()) {
-                event.setCancelled(true);
-                player.onPacketCancel();
-            }
-
-            lastSlot = slot;
+        if (event.getPacketType() != PacketType.Play.Client.HELD_ITEM_CHANGE) {
+            return;
         }
+
+        final var packet = lastWrapper(event,
+                WrapperPlayClientHeldItemChange.class,
+                () -> new WrapperPlayClientHeldItemChange(event));
+
+        final var slot = packet.getSlot();
+        if (slot != lastSlot) {
+            lastSlot = slot;
+            return;
+        }
+
+        if (!flagAndAlert(new Pair<>("slot", slot)) || !shouldModifyPackets()) {
+            return;
+        }
+
+        event.setCancelled(true);
     }
+
 }

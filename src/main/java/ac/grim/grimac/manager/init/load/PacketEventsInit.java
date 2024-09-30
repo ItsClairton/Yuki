@@ -19,6 +19,7 @@ public class PacketEventsInit implements Initable {
                 .fullStackTrace(true)
                 .kickOnPacketException(true)
                 .checkForUpdates(false)
+                .reEncodeByDefault(false)
                 .debug(false);
 
         PacketEvents.getAPI().load();

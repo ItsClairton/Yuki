@@ -137,8 +137,6 @@ checks:
     description: "Verifica se o tamanho dos argumentos enviados pelo jogador na ação de tab-complete estão dentro dos 
     limites do jogo (256)."
   ExploitA:
-    description: "Verifica se as mensagens enviadas pelo jogador não exploram a falha de segurança CVE-2021-44228."
-  ExploitB:
     description: "Verifica se o jogador enviou algum conteúdo depois da \"/\" na interação de tab-completer."
   NoFall:
     description: "Verifica se o ground-state enviado pelo jogador é válido nos pacotes de movimentação e rotação."

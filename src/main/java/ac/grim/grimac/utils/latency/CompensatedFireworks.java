@@ -4,15 +4,14 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.type.PostPredictionCheck;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.update.PredictionComplete;
-
-import java.util.HashSet;
-import java.util.Set;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 
 public class CompensatedFireworks extends Check implements PostPredictionCheck {
 
     // As this is sync to one player, this does not have to be concurrent
-    private final Set<Integer> activeFireworks = new HashSet<>();
-    private final Set<Integer> fireworksToRemoveNextTick = new HashSet<>();
+    private final IntSet activeFireworks = new IntOpenHashSet();
+    private final IntSet fireworksToRemoveNextTick = new IntOpenHashSet();
 
     public CompensatedFireworks(GrimPlayer player) {
         super(player);

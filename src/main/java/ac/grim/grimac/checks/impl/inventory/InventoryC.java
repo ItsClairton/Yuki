@@ -22,7 +22,10 @@ public class InventoryC extends Check implements PacketCheck {
             return;
         }
 
-        final var wrapper = new WrapperPlayClientClickWindow(event);
+        final var wrapper = lastWrapper(event,
+                WrapperPlayClientClickWindow.class,
+                () -> new WrapperPlayClientClickWindow(event));
+
         final var handler = player.checkManager.getPacketCheck(InventoryHandler.class);
 
         if (wrapper.getWindowId() == handler.getWindowId()) {
@@ -41,7 +44,6 @@ public class InventoryC extends Check implements PacketCheck {
         }
 
         event.setCancelled(true);
-        player.onPacketCancel();
     }
 
 }

@@ -51,7 +51,6 @@ public class PacketEntityAction extends PacketListenerAbstract {
                         }
 
                         event.setCancelled(true);
-                        player.onPacketCancel();
                         break;
                     }
                     // Starting fall flying is server sided on 1.14 and below
@@ -72,7 +71,6 @@ public class PacketEntityAction extends PacketListenerAbstract {
                             player.bukkitPlayer.setSneaking(!player.bukkitPlayer.isSneaking());
                         }
                         event.setCancelled(true);
-                        player.onPacketCancel();
                     }
                     break;
                 case START_JUMPING_WITH_HORSE:

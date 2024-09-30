@@ -10,13 +10,12 @@ import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientKeepAlive;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerKeepAlive;
-
-import java.util.LinkedList;
-import java.util.Queue;
+import it.unimi.dsi.fastutil.longs.LongArrayFIFOQueue;
 
 @CheckData(name = "BadPacketsO")
 public class BadPacketsO extends Check implements PacketCheck {
-    Queue<Pair<Long, Long>> keepaliveMap = new LinkedList<>();
+
+    private final LongArrayFIFOQueue queue = new LongArrayFIFOQueue();
 
     public BadPacketsO(GrimPlayer player) {
         super(player);
@@ -24,39 +23,48 @@ public class BadPacketsO extends Check implements PacketCheck {
 
     @Override
     public void onPacketSend(PacketSendEvent event) {
-        if (event.getPacketType() == PacketType.Play.Server.KEEP_ALIVE) {
-            WrapperPlayServerKeepAlive packet = new WrapperPlayServerKeepAlive(event);
-            keepaliveMap.add(new Pair<>(packet.getId(), System.nanoTime()));
+        if (event.getPacketType() != PacketType.Play.Server.KEEP_ALIVE) {
+            return;
         }
+
+        final var packet = lastWrapper(event,
+                WrapperPlayServerKeepAlive.class,
+                () -> new WrapperPlayServerKeepAlive(event));
+
+        queue.enqueue(packet.getId());
     }
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        if (event.getPacketType() == PacketType.Play.Client.KEEP_ALIVE) {
-            WrapperPlayClientKeepAlive packet = new WrapperPlayClientKeepAlive(event);
-
-            long id = packet.getId();
-            boolean hasID = false;
-
-            for (Pair<Long, Long> iterator : keepaliveMap) {
-                if (iterator.first() == id) {
-                    hasID = true;
-                    break;
-                }
-            }
-
-            if (!hasID && System.currentTimeMillis() - player.joinTime > 5000) {
-                if (flagAndAlert(new Pair<>("id", id)) && shouldModifyPackets()) {
-                    event.setCancelled(true);
-                    player.onPacketCancel();
-                }
-            } else { // Found the ID, remove stuff until we get to it (to stop very slow memory leaks)
-                Pair<Long, Long> data;
-                do {
-                    data = keepaliveMap.poll();
-                    if (data == null) break;
-                } while (data.first() != id);
-            }
+        if (event.getPacketType() != PacketType.Play.Client.KEEP_ALIVE) {
+            return;
         }
+
+        final var packet = lastWrapper(event,
+                WrapperPlayClientKeepAlive.class,
+                () -> new WrapperPlayClientKeepAlive(event));
+
+        final var expectedId = queue.isEmpty()
+                ? -1
+                : queue.dequeueLong();
+
+        if (packet.getId() == expectedId) {
+            return;
+        }
+
+        if (expectedId != -1) {
+            queue.enqueueFirst(expectedId);
+        }
+
+        if (shouldModifyPackets()) {
+            event.setCancelled(true);
+        }
+
+        if (System.currentTimeMillis() - player.joinTime > 5000) {
+            return;
+        }
+
+        flagAndAlert(new Pair<>("id", packet.getId()), new Pair<>("expected-id", expectedId));
     }
+
 }

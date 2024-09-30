@@ -10,13 +10,18 @@ import com.github.retrooper.packetevents.manager.server.ServerVersion;
 
 @CheckData(name = "InvalidPlaceB")
 public class InvalidPlaceB extends BlockPlaceCheck {
+
+    private final boolean legacyServer = PacketEvents.getAPI().getServerManager()
+            .getVersion()
+            .isOlderThanOrEquals(ServerVersion.V_1_8);
+
     public InvalidPlaceB(GrimPlayer player) {
         super(player);
     }
 
     @Override
     public void onBlockPlace(final BlockPlace place) {
-        if (place.getFaceId() == 255 && PacketEvents.getAPI().getServerManager().getVersion().isOlderThanOrEquals(ServerVersion.V_1_8)) {
+        if (legacyServer && place.getFaceId() == 255) {
             return;
         }
 

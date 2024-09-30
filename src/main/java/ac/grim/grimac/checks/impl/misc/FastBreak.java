@@ -32,9 +32,6 @@ import org.bukkit.entity.Player;
 // Also based off minecraft wiki: https://minecraft.wiki/w/Breaking#Instant_breaking
 @CheckData(name = "FastBreak")
 public class FastBreak extends Check implements PacketCheck {
-    public FastBreak(GrimPlayer playerData) {
-        super(playerData);
-    }
 
     // The block the player is currently breaking
     Vector3i targetBlock = null;
@@ -50,29 +47,40 @@ public class FastBreak extends Check implements PacketCheck {
     double blockBreakBalance = 0;
     double blockDelayBalance = 0;
 
+    private final boolean newerVersion = player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_9);
+
+    public FastBreak(GrimPlayer playerData) {
+        super(playerData);
+    }
+
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
         // Find the most optimal block damage using the animation packet, which is sent at least once a tick when breaking blocks
         // On 1.8 clients, via screws with this packet meaning we must fall back to the 1.8 idle flying packet
-        if ((player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_9) ? event.getPacketType() == PacketType.Play.Client.ANIMATION : WrapperPlayClientPlayerFlying.isFlying(event.getPacketType())) && targetBlock != null) {
+        if ((newerVersion
+                ? event.getPacketType() == PacketType.Play.Client.ANIMATION
+                : WrapperPlayClientPlayerFlying.isFlying(event.getPacketType())) && targetBlock != null) {
             maximumBlockDamage = Math.max(maximumBlockDamage, BlockBreakSpeed.getBlockDamage(player, targetBlock));
         }
 
         if (event.getPacketType() == PacketType.Play.Client.PLAYER_DIGGING) {
-            WrapperPlayClientPlayerDigging digging = new WrapperPlayClientPlayerDigging(event);
-            final Vector3i blockPosition = digging.getBlockPosition();
+            final var digging = lastWrapper(event,
+                    WrapperPlayClientPlayerDigging.class,
+                    () -> new WrapperPlayClientPlayerDigging(event));
+
+            final var blockPosition = digging.getBlockPosition();
 
             if (digging.getAction() == DiggingAction.START_DIGGING) {
                 WrappedBlockState block = player.compensatedWorld.getWrappedBlockStateAt(blockPosition);
-                
+
                 // Exempt all blocks that do not exist in the player version
                 if (WrappedBlockState.getDefaultState(player.getClientVersion(), block.getType()).getType() == StateTypes.AIR) {
                     return;
                 }
-            
+
                 startBreak = System.currentTimeMillis() - (targetBlock == null ? 50 : 0); // ???
                 targetBlock = blockPosition;
-                
+
                 maximumBlockDamage = BlockBreakSpeed.getBlockDamage(player, targetBlock);
 
                 double breakDelay = System.currentTimeMillis() - lastFinishBreak;
@@ -87,7 +95,6 @@ public class FastBreak extends Check implements PacketCheck {
                     flagAndAlert(new Pair<>("delay", breakDelay));
                     if (shouldModifyPackets()) {
                         event.setCancelled(true); // Cancelling start digging will cause server to reject block break
-                        player.onPacketCancel();
                     }
                 }
 
@@ -115,7 +122,8 @@ public class FastBreak extends Check implements PacketCheck {
                         if (bukkitPlayer.getLocation().distance(new Location(bukkitPlayer.getWorld(), blockPosition.getX(), blockPosition.getY(), blockPosition.getZ())) < 64) {
                             final int chunkX = blockPosition.getX() >> 4;
                             final int chunkZ = blockPosition.getZ() >> 4;
-                            if (!bukkitPlayer.getWorld().isChunkLoaded(chunkX, chunkZ)) return; // Don't load chunks sync
+                            if (!bukkitPlayer.getWorld().isChunkLoaded(chunkX, chunkZ))
+                                return; // Don't load chunks sync
 
                             Chunk chunk = bukkitPlayer.getWorld().getChunkAt(chunkX, chunkZ);
                             Block block = chunk.getBlock(blockPosition.getX() & 15, blockPosition.getY(), blockPosition.getZ() & 15);
@@ -139,7 +147,6 @@ public class FastBreak extends Check implements PacketCheck {
 
                     if (flagAndAlert(new Pair<>("difference", diff), new Pair<>("balance", blockBreakBalance)) && shouldModifyPackets()) {
                         event.setCancelled(true);
-                        player.onPacketCancel();
                     }
                 }
 
@@ -153,4 +160,5 @@ public class FastBreak extends Check implements PacketCheck {
         blockBreakBalance = GrimMath.clamp(blockBreakBalance, -balance, balance); // Clamp not Math.max in case other logic changes
         blockDelayBalance = GrimMath.clamp(blockDelayBalance, -balance, balance);
     }
+
 }

@@ -10,12 +10,15 @@ import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 
 @CheckData(name = "NoSlowA (Prediction)", configName = "NoSlowA", setback = 5)
 public class NoSlowA extends Check implements PostPredictionCheck {
+
     double offsetToFlag;
     double bestOffset = 1;
     // The player sends that they switched items the next tick if they switch from an item that can be used
     // to another item that can be used.  What the fuck mojang.  Affects 1.8 (and most likely 1.7) clients.
     public boolean didSlotChangeLastTick = false;
     public boolean flaggedLastTick = false;
+
+    private final boolean legacy = player.getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_8);
 
     public NoSlowA(GrimPlayer player) {
         super(player);
@@ -28,7 +31,7 @@ public class NoSlowA extends Check implements PostPredictionCheck {
         // If the player was using an item for certain, and their predicted velocity had a flipped item
         if (player.packetStateData.isSlowedByUsingItem()) {
             // 1.8 users are not slowed the first tick they use an item, strangely
-            if (player.getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_8) && didSlotChangeLastTick) {
+            if (legacy && didSlotChangeLastTick) {
                 didSlotChangeLastTick = false;
                 flaggedLastTick = false;
             }
@@ -56,4 +59,5 @@ public class NoSlowA extends Check implements PostPredictionCheck {
         super.reload();
         offsetToFlag = getConfig().getDoubleElse("NoSlowA.threshold", 0.001);
     }
+
 }

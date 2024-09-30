@@ -14,44 +14,66 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClickWindow;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerOpenWindow;
 
-@CheckData(name = "CrashD", experimental = false)
+@CheckData(name = "CrashD")
 public class CrashD extends Check implements PacketCheck {
+
+    private final boolean supportedVersion = PacketEvents.getAPI()
+            .getServerManager()
+            .getVersion()
+            .isNewerThanOrEquals(ServerVersion.V_1_14);
+
+    private MenuType type = MenuType.UNKNOWN;
+    private int lecternId = -1;
 
     public CrashD(GrimPlayer playerData) {
         super(playerData);
     }
 
-    private MenuType type = MenuType.UNKNOWN;
-    private int lecternId = -1;
-
     @Override
     public void onPacketSend(final PacketSendEvent event) {
-        if (event.getPacketType() == PacketType.Play.Server.OPEN_WINDOW && isSupportedVersion()) {
-            WrapperPlayServerOpenWindow window = new WrapperPlayServerOpenWindow(event);
-            this.type = MenuType.getMenuType(window.getType());
-            if (type == MenuType.LECTERN) lecternId = window.getContainerId();
+        if (!supportedVersion) {
+            return;
         }
+
+        if (event.getPacketType() != PacketType.Play.Server.OPEN_WINDOW) {
+            return;
+        }
+
+        final var packet = lastWrapper(event,
+                WrapperPlayServerOpenWindow.class,
+                () -> new WrapperPlayServerOpenWindow(event));
+
+        this.type = MenuType.getMenuType(packet.getType());
+        if (type != MenuType.LECTERN) {
+            return;
+        }
+
+        lecternId = packet.getContainerId();
     }
 
     @Override
     public void onPacketReceive(final PacketReceiveEvent event) {
-        if (event.getPacketType() == PacketType.Play.Client.CLICK_WINDOW && isSupportedVersion()) {
-            WrapperPlayClientClickWindow click = new WrapperPlayClientClickWindow(event);
-            int clickType = click.getWindowClickType().ordinal();
-            int button = click.getButton();
-            int windowId = click.getWindowId();
+        if (!supportedVersion) {
+            return;
+        }
 
-            if (type == MenuType.LECTERN && windowId > 0 && windowId == lecternId) {
-                if (flagAndAlert(new Pair<>("clickType", clickType), new Pair<>("button", button))) {
-                    event.setCancelled(true);
-                    player.onPacketCancel();
-                }
+        if (event.getPacketType() != PacketType.Play.Client.CLICK_WINDOW) {
+            return;
+        }
+
+        final var packet = lastWrapper(event,
+                WrapperPlayClientClickWindow.class,
+                () -> new WrapperPlayClientClickWindow(event));
+
+        final var clickType = packet.getWindowClickType().ordinal();
+        final var button = packet.getButton();
+        final var windowId = packet.getWindowId();
+
+        if (type == MenuType.LECTERN && windowId > 0 && windowId == lecternId) {
+            if (flagAndAlert(new Pair<>("clickType", clickType), new Pair<>("button", button))) {
+                event.setCancelled(true);
             }
         }
-    }
-
-    private boolean isSupportedVersion() {
-        return PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_14);
     }
 
 }

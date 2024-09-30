@@ -81,7 +81,7 @@ public class CompensatedInventory extends Check implements PacketCheck {
             return packetSlot - 36;
         }
         // 45 is offhand is packet, it is 40 in bukkit
-        if (PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_9) && packetSlot == 45) {
+        if (packetSlot == 45 && PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_9)) {
             return 40;
         }
         return -1;

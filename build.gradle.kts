@@ -33,7 +33,8 @@ repositories {
 dependencies {
     implementation("com.github.retrooper:packetevents-spigot:2.5.1-SNAPSHOT")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
-    implementation("it.unimi.dsi:fastutil:8.5.13")
+    implementation("it.unimi.dsi:fastutil:8.5.14")
+    implementation("com.trivago:fastutil-concurrent-wrapper:0.2.2")
     implementation("github.scarsz:configuralize:1.4.0")
 
     implementation("com.github.ItsClairton:GrimAPI:e691d1ae36")

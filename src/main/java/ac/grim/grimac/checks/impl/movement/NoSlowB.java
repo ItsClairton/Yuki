@@ -16,23 +16,32 @@ public class NoSlowB extends Check implements PacketCheck {
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        if (WrapperPlayClientPlayerFlying.isFlying(event.getPacketType())) {
-            // Players can sprint if they're able to fly (MCP)
-            if (player.canFly) return;
-
-            if (player.food < 6.0F && player.isSprinting) {
-                if (flag()) {
-                    // Cancel the packet
-                    if (shouldModifyPackets()) {
-                        event.setCancelled(true);
-                        player.onPacketCancel();
-                    }
-                    alert();
-                    player.getSetbackTeleportUtil().executeNonSimulatingSetback();
-                }
-            } else {
-                reward();
-            }
+        if (player.canFly) {
+            return;
         }
+
+        if (!player.isSprinting) {
+            return;
+        }
+
+        if (!WrapperPlayClientPlayerFlying.isFlying(event.getPacketType())) {
+            return;
+        }
+
+        if (player.food >= 6.0F) {
+            return;
+        }
+
+        if (!flagAndAlert()) {
+            return;
+        }
+
+        if (!shouldModifyPackets()) {
+            return;
+        }
+
+        event.setCancelled(true);
+        player.getSetbackTeleportUtil().executeNonSimulatingSetback();
     }
+
 }

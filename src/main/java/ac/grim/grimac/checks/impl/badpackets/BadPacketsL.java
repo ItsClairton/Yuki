@@ -10,12 +10,13 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.DiggingAction;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
-import com.github.retrooper.packetevents.util.Vector3i;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging;
 
 // checks for impossible dig packets
 @CheckData(name = "BadPacketsL")
 public class BadPacketsL extends Check implements PacketCheck {
+
+    private final boolean legacy = player.getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_7_10);
 
     public BadPacketsL(GrimPlayer player) {
         super(player);
@@ -23,36 +24,48 @@ public class BadPacketsL extends Check implements PacketCheck {
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        if (event.getPacketType() == PacketType.Play.Client.PLAYER_DIGGING) {
-            final WrapperPlayClientPlayerDigging packet = new WrapperPlayClientPlayerDigging(event);
-
-            if (packet.getAction() == DiggingAction.START_DIGGING || packet.getAction() == DiggingAction.FINISHED_DIGGING || packet.getAction() == DiggingAction.CANCELLED_DIGGING) return;
-
-            // 1.8 and above clients always send digging packets that aren't used for digging at 0, 0, 0, facing DOWN
-            // 1.7 and below clients do the same, except use SOUTH for RELEASE_USE_ITEM
-            final BlockFace expectedFace = player.getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_7_10) && packet.getAction() == DiggingAction.RELEASE_USE_ITEM
-                    ? BlockFace.SOUTH : BlockFace.DOWN;
-
-            if (packet.getBlockFace() != expectedFace
-                    || packet.getBlockPosition().getX() != 0
-                    || packet.getBlockPosition().getY() != 0
-                    || packet.getBlockPosition().getZ() != 0
-                    || packet.getSequence() != 0
-            ) {
-                Vector3i blockPos = packet.getBlockPosition();
-
-                if (flagAndAlert(
-                        new Pair<>("x", blockPos.getX()),
-                        new Pair<>("y", blockPos.getY()),
-                        new Pair<>("z", blockPos.getZ()),
-                        new Pair<>("face", packet.getBlockFace()),
-                        new Pair<>("sequence", packet.getSequence()),
-                        new Pair<>("action", packet.getAction())
-                ) && shouldModifyPackets() && packet.getAction() != DiggingAction.RELEASE_USE_ITEM) {
-                    event.setCancelled(true);
-                    player.onPacketCancel();
-                }
-            }
+        if (event.getPacketType() != PacketType.Play.Client.PLAYER_DIGGING) {
+            return;
         }
+
+        final var packet = lastWrapper(event,
+                WrapperPlayClientPlayerDigging.class,
+                () -> new WrapperPlayClientPlayerDigging(event));
+
+        final var action = packet.getAction();
+        if (action == DiggingAction.START_DIGGING
+                || action == DiggingAction.FINISHED_DIGGING
+                || action == DiggingAction.CANCELLED_DIGGING) {
+            return;
+        }
+
+        final var expectedFace = legacy && action == DiggingAction.RELEASE_USE_ITEM
+                ? BlockFace.SOUTH
+                : BlockFace.DOWN;
+
+        final var blockPosition = packet.getBlockPosition();
+        if (packet.getBlockFace() == expectedFace
+                && blockPosition.getX() == 0
+                && blockPosition.getY() == 0
+                && blockPosition.getZ() == 0
+                && packet.getSequence() == 0) {
+            return;
+        }
+
+        if (!flagAndAlert(
+                new Pair<>("blockPos", blockPosition),
+                new Pair<>("face", packet.getBlockFace()),
+                new Pair<>("sequence", packet.getSequence()),
+                new Pair<>("action", action)
+        )) {
+            return;
+        }
+
+        if (!shouldModifyPackets() || action == DiggingAction.RELEASE_USE_ITEM) {
+            return;
+        }
+
+        event.setCancelled(true);
     }
+
 }

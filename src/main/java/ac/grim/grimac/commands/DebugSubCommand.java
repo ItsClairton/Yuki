@@ -47,7 +47,7 @@ public class DebugSubCommand extends BaseCommand {
             if (user == null) {
                 sender.sendMessage(ChatColor.RED + "Unknown PacketEvents user");
             } else {
-                boolean isExempt = GrimAPI.INSTANCE.getPlayerDataManager().shouldCheck(user);
+                boolean isExempt = GrimAPI.INSTANCE.getPlayerDataManager().shouldCheck(user, false);
                 if (!isExempt) {
                     sender.sendMessage(ChatColor.RED + "User connection state: " + user.getConnectionState());
                 }

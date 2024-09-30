@@ -22,19 +22,33 @@ public class NoSlowC extends Check implements PostPredictionCheck, PacketCheck {
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        if (event.getPacketType() == PacketType.Play.Client.ENTITY_ACTION) {
-            if (new WrapperPlayClientEntityAction(event).getAction() == WrapperPlayClientEntityAction.Action.START_SPRINTING) {
-                startedSprintingBeforeSlowMovement = false;
-            }
+        if (!startedSprintingBeforeSlowMovement) {
+            return;
         }
+
+        if (event.getPacketType() != PacketType.Play.Client.ENTITY_ACTION) {
+            return;
+        }
+
+        final var packet = lastWrapper(event,
+                WrapperPlayClientEntityAction.class,
+                () -> new WrapperPlayClientEntityAction(event));
+
+        if (packet.getAction() != WrapperPlayClientEntityAction.Action.START_SPRINTING) {
+            return;
+        }
+
+        startedSprintingBeforeSlowMovement = false;
     }
 
     @Override
     public void onPredictionComplete(final PredictionComplete predictionComplete) {
-        if (!predictionComplete.isChecked()) return;
+        if (!predictionComplete.isChecked()) {
+            return;
+        }
 
         if (player.isSlowMovement) {
-            ClientVersion client = player.getClientVersion();
+            final var client = player.getClientVersion();
 
             // https://bugs.mojang.com/browse/MC-152728
             if (startedSprintingBeforeSlowMovement && client.isNewerThanOrEquals(ClientVersion.V_1_14_2)) {

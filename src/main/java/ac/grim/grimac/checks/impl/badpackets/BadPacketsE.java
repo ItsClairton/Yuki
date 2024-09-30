@@ -4,14 +4,14 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
-import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
-import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Client;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerFlying;
 
 @CheckData(name = "BadPacketsE")
 public class BadPacketsE extends Check implements PacketCheck {
-    private int noReminderTicks;
+
+    private byte noReminderTicks;
 
     public BadPacketsE(GrimPlayer player) {
         super(player);
@@ -19,21 +19,27 @@ public class BadPacketsE extends Check implements PacketCheck {
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        if (event.getPacketType() == PacketType.Play.Client.PLAYER_POSITION_AND_ROTATION ||
-                event.getPacketType() == PacketType.Play.Client.PLAYER_POSITION) {
+        final var packet = event.getPacketType();
+
+        if (packet == Client.PLAYER_POSITION_AND_ROTATION || packet == Client.PLAYER_POSITION || packet == Client.STEER_VEHICLE) {
             noReminderTicks = 0;
-        } else if (WrapperPlayClientPlayerFlying.isFlying(event.getPacketType())) {
-            noReminderTicks++;
-        } else if (event.getPacketType() == PacketType.Play.Client.STEER_VEHICLE) {
-            noReminderTicks = 0; // Exempt vehicles
+            return;
         }
 
-        if (noReminderTicks > 20) {
-            flagAndAlert(new Pair<>("ticks", noReminderTicks)); // ban?  I don't know how this would false
+        if (!WrapperPlayClientPlayerFlying.isFlying(packet)) {
+            return;
         }
+
+        if (noReminderTicks+1 <= 20) {
+            noReminderTicks++;
+            return;
+        }
+
+        flagAndAlert();
     }
 
     public void handleRespawn() {
         noReminderTicks = 0;
     }
+
 }

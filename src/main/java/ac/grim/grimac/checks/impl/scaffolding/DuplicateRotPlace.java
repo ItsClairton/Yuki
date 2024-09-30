@@ -10,14 +10,14 @@ import ac.grim.grimac.utils.data.Pair;
 @CheckData(name = "DuplicateRotPlace", experimental = true)
 public class DuplicateRotPlace extends BlockPlaceCheck {
 
-    public DuplicateRotPlace(GrimPlayer player) {
-        super(player);
-    }
-
     private float deltaX, deltaY;
 
     private double deltaDotsX;
     private boolean rotated = false;
+
+    public DuplicateRotPlace(GrimPlayer player) {
+        super(player);
+    }
 
     @Override
     public void process(final RotationUpdate rotationUpdate) {
@@ -33,10 +33,10 @@ public class DuplicateRotPlace extends BlockPlaceCheck {
     public void onPostFlyingBlockPlace(BlockPlace place) {
         if (rotated) {
             if (deltaX > 2) {
-                float xDiff = Math.abs(deltaX - lastPlacedDeltaX);
+                final var xDiff = Math.abs(deltaX - lastPlacedDeltaX);
 
                 if (xDiff < 0.0001) {
-                    double xDiffDots = Math.abs(deltaDotsX - lastPlacedDeltaDotsX);
+                    final var xDiffDots = Math.abs(deltaDotsX - lastPlacedDeltaDotsX);
                     flagAndAlert(new Pair<>("x", xDiff), new Pair<>("x-dots", xDiffDots), new Pair<>("y-delta", deltaY));
                 } else {
                     reward();

@@ -7,7 +7,9 @@ import ac.grim.grimac.player.GrimPlayer;
 
 @CheckData(name = "BadPacketsN")
 public class BadPacketsN extends Check implements PacketCheck {
+
     public BadPacketsN(final GrimPlayer player) {
         super(player);
     }
+
 }

@@ -18,27 +18,27 @@ public class CrashF extends Check implements PacketCheck {
 
     @Override
     public void onPacketReceive(final PacketReceiveEvent event) {
-        if (event.getPacketType() == PacketType.Play.Client.CLICK_WINDOW) {
-            WrapperPlayClientClickWindow click = new WrapperPlayClientClickWindow(event);
-            int clickType = click.getWindowClickType().ordinal();
-            int button = click.getButton();
-            int windowId = click.getWindowId();
-            int slot = click.getSlot();
+        if (event.getPacketType() != PacketType.Play.Client.CLICK_WINDOW) {
+            return;
+        }
 
-            if ((clickType == 1 || clickType == 2) && windowId >= 0 && button < 0) {
-                if (flagAndAlert(new Pair<>("click-type", clickType), new Pair<>("button", button))) {
-                    event.setCancelled(true);
-                    player.onPacketCancel();
-                }
+        final var packet = lastWrapper(event,
+                WrapperPlayClientClickWindow.class,
+                () -> new WrapperPlayClientClickWindow(event));
+
+        int clickType = packet.getWindowClickType().ordinal();
+        int button = packet.getButton();
+        int windowId = packet.getWindowId();
+        int slot = packet.getSlot();
+
+        if ((clickType == 1 || clickType == 2) && windowId >= 0 && button < 0) {
+            if (flagAndAlert(new Pair<>("click-type", clickType), new Pair<>("button", button))) {
+                event.setCancelled(true);
             }
-
-            else if (windowId >= 0 && clickType == 2 && slot < 0) {
-                if (flagAndAlert(new Pair<>("click-type", clickType), new Pair<>("button", button), new Pair<>("slot", slot))) {
-                    event.setCancelled(true);
-                    player.onPacketCancel();
-                }
+        } else if (windowId >= 0 && clickType == 2 && slot < 0) {
+            if (flagAndAlert(new Pair<>("click-type", clickType), new Pair<>("button", button), new Pair<>("slot", slot))) {
+                event.setCancelled(true);
             }
-
         }
     }
 

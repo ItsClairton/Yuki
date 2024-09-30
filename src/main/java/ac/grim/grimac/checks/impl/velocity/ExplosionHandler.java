@@ -10,25 +10,20 @@ import ac.grim.grimac.utils.data.VectorData;
 import ac.grim.grimac.utils.data.VelocityData;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
-import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.protocol.world.states.defaulttags.BlockTags;
-import com.github.retrooper.packetevents.protocol.world.states.type.StateType;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateValue;
 import com.github.retrooper.packetevents.util.Vector3f;
-import com.github.retrooper.packetevents.util.Vector3i;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerExplosion;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerExplosion.BlockInteraction;
+import it.unimi.dsi.fastutil.objects.ObjectArrayFIFOQueue;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Deque;
-import java.util.LinkedList;
-
 @CheckData(name = "AntiExplosion", configName = "Explosion", setback = 10)
 public class ExplosionHandler extends Check implements PostPredictionCheck {
-    Deque<VelocityData> firstBreadMap = new LinkedList<>();
+    ObjectArrayFIFOQueue<VelocityData> firstBreadMap = new ObjectArrayFIFOQueue<>();
 
     VelocityData lastExplosionsKnownTaken = null;
     VelocityData firstBreadAddedExplosion = null;
@@ -46,24 +41,26 @@ public class ExplosionHandler extends Check implements PostPredictionCheck {
     @Override
     public void onPacketSend(final PacketSendEvent event) {
         if (event.getPacketType() == PacketType.Play.Server.EXPLOSION) {
-            WrapperPlayServerExplosion explosion = new WrapperPlayServerExplosion(event);
+            final var explosion = lastWrapper(event,
+                    WrapperPlayServerExplosion.class,
+                    () -> new WrapperPlayServerExplosion(event));
 
-            Vector3f velocity = explosion.getPlayerMotion();
+            final var velocity = explosion.getPlayerMotion();
 
-            final @Nullable WrapperPlayServerExplosion.BlockInteraction blockInteraction = explosion.getBlockInteraction();
-            final boolean shouldDestroy = blockInteraction != WrapperPlayServerExplosion.BlockInteraction.KEEP_BLOCKS;
+            final @Nullable var blockInteraction = explosion.getBlockInteraction();
+            final var shouldDestroy = blockInteraction != BlockInteraction.KEEP_BLOCKS;
             if (!explosion.getRecords().isEmpty() && shouldDestroy) {
                 player.sendTransaction();
 
                 player.latencyUtils.addRealTimeTask(player.lastTransactionSent.get(), () -> {
-                    for (Vector3i record : explosion.getRecords()) {
+                    for (final var record : explosion.getRecords()) {
                         // Null OR not flip redstone blocks, then set to air
-                        if (blockInteraction != WrapperPlayServerExplosion.BlockInteraction.TRIGGER_BLOCKS) {
+                        if (blockInteraction != BlockInteraction.TRIGGER_BLOCKS) {
                             player.compensatedWorld.updateBlock(record.x, record.y, record.z, 0);
                         } else {
                             // We need to flip redstone blocks, or do special things with other blocks
-                            final WrappedBlockState state = player.compensatedWorld.getWrappedBlockStateAt(record);
-                            final StateType type = state.getType();
+                            final var state = player.compensatedWorld.getWrappedBlockStateAt(record);
+                            final var type = state.getType();
                             if (BlockTags.CANDLES.contains(type) || BlockTags.CANDLE_CAKES.contains(type)) {
                                 state.setLit(false);
                                 continue;
@@ -73,8 +70,8 @@ public class ExplosionHandler extends Check implements PostPredictionCheck {
                             }
 
                             // Otherwise try and flip/open it.
-                            final Object poweredValue = state.getInternalData().get(StateValue.POWERED);
-                            final boolean canFlip = (poweredValue != null && !(Boolean) poweredValue) || type == StateTypes.LEVER;
+                            final var poweredValue = state.getInternalData().get(StateValue.POWERED);
+                            final var canFlip = (poweredValue != null && !(Boolean) poweredValue) || type == StateTypes.LEVER;
                             if (canFlip) {
                                 player.compensatedWorld.tickOpenable(record.x, record.y, record.z);
                             }
@@ -94,8 +91,8 @@ public class ExplosionHandler extends Check implements PostPredictionCheck {
 
     public VelocityData getFutureExplosion() {
         // Chronologically in the future
-        if (firstBreadMap.size() > 0) {
-            return firstBreadMap.peek();
+        if (!firstBreadMap.isEmpty()) {
+            return firstBreadMap.first();
         }
         // Less in the future
         if (lastExplosionsKnownTaken != null) {
@@ -122,7 +119,7 @@ public class ExplosionHandler extends Check implements PostPredictionCheck {
     }
 
     public void addPlayerExplosion(int breadOne, Vector3f explosion) {
-        firstBreadMap.add(new VelocityData(-1, breadOne, player.getSetbackTeleportUtil().isSendingSetback, new Vector(explosion.getX(), explosion.getY(), explosion.getZ())));
+        firstBreadMap.enqueue(new VelocityData(-1, breadOne, player.getSetbackTeleportUtil().isSendingSetback, new Vector(explosion.getX(), explosion.getY(), explosion.getZ())));
     }
 
     public void setPointThree(boolean isPointThree) {
@@ -176,7 +173,7 @@ public class ExplosionHandler extends Check implements PostPredictionCheck {
 
         if (player.predictedVelocity.isFirstBreadExplosion()) {
             firstBreadAddedExplosion = null;
-            firstBreadMap.poll(); // Remove from map so we don't pull it again
+            firstBreadMap.dequeue(); // Remove from map so we don't pull it again
         }
 
         if (wasZero || player.predictedVelocity.isExplosion() ||
@@ -221,7 +218,8 @@ public class ExplosionHandler extends Check implements PostPredictionCheck {
     }
 
     private void handleTransactionPacket(int transactionID) {
-        VelocityData data = firstBreadMap.peek();
+        if (firstBreadMap.isEmpty()) return;
+        VelocityData data = firstBreadMap.first();
         while (data != null) {
             if (data.transaction == transactionID) { // First bread explosion
                 if (lastExplosionsKnownTaken != null)
@@ -237,8 +235,8 @@ public class ExplosionHandler extends Check implements PostPredictionCheck {
                 }
 
                 firstBreadAddedExplosion = null;
-                firstBreadMap.poll();
-                data = firstBreadMap.peek();
+                firstBreadMap.dequeue();
+                data = firstBreadMap.isEmpty() ? null : firstBreadMap.first();
             } else { // We are too far ahead in the future
                 break;
             }
@@ -259,4 +257,5 @@ public class ExplosionHandler extends Check implements PostPredictionCheck {
 
         if (setbackVL == -1) setbackVL = Double.MAX_VALUE;
     }
+
 }

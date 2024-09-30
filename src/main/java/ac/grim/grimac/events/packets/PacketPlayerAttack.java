@@ -38,7 +38,6 @@ public class PacketPlayerAttack extends PacketListenerAbstract {
             if (!player.compensatedEntities.entityMap.containsKey(interact.getEntityId()) && !player.compensatedEntities.serverPositionsMap.containsKey(interact.getEntityId())) {
                 if (player.checkManager.getPacketCheck(BadPacketsW.class).flagAndAlert(new Pair<>("entity-id", interact.getEntityId())) && player.checkManager.getPacketCheck(BadPacketsW.class).shouldModifyPackets()) {
                     event.setCancelled(true);
-                    player.onPacketCancel();
                 }
                 return;
             }

@@ -87,7 +87,6 @@ public class TimerCheck extends Check implements PacketCheck {
                 // Only cancel if not an adjustment setback
                 if (wouldFailNormal && shouldModifyPackets()) {
                     event.setCancelled(true);
-                    player.onPacketCancel();
                 }
 
                 if (isAboveSetbackVl()) player.getSetbackTeleportUtil().executeNonSimulatingSetback();

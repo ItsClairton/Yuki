@@ -27,10 +27,11 @@ import com.github.retrooper.packetevents.protocol.entity.type.EntityType;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.potion.PotionType;
 import com.github.retrooper.packetevents.util.Vector3d;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import lombok.Getter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.OptionalInt;
@@ -54,7 +55,7 @@ public class PacketEntity extends TypedPacketEntity {
     private ReachInterpolationData oldPacketLocation;
     private ReachInterpolationData newPacketLocation;
 
-    private Map<PotionType, Integer> potionsMap = null;
+    private Object2IntMap<PotionType> potionsMap = null;
     protected final Map<Attribute, ValuedAttribute> attributeMap = new IdentityHashMap<>();
 
     public PacketEntity(GrimPlayer player, EntityType type) {
@@ -197,8 +198,15 @@ public class PacketEntity extends TypedPacketEntity {
     }
 
     public OptionalInt getPotionEffectLevel(PotionType effect) {
-        final Integer amplifier = potionsMap == null ? null : potionsMap.get(effect);
-        return amplifier == null ? OptionalInt.empty() : OptionalInt.of(amplifier);
+        final var amplifier = potionsMap == null
+                ? -1
+                : potionsMap.getOrDefault(effect, -1);
+
+        if (amplifier == -1) {
+            return OptionalInt.empty();
+        } else {
+            return OptionalInt.of(amplifier);
+        }
     }
 
     public boolean hasPotionEffect(PotionType effect) {
@@ -207,13 +215,15 @@ public class PacketEntity extends TypedPacketEntity {
 
     public void addPotionEffect(PotionType effect, int amplifier) {
         if (potionsMap == null) {
-            potionsMap = new HashMap<>();
+            potionsMap = new Object2IntArrayMap<>();
         }
+
         potionsMap.put(effect, amplifier);
     }
 
     public void removePotionEffect(PotionType effect) {
         if (potionsMap == null) return;
-        potionsMap.remove(effect);
+        potionsMap.removeInt(effect);
     }
+
 }

@@ -27,7 +27,10 @@ public class InventoryA extends Check implements PacketCheck {
             return;
         }
 
-        final var wrapper = new WrapperPlayClientInteractEntity(event);
+        final var wrapper = lastWrapper(event,
+                WrapperPlayClientInteractEntity.class,
+                () -> new WrapperPlayClientInteractEntity(event));
+
         if (!flagAndAlert(new Pair<>("window-id", handler.getWindowId()),
                 new Pair<>("entity-id", wrapper.getEntityId()),
                 new Pair<>("action", wrapper.getAction()))) {
@@ -39,7 +42,6 @@ public class InventoryA extends Check implements PacketCheck {
         }
 
         event.setCancelled(true);
-        player.onPacketCancel();
     }
 
 }

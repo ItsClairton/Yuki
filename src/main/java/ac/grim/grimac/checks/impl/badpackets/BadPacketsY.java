@@ -14,20 +14,35 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientHe
  */
 @CheckData(name = "BadPacketsY")
 public class BadPacketsY extends Check implements PacketCheck {
+
     public BadPacketsY(GrimPlayer player) {
         super(player);
     }
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        if (event.getPacketType() == PacketType.Play.Client.HELD_ITEM_CHANGE) {
-            final int slot = new WrapperPlayClientHeldItemChange(event).getSlot();
-            if (slot > 8 || slot < 0) { // ban
-                if (flagAndAlert(new Pair<>("slot", slot)) && shouldModifyPackets()) {
-                    event.setCancelled(true);
-                    player.onPacketCancel();
-                }
-            }
+        if (event.getPacketType() != PacketType.Play.Client.HELD_ITEM_CHANGE) {
+            return;
         }
+
+        final var packet = lastWrapper(event,
+                WrapperPlayClientHeldItemChange.class,
+                () -> new WrapperPlayClientHeldItemChange(event));
+
+        final var slot = packet.getSlot();
+        if (slot >= 0 && slot <= 8) {
+            return;
+        }
+
+        if (!flagAndAlert(new Pair<>("slot", slot))) {
+            return;
+        }
+
+        if (!shouldModifyPackets()) {
+            return;
+        }
+
+        event.setCancelled(true);
     }
+
 }

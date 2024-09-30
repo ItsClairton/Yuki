@@ -28,11 +28,11 @@ public class PlayerDataManager {
         return playerDataMap.get(user);
     }
 
-    public boolean shouldCheck(User user) {
+    public boolean shouldCheck(User user, boolean alreadyChecked) {
         if (exemptUsers.contains(user)) return false;
-        if (!ChannelHelper.isOpen(user.getChannel())) return false;
+        if (!alreadyChecked && !ChannelHelper.isOpen(user.getChannel())) return false;
 
-        if (user.getUUID() != null) {
+        if (!alreadyChecked && user.getUUID() != null) {
             // Geyser players don't have Java movement
             // Floodgate is the authentication system for Geyser on servers that use Geyser as a proxy instead of installing it as a plugin directly on the server
             if (GeyserUtil.isGeyserPlayer(user.getUUID()) || FloodgateUtil.isFloodgatePlayer(user.getUUID())) {
@@ -57,7 +57,7 @@ public class PlayerDataManager {
     }
 
     public void addUser(final User user) {
-        if (shouldCheck(user)) {
+        if (shouldCheck(user, false)) {
             GrimPlayer player = new GrimPlayer(user);
             playerDataMap.put(user, player);
         }

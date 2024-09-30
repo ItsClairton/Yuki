@@ -28,7 +28,10 @@ public class InventoryB extends Check implements PacketCheck {
             return;
         }
 
-        final var wrapper = new WrapperPlayClientPlayerBlockPlacement(event);
+        final var wrapper = lastWrapper(event,
+                WrapperPlayClientPlayerBlockPlacement.class,
+                () -> new WrapperPlayClientPlayerBlockPlacement(event));
+
         if (!flagAndAlert(new Pair<>("window-id", handler.getWindowId()),
                 new Pair<>("position", wrapper.getBlockPosition()),
                 new Pair<>("face", wrapper.getFace()))) {
@@ -40,8 +43,6 @@ public class InventoryB extends Check implements PacketCheck {
         }
 
         event.setCancelled(true);
-        player.onPacketCancel();
-
         ResyncWorldUtil.resyncPosition(player, wrapper.getBlockPosition());
     }
 

@@ -34,6 +34,7 @@ import com.github.retrooper.packetevents.protocol.player.GameMode;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerFlying;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -43,10 +44,11 @@ import java.util.*;
 // You may not copy the check unless you are licensed under GPL
 @CheckData(name = "Reach", configName = "Reach", setback = 10)
 public class Reach extends Check implements PacketCheck {
+
     // Only one flag per reach attack, per entity, per tick.
     // We store position because lastX isn't reliable on teleports.
-    private final Map<Integer, Vector3d> playerAttackQueue = new HashMap<>();
-    private static final List<EntityType> blacklisted = Arrays.asList(
+    private final Int2ObjectArrayMap<Vector3d> playerAttackQueue = new Int2ObjectArrayMap<>();
+    private final List<EntityType> blacklisted = Arrays.asList(
             EntityTypes.BOAT,
             EntityTypes.CHEST_BOAT,
             EntityTypes.SHULKER,
@@ -60,6 +62,8 @@ public class Reach extends Check implements PacketCheck {
     private double threshold;
     private double cancelBuffer; // For the next 4 hits after using reach, we aggressively cancel reach
 
+    private final boolean legacy = player.getClientVersion().isOlderThan(ClientVersion.V_1_9);
+
     public Reach(GrimPlayer player) {
         super(player);
     }
@@ -67,16 +71,25 @@ public class Reach extends Check implements PacketCheck {
     @Override
     public void onPacketReceive(final PacketReceiveEvent event) {
         if (!player.disableGrim && event.getPacketType() == PacketType.Play.Client.INTERACT_ENTITY) {
-            WrapperPlayClientInteractEntity action = new WrapperPlayClientInteractEntity(event);
-
             // Don't let the player teleport to bypass reach
             if (player.getSetbackTeleportUtil().shouldBlockMovement()) {
                 event.setCancelled(true);
-                player.onPacketCancel();
                 return;
             }
 
-            PacketEntity entity = player.compensatedEntities.entityMap.get(action.getEntityId());
+            if (player.gamemode == GameMode.CREATIVE || player.gamemode == GameMode.SPECTATOR) {
+                return;
+            }
+
+            if (player.compensatedEntities.getSelf().inVehicle()) {
+                return;
+            }
+
+            final var action = lastWrapper(event,
+                    WrapperPlayClientInteractEntity.class,
+                    () -> new WrapperPlayClientInteractEntity(event));
+
+            final var entity = player.compensatedEntities.entityMap.get(action.getEntityId());
             // Stop people from freezing transactions before an entity spawns to bypass reach
             // TODO: implement dragon parts?
             if (entity == null || entity instanceof PacketEntityEnderDragonPart) {
@@ -84,20 +97,24 @@ public class Reach extends Check implements PacketCheck {
                 // This is because we don't track paintings.
                 if (shouldModifyPackets() && player.compensatedEntities.serverPositionsMap.containsKey(action.getEntityId())) {
                     event.setCancelled(true);
-                    player.onPacketCancel();
                 }
+
                 return;
             }
             
             // Dead entities cause false flags (https://github.com/GrimAnticheat/Grim/issues/546)
-            if (entity.isDead) return;
+            if (entity.isDead) {
+                return;
+            }
+
+            if (entity.riding != null) {
+                return;
+            }
 
             // TODO: Remove when in front of via
-            if (entity.getType() == EntityTypes.ARMOR_STAND && player.getClientVersion().isOlderThan(ClientVersion.V_1_8)) return;
-
-            if (player.gamemode == GameMode.CREATIVE || player.gamemode == GameMode.SPECTATOR) return;
-            if (player.compensatedEntities.getSelf().inVehicle()) return;
-            if (entity.riding != null) return;
+            if (entity.getType() == EntityTypes.ARMOR_STAND && player.getClientVersion().isOlderThan(ClientVersion.V_1_8)) {
+                return;
+            }
 
             boolean tooManyAttacks = playerAttackQueue.size() > 10;
             if (!tooManyAttacks) {
@@ -108,7 +125,6 @@ public class Reach extends Check implements PacketCheck {
 
             if ((shouldModifyPackets() && cancelImpossibleHits && knownInvalid) || tooManyAttacks) {
                 event.setCancelled(true);
-                player.onPacketCancel();
             }
         }
 
@@ -149,10 +165,10 @@ public class Reach extends Check implements PacketCheck {
     }
 
     private void tickBetterReachCheckWithAngle() {
-        for (Map.Entry<Integer, Vector3d> attack : playerAttackQueue.entrySet()) {
-            PacketEntity reachEntity = player.compensatedEntities.entityMap.get(attack.getKey().intValue());
+        for (final var attack : playerAttackQueue.int2ObjectEntrySet()) {
+            final var reachEntity = player.compensatedEntities.entityMap.get(attack.getIntKey());
             if (reachEntity != null) {
-                String result = checkReach(reachEntity, attack.getValue(), false);
+                final var result = checkReach(reachEntity, attack.getValue(), false);
                 if (result != null) {
                     if (reachEntity.getType() == EntityTypes.PLAYER && reachEntity.getUuid() != null) {
                         String targetDetails = reachEntity.getUuid().toString();
@@ -176,19 +192,22 @@ public class Reach extends Check implements PacketCheck {
                 }
             }
         }
+
         playerAttackQueue.clear();
     }
 
     private String checkReach(PacketEntity reachEntity, Vector3d from, boolean isPrediction) {
-        SimpleCollisionBox targetBox = reachEntity.getPossibleCollisionBoxes();
+        var targetBox = reachEntity.getPossibleCollisionBoxes();
 
         if (reachEntity.getType() == EntityTypes.END_CRYSTAL) { // Hardcode end crystal box
-            targetBox = new SimpleCollisionBox(reachEntity.trackedServerPosition.getPos().subtract(1, 0, 1), reachEntity.trackedServerPosition.getPos().add(1, 2, 1));
+            targetBox = new SimpleCollisionBox(
+                    reachEntity.trackedServerPosition.getPos().subtract(1, 0, 1),
+                    reachEntity.trackedServerPosition.getPos().add(1, 2, 1));
         }
 
         // 1.7 and 1.8 players get a bit of extra hitbox (this is why you should use 1.8 on cross version servers)
         // Yes, this is vanilla and not uncertainty.  All reach checks have this or they are wrong.
-        if (player.getClientVersion().isOlderThan(ClientVersion.V_1_9)) {
+        if (legacy) {
             targetBox.expand(0.1f);
         }
 
@@ -198,10 +217,11 @@ public class Reach extends Check implements PacketCheck {
         // Adds some more than 0.03 uncertainty in some cases, but a good trade off for simplicity
         //
         // Just give the uncertainty on 1.9+ clients as we have no way of knowing whether they had 0.03 movement
-        if (!player.packetStateData.didLastLastMovementIncludePosition || player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_9))
+        if (!player.packetStateData.didLastLastMovementIncludePosition || player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_9)) {
             targetBox.expand(player.getMovementThreshold());
+        }
 
-        double minDistance = Double.MAX_VALUE;
+        var minDistance = Double.MAX_VALUE;
 
         // https://bugs.mojang.com/browse/MC-67665
         List<Vector> possibleLookDirs = new ArrayList<>(Collections.singletonList(ReachUtils.getLook(player, player.xRot, player.yRot)));
@@ -263,4 +283,5 @@ public class Reach extends Check implements PacketCheck {
         this.cancelImpossibleHits = getConfig().getBooleanElse("Reach.block-impossible-hits", true);
         this.threshold = getConfig().getDoubleElse("Reach.threshold", 0.0005);
     }
+
 }

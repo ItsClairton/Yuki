@@ -18,32 +18,35 @@ public class CrashH extends Check implements PacketCheck {
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        if (event.getPacketType() == PacketType.Play.Client.TAB_COMPLETE) {
-            WrapperPlayClientTabComplete wrapper = new WrapperPlayClientTabComplete(event);
-            String text = wrapper.getText();
-            final int length = text.length();
-            // general length limit
-            if (length > 256) {
-                if (shouldModifyPackets()) {
-                    event.setCancelled(true);
-                    player.onPacketCancel();
-                }
-                flagAndAlert(new Pair<>("cause", "length"), new Pair<>("length", length));
-                return;
-            }
-            // paper's patch
-            final int index;
-            if (text.length() > 64 && ((index = text.indexOf(' ')) == -1 || index >= 64)) {
-                if (shouldModifyPackets()) {
-                    event.setCancelled(true);
-                    player.onPacketCancel();
-                }
+        if (event.getPacketType() != PacketType.Play.Client.TAB_COMPLETE) {
+            return;
+        }
 
-                flagAndAlert(new Pair<>("cause", "space"), new Pair<>("length", length));
-                return;
+        final var packet = lastWrapper(event,
+                WrapperPlayClientTabComplete.class,
+                () -> new WrapperPlayClientTabComplete(event));
+
+        final var text = packet.getText();
+        final var length = text.length();
+
+        // general length limit
+        if (length > 256) {
+            if (shouldModifyPackets()) {
+                event.setCancelled(true);
             }
+            flagAndAlert(new Pair<>("cause", "length"), new Pair<>("length", length));
+            return;
+        }
+
+        // paper's patch
+        final int index;
+        if (text.length() > 64 && ((index = text.indexOf(' ')) == -1 || index >= 64)) {
+            if (shouldModifyPackets()) {
+                event.setCancelled(true);
+            }
+
+            flagAndAlert(new Pair<>("cause", "space"), new Pair<>("length", length));
         }
     }
-
 
 }

@@ -31,20 +31,22 @@ public class ClientBrand extends Check implements PacketCheck {
             return;
         }
 
-        WrapperPlayClientPluginMessage packet = new WrapperPlayClientPluginMessage(event);
+        final var packet = lastWrapper(event,
+                WrapperPlayClientPluginMessage.class,
+                () -> new WrapperPlayClientPluginMessage(event));
 
-        String channel = packet.getChannelName();
+        final var channel = packet.getChannelName();
         if (channel.equals(legacyChannel ? "MC|Brand" : "minecraft:brand")) {
             if (hasBrand) {
                 return;
             }
 
-            byte[] data = packet.getData();
+            final var data = packet.getData();
             if (data.length > 64 || data.length == 0) {
                 return;
             }
 
-            byte[] dataWithoutPrefix = new byte[data.length - 1];
+            final var dataWithoutPrefix = new byte[data.length - 1];
             System.arraycopy(data, 1, dataWithoutPrefix, 0, dataWithoutPrefix.length);
 
             brand = new String(dataWithoutPrefix).replace(" (Velocity)", "");

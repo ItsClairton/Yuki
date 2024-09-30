@@ -12,25 +12,38 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientEn
 
 @CheckData(name = "BadPacketsQ")
 public class BadPacketsQ extends Check implements PacketCheck {
+
     public BadPacketsQ(final GrimPlayer player) {
         super(player);
     }
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        if (event.getPacketType() == Client.ENTITY_ACTION) {
-            WrapperPlayClientEntityAction wrapper = new WrapperPlayClientEntityAction(event);
-
-            if (wrapper.getJumpBoost() < 0 || wrapper.getJumpBoost() > 100 || wrapper.getEntityId() != player.entityID || (wrapper.getAction() != Action.START_JUMPING_WITH_HORSE && wrapper.getJumpBoost() != 0)) {
-                if (flagAndAlert(
-                        new Pair<>("boost", wrapper.getJumpBoost()),
-                        new Pair<>("action", wrapper.getAction()),
-                        new Pair<>("entity-id", wrapper.getEntityId())
-                ) && shouldModifyPackets()) {
-                    event.setCancelled(true);
-                    player.onPacketCancel();
-                }
-            }
+        if (event.getPacketType() != Client.ENTITY_ACTION) {
+            return;
         }
+
+        final var packet = lastWrapper(event,
+                WrapperPlayClientEntityAction.class,
+                () -> new WrapperPlayClientEntityAction(event));
+
+        if (!(packet.getJumpBoost() < 0 || packet.getJumpBoost() > 100
+                || packet.getEntityId() != player.entityID
+                || (packet.getAction() != Action.START_JUMPING_WITH_HORSE && packet.getJumpBoost() != 0))) {
+            return;
+        }
+
+        if (!flagAndAlert(new Pair<>("boost", packet.getJumpBoost()),
+                new Pair<>("action", packet.getAction()),
+                new Pair<>("entity-id", packet.getEntityId()))) {
+            return;
+        }
+
+        if (!shouldModifyPackets()) {
+            return;
+        }
+
+        event.setCancelled(true);
     }
+
 }

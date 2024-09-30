@@ -27,7 +27,10 @@ public class InventoryHandler extends Check implements PacketCheck {
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
         if (event.getPacketType() == PacketType.Play.Client.CLIENT_STATUS) {
-            final var wrapper = new WrapperPlayClientClientStatus(event);
+            final var wrapper = lastWrapper(event,
+                    WrapperPlayClientClientStatus.class,
+                    () -> new WrapperPlayClientClientStatus(event));
+
             if (wrapper.getAction() == WrapperPlayClientClientStatus.Action.OPEN_INVENTORY_ACHIEVEMENT) {
                 if (!legacyClient) {
                     return;
@@ -42,7 +45,9 @@ public class InventoryHandler extends Check implements PacketCheck {
                 return;
             }
 
-            final var wrapper = new WrapperPlayClientClickWindow(event);
+            final var wrapper = lastWrapper(event,
+                    WrapperPlayClientClickWindow.class,
+                    () -> new WrapperPlayClientClickWindow(event));
 
             windowId = wrapper.getWindowId();
             return;
@@ -56,7 +61,9 @@ public class InventoryHandler extends Check implements PacketCheck {
     @Override
     public void onPacketSend(PacketSendEvent event) {
         if (event.getPacketType() == PacketType.Play.Server.OPEN_WINDOW) {
-            final var window = new WrapperPlayServerOpenWindow(event);
+            final var window = lastWrapper(event,
+                    WrapperPlayServerOpenWindow.class,
+                    () -> new WrapperPlayServerOpenWindow(event));
 
             // Thanks mojang, another disgraceful desync
             // when the player clicks on the "X" of the beacon
@@ -71,7 +78,9 @@ public class InventoryHandler extends Check implements PacketCheck {
         }
 
         if (event.getPacketType() == PacketType.Play.Server.OPEN_HORSE_WINDOW) {
-            final var wrapper = new WrapperPlayServerOpenHorseWindow(event);
+            final var wrapper = lastWrapper(event,
+                    WrapperPlayServerOpenHorseWindow.class,
+                    () -> new WrapperPlayServerOpenHorseWindow(event));
 
             player.sendTransaction();
             player.latencyUtils.addRealTimeTask(player.lastTransactionSent.get(), () -> windowId = wrapper.getWindowId());

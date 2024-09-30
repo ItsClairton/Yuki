@@ -32,18 +32,19 @@ public class MultiPlace extends BlockPlaceCheck {
     @SuppressWarnings("unchecked")
     @Override
     public void onBlockPlace(final BlockPlace place) {
-        final BlockFace face = place.getDirection();
-        final Vector3f cursor = place.getCursor();
-        final Vector3i pos = place.getPlacedAgainstBlockLocation();
+        final var face = place.getDirection();
+        final var cursor = place.getCursor();
+        final var pos = place.getPlacedAgainstBlockLocation();
 
         if (hasPlaced && (face != lastFace || !cursor.equals(lastCursor) || !pos.equals(lastPos))) {
-            final Pair<String, Object>[] verbose = new Pair[]{
+            final var verbose = new Pair[]{
                     new Pair<>("face", face),
                     new Pair<>("last-face", lastFace),
                     new Pair<>("cursor", cursor),
                     new Pair<>("position", pos),
                     new Pair<>("last-position", lastPos)
             };
+
             if (player.getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_8)) {
                 if (flagAndAlert(verbose) && shouldModifyPackets() && shouldCancel()) {
                     place.resync();
@@ -61,14 +62,16 @@ public class MultiPlace extends BlockPlaceCheck {
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        if (WrapperPlayClientPlayerFlying.isFlying(event.getPacketType()) && !player.packetStateData.lastPacketWasTeleport && !player.packetStateData.lastPacketWasOnePointSeventeenDuplicate) {
+        if (WrapperPlayClientPlayerFlying.isFlying(event.getPacketType())
+                && !player.packetStateData.lastPacketWasTeleport
+                && !player.packetStateData.lastPacketWasOnePointSeventeenDuplicate) {
             hasPlaced = false;
         }
     }
 
     @Override
     public void onPredictionComplete(PredictionComplete predictionComplete) {
-        if (player.getClientVersion().isNewerThan(ClientVersion.V_1_8) && !player.skippedTickInActualMovement) {
+        if (!player.skippedTickInActualMovement && player.getClientVersion().isNewerThan(ClientVersion.V_1_8)) {
             for (Pair<String, Object>[] verbose : flags) {
                 flagAndAlert(verbose);
             }
@@ -76,4 +79,5 @@ public class MultiPlace extends BlockPlaceCheck {
 
         flags.clear();
     }
+
 }

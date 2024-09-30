@@ -52,9 +52,9 @@ public class CompensatedEntities {
     }
 
     public int getPacketEntityID(PacketEntity entity) {
-        for (Map.Entry<Integer, PacketEntity> entry : entityMap.int2ObjectEntrySet()) {
+        for (final var entry : entityMap.int2ObjectEntrySet()) {
             if (entry.getValue() == entity) {
-                return entry.getKey();
+                return entry.getIntKey();
             }
         }
         return Integer.MIN_VALUE;
@@ -62,8 +62,8 @@ public class CompensatedEntities {
 
     public void tick() {
         this.playerEntity.setPositionRaw(player.boundingBox);
-        for (PacketEntity vehicle : entityMap.values()) {
-            for (PacketEntity passenger : vehicle.passengers) {
+        for (final var vehicle : entityMap.values()) {
+            for (final var passenger : vehicle.passengers) {
                 tickPassenger(vehicle, passenger);
             }
         }

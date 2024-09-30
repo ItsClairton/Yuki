@@ -21,7 +21,7 @@ public class NoFallB extends Check implements PostPredictionCheck {
     public void onPredictionComplete(final PredictionComplete predictionComplete) {
         // Exemptions
         // Don't check players in spectator
-        if (PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_8) && player.gamemode == GameMode.SPECTATOR)
+        if (player.gamemode == GameMode.SPECTATOR && PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_8))
             return;
         // And don't check this long list of ground exemptions
         if (player.exemptOnGround() || !predictionComplete.isChecked()) return;

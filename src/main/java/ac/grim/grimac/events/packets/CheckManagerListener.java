@@ -527,7 +527,6 @@ public class CheckManagerListener extends PacketListenerAbstract {
 
                     if (!event.isCancelled()) {
                         event.setCancelled(true);
-                        player.onPacketCancel();
                     }
 
                     Vector3i facePos = new Vector3i(packet.getBlockPosition().getX() + packet.getFace().getModX(), packet.getBlockPosition().getY() + packet.getFace().getModY(), packet.getBlockPosition().getZ() + packet.getFace().getModZ());

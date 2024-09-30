@@ -22,21 +22,38 @@ public class NoSlowE extends Check implements PostPredictionCheck, PacketCheck {
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        if (event.getPacketType() == PacketType.Play.Client.ENTITY_ACTION) {
-            if (new WrapperPlayClientEntityAction(event).getAction() == WrapperPlayClientEntityAction.Action.START_SPRINTING) {
-                startedSprintingBeforeBlind = false;
-            }
+        if (!startedSprintingBeforeBlind) {
+            return;
         }
+
+        if (event.getPacketType() != PacketType.Play.Client.ENTITY_ACTION) {
+            return;
+        }
+
+        final var packet = lastWrapper(event,
+                WrapperPlayClientEntityAction.class,
+                () -> new WrapperPlayClientEntityAction(event));
+
+        if (packet.getAction() != WrapperPlayClientEntityAction.Action.START_SPRINTING) {
+            return;
+        }
+
+        startedSprintingBeforeBlind = false;
     }
 
     @Override
     public void onPredictionComplete(final PredictionComplete predictionComplete) {
-        if (!predictionComplete.isChecked()) return;
+        if (!predictionComplete.isChecked()) {
+            return;
+        }
 
         if (player.compensatedEntities.getSelf().hasPotionEffect(BLINDNESS)) {
             if (player.isSprinting && !startedSprintingBeforeBlind) {
                 if (flagWithSetback()) alert();
-            } else reward();
+            } else {
+                reward();
+            }
         }
     }
+
 }

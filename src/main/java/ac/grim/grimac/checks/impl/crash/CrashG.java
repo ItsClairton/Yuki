@@ -16,45 +16,59 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientUs
 @CheckData(name = "CrashG")
 public class CrashG extends Check implements PacketCheck {
 
+    private final boolean supportedVersion = player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_19)
+            && PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_19);
+
     public CrashG(GrimPlayer player) {
         super(player);
     }
 
     @Override
     public void onPacketReceive(final PacketReceiveEvent event) {
-        if (!isSupportedVersion()) return;
+        if (!supportedVersion) {
+            return;
+        }
 
-        if (event.getPacketType() == PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT) {
-            WrapperPlayClientPlayerBlockPlacement place = new WrapperPlayClientPlayerBlockPlacement(event);
-            if (place.getSequence() < 0) {
-                flagAndAlert();
-                event.setCancelled(true);
-                player.onPacketCancel();
+        final var packetType = event.getPacketType();
+        if (packetType != PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT
+                && packetType != PacketType.Play.Client.PLAYER_DIGGING
+                && packetType != PacketType.Play.Client.USE_ITEM) {
+            return;
+        }
+
+        if (packetType == PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT) {
+            final var packet = lastWrapper(event,
+                    WrapperPlayClientPlayerBlockPlacement.class,
+                    () -> new WrapperPlayClientPlayerBlockPlacement(event));
+
+
+            if (packet.getSequence() >= 0) {
+                return;
             }
         }
 
-        if (event.getPacketType() == PacketType.Play.Client.PLAYER_DIGGING) {
-            WrapperPlayClientPlayerDigging dig = new WrapperPlayClientPlayerDigging(event);
-            if (dig.getSequence() < 0) {
-                flagAndAlert();
-                event.setCancelled(true);
-                player.onPacketCancel();
+        if (packetType == PacketType.Play.Client.PLAYER_DIGGING) {
+            final var packet = lastWrapper(event,
+                    WrapperPlayClientPlayerDigging.class,
+                    () -> new WrapperPlayClientPlayerDigging(event));
+
+            if (packet.getSequence() >= 0) {
+                return;
             }
         }
 
-        if (event.getPacketType() == PacketType.Play.Client.USE_ITEM) {
-            WrapperPlayClientUseItem use = new WrapperPlayClientUseItem(event);
-            if (use.getSequence() < 0) {
-                flagAndAlert();
-                event.setCancelled(true);
-                player.onPacketCancel();
+        if (packetType == PacketType.Play.Client.USE_ITEM) {
+            final var packet = lastWrapper(event,
+                    WrapperPlayClientUseItem.class,
+                    () -> new WrapperPlayClientUseItem(event));
+
+            if (packet.getSequence() >= 0) {
+                return;
             }
         }
 
-    }
-
-    private boolean isSupportedVersion() {
-        return player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_19) && PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_19);
+        flagAndAlert();
+        event.setCancelled(true);
     }
 
 }

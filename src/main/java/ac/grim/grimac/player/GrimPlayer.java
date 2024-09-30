@@ -47,6 +47,8 @@ import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyCompon
 import io.github.retrooper.packetevents.util.folia.FoliaScheduler;
 import io.github.retrooper.packetevents.util.viaversion.ViaVersionUtil;
 import io.netty.channel.Channel;
+import it.unimi.dsi.fastutil.shorts.ShortOpenHashSet;
+import it.unimi.dsi.fastutil.shorts.ShortSet;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
@@ -77,8 +79,8 @@ public class GrimPlayer implements GrimUser {
     // Start transaction handling stuff
     // Determining player ping
     // The difference between keepalive and transactions is that keepalive is async while transactions are sync
-    public final Queue<Pair<Short, Long>> transactionsSent = new ConcurrentLinkedQueue<>();
-    public final Set<Short> didWeSendThatTrans = ConcurrentHashMap.newKeySet();
+    public final Queue<Short2LongPair> transactionsSent = new ConcurrentLinkedQueue<>();
+    public final ShortSet didWeSendThatTrans = new ShortOpenHashSet();
     private final AtomicInteger transactionIDCounter = new AtomicInteger(0);
     public AtomicInteger lastTransactionSent = new AtomicInteger(0);
     public AtomicInteger lastTransactionReceived = new AtomicInteger(0);
@@ -202,14 +204,6 @@ public class GrimPlayer implements GrimUser {
     public AtomicInteger cancelledPackets = new AtomicInteger(0);
     public MainSupportingBlockData mainSupportingBlockData = new MainSupportingBlockData(null, false);
 
-    public void onPacketCancel() {
-        if (spamThreshold != -1 && cancelledPackets.incrementAndGet() > spamThreshold) {
-            LogUtil.info("Disconnecting " + getName() + " for spamming invalid packets, packets cancelled within a second " + cancelledPackets);
-            disconnect(Component.translatable("disconnect.closed"));
-            cancelledPackets.set(0);
-        }
-    }
-
     public int totalFlyingPacketsSent;
     public Queue<BlockPlaceSnapshot> placeUseItemPackets = new LinkedBlockingQueue<>();
     // This variable is for support with test servers that want to be able to disable grim
@@ -303,10 +297,10 @@ public class GrimPlayer implements GrimUser {
     // But if some error made a client miss a packet, then it won't hurt them too bad.
     // Also it forces players to take knockback
     public boolean addTransactionResponse(short id) {
-        Pair<Short, Long> data = null;
+        Short2LongPair data = null;
         boolean hasID = false;
         int skipped = 0;
-        for (Pair<Short, Long> iterator : transactionsSent) {
+        for (final var iterator : transactionsSent) {
             if (iterator.first() == id) {
                 hasID = true;
                 break;
@@ -339,7 +333,7 @@ public class GrimPlayer implements GrimUser {
         }
 
         // Were we the ones who sent the packet?
-        return data != null && data.first() == id;
+        return data != null;
     }
 
     public void baseTickAddWaterPushing(Vector vector) {
@@ -374,7 +368,9 @@ public class GrimPlayer implements GrimUser {
     public void sendTransaction(boolean async) {
         // don't send transactions outside PLAY phase
         // Sending in non-play corrupts the pipeline, don't waste bandwidth when anticheat disabled
-        if (user.getEncoderState() != ConnectionState.PLAY) return;
+        if (user.getEncoderState() != ConnectionState.PLAY) {
+            return;
+        }
 
         // Send a packet once every 15 seconds to avoid any memory leaks
         if (disableGrim && (System.nanoTime() - getPlayerClockAtLeast()) > 15e9) {
@@ -456,7 +452,7 @@ public class GrimPlayer implements GrimUser {
             timedOut();
         }
 
-        if (!GrimAPI.INSTANCE.getPlayerDataManager().shouldCheck(user)) {
+        if (!GrimAPI.INSTANCE.getPlayerDataManager().shouldCheck(user, bukkitPlayer != null)) {
             GrimAPI.INSTANCE.getPlayerDataManager().remove(user);
         }
 
@@ -467,7 +463,6 @@ public class GrimPlayer implements GrimUser {
 
         if (playerUUID != null && this.bukkitPlayer == null) {
             this.bukkitPlayer = Bukkit.getPlayer(playerUUID);
-            updatePermissions();
         }
     }
 
@@ -495,10 +490,6 @@ public class GrimPlayer implements GrimUser {
         if (kbPointThree || explosionPointThree) {
             uncertaintyHandler.lastPointThree.reset();
         }
-    }
-
-    @Override
-    public void updatePermissions() {
     }
 
     private int spamThreshold = 100;
@@ -696,6 +687,10 @@ public class GrimPlayer implements GrimUser {
     @Override
     public boolean isVanillaMath() {
         return trigHandler.isVanillaMath();
+    }
+
+    @Override
+    public void updatePermissions() {
     }
 
     @Override

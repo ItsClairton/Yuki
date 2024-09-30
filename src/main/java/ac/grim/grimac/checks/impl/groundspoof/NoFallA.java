@@ -34,8 +34,11 @@ public class NoFallA extends Check implements PacketCheck {
             // The player has already been flagged, and
             if (player.getSetbackTeleportUtil().blockOffsets) return;
 
-            WrapperPlayClientPlayerFlying wrapper = new WrapperPlayClientPlayerFlying(event);
-            boolean hasPosition = false;
+            final var wrapper = lastWrapper(event,
+                    WrapperPlayClientPlayerFlying.class,
+                    () -> new WrapperPlayClientPlayerFlying(event));
+
+            final var hasPosition = false;
 
             // If the player claims to be on the ground
             // Run this code IFF the player doesn't send the position, as that won't get processed by predictions
@@ -43,13 +46,19 @@ public class NoFallA extends Check implements PacketCheck {
                 if (!isNearGround(wrapper.isOnGround())) { // If player isn't near ground
                     // 1.8 boats have a mind on their own... only flag if they're not near a boat or are on 1.9+
                     if (!GhostBlockDetector.isGhostBlock(player) && flagWithSetback()) alert();
-                    if (shouldModifyPackets()) wrapper.setOnGround(false);
+                    if (shouldModifyPackets()) {
+                        wrapper.setOnGround(false);
+                        event.markForReEncode(true);
+                    }
                 }
             }
         }
 
         if (WrapperPlayClientPlayerFlying.isFlying(event.getPacketType())) {
-            WrapperPlayClientPlayerFlying wrapper = new WrapperPlayClientPlayerFlying(event);
+            final var wrapper = lastWrapper(event,
+                    WrapperPlayClientPlayerFlying.class,
+                    () -> new WrapperPlayClientPlayerFlying(event));
+
             // The prediction based NoFall check (that runs before us without the packet)
             // has asked us to flip the player's onGround status
             // This happens to make both checks use the same logic... and
@@ -59,10 +68,16 @@ public class NoFallA extends Check implements PacketCheck {
             // Also flip teleports because I don't trust vanilla's handling of teleports and ground
             if (flipPlayerGroundStatus) {
                 flipPlayerGroundStatus = false;
-                if (shouldModifyPackets()) wrapper.setOnGround(!wrapper.isOnGround());
+                if (shouldModifyPackets()) {
+                    wrapper.setOnGround(!wrapper.isOnGround());
+                    event.markForReEncode(true);
+                }
             }
             if (player.packetStateData.lastPacketWasTeleport) {
-                if (shouldModifyPackets()) wrapper.setOnGround(false);
+                if (shouldModifyPackets()) {
+                    wrapper.setOnGround(false);
+                    event.markForReEncode(true);
+                }
             }
         }
     }
