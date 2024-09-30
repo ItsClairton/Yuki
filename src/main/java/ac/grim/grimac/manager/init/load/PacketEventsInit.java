@@ -9,7 +9,6 @@ import com.github.retrooper.packetevents.util.PEVersions;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class PacketEventsInit implements Initable {
 

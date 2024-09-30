@@ -30,7 +30,6 @@ import ac.grim.grimac.events.packets.PacketChangeGameState;
 import ac.grim.grimac.events.packets.PacketEntityReplication;
 import ac.grim.grimac.events.packets.PacketPlayerAbilities;
 import ac.grim.grimac.events.packets.PacketWorldBorder;
-import ac.grim.grimac.manager.init.start.SuperDebug;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.predictionengine.GhostBlockDetector;
 import ac.grim.grimac.predictionengine.SneakingEstimator;
@@ -125,7 +124,6 @@ public class CheckManager {
                 .put(PostCheck.class, new PostCheck(player))
                 .put(NoFallB.class, new NoFallB(player))
                 .put(OffsetHandler.class, new OffsetHandler(player))
-                .put(SuperDebug.class, new SuperDebug(player))
                 .put(DebugHandler.class, new DebugHandler(player))
                 .put(EntityControl.class, new EntityControl(player))
                 .put(NoSlowA.class, new NoSlowA(player))

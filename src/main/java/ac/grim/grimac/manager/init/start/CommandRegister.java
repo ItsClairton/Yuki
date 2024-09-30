@@ -25,7 +25,6 @@ public class CommandRegister implements Initable {
 
         commandManager.registerCommand(new ProfileSubCommand());
         commandManager.registerCommand(new ReloadSubCommand());
-        commandManager.registerCommand(new LogSubCommand());
         commandManager.registerCommand(new VerboseSubCommand());
     }
 
