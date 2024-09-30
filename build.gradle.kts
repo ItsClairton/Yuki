@@ -14,24 +14,17 @@ java {
 
 repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") // Spigot
-
-    maven("https://jitpack.io/") { // Grim API
-        content {
-            includeGroup("com.github.ItsClairton")
-        }
-    }
-
     maven("https://repo.viaversion.com") // ViaVersion
     maven("https://repo.aikar.co/content/groups/aikar/") // ACF
     maven("https://nexus.scarsz.me/content/repositories/releases") // Configuralize
     maven("https://repo.opencollab.dev/maven-snapshots/") // Floodgate
     maven("https://repo.opencollab.dev/maven-releases/") // Cumulus (for Floodgate)
-    maven("https://repo.codemc.io/repository/maven-snapshots/") // Packetevents
     mavenCentral() // FastUtil
+    maven("https://jitpack.io/")
 }
 
 dependencies {
-    implementation("com.github.retrooper:packetevents-spigot:2.5.1-SNAPSHOT")
+    implementation("com.github.itsclairton.packetevents:packetevents-spigot:a99e735db2")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     implementation("it.unimi.dsi:fastutil:8.5.14")
     implementation("com.trivago:fastutil-concurrent-wrapper:0.2.2")
@@ -95,6 +88,14 @@ tasks {
     runServer {
         minecraftVersion("1.8.8")
         jvmArgs("-XX:+AllowEnhancedClassRedefinition -Dfile.encoding=UTF-8")
+
+        downloadPlugins {
+            hangar("ViaVersion", "5.0.4-SNAPSHOT+547")
+            hangar("ViaBackwards", "5.0.4-SNAPSHOT+328")
+            hangar("ViaRewind", "4.0.3-SNAPSHOT+207")
+
+            url("https://ci.lucko.me/job/spark/455/artifact/spark-bukkit/build/libs/spark-1.10.109-bukkit.jar")
+        }
     }
 
 }

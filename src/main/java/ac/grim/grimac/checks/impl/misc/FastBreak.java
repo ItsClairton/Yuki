@@ -48,6 +48,10 @@ public class FastBreak extends Check implements PacketCheck {
     double blockDelayBalance = 0;
 
     private final boolean newerVersion = player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_9);
+    private final boolean clientUpdated = PacketEvents.getAPI().getServerManager()
+            .getVersion()
+            .toClientVersion()
+            .isOlderThanOrEquals(player.getClientVersion());
 
     public FastBreak(GrimPlayer playerData) {
         super(playerData);
@@ -74,7 +78,7 @@ public class FastBreak extends Check implements PacketCheck {
                 WrappedBlockState block = player.compensatedWorld.getWrappedBlockStateAt(blockPosition);
 
                 // Exempt all blocks that do not exist in the player version
-                if (WrappedBlockState.getDefaultState(player.getClientVersion(), block.getType()).getType() == StateTypes.AIR) {
+                if (!clientUpdated && WrappedBlockState.getDefaultState(player.getClientVersion(), block.getType()).getType() == StateTypes.AIR) {
                     return;
                 }
 
