@@ -13,6 +13,7 @@ import ac.grim.grimac.utils.nmsutil.JumpPower;
 import ac.grim.grimac.utils.nmsutil.Riptide;
 import com.github.retrooper.packetevents.protocol.attribute.Attributes;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -156,7 +157,7 @@ public class PredictionEngine {
             //
             // Exempt if the player
             if ((clientVelAfterInput.isKnockback() || clientVelAfterInput.isExplosion()) && !clientVelAfterInput.isZeroPointZeroThree()) {
-                boolean wasVelocityPointThree = player.pointThreeEstimator.determineCanSkipTick(speed, new HashSet<>(Collections.singletonList(clientVelAfterInput)));
+                boolean wasVelocityPointThree = player.pointThreeEstimator.determineCanSkipTick(speed, new ObjectArraySet<>(Collections.singletonList(clientVelAfterInput)));
 
                 if (clientVelAfterInput.isKnockback()) {
                     player.checkManager.getKnockbackHandler().setPointThree(wasVelocityPointThree);
@@ -245,7 +246,7 @@ public class PredictionEngine {
 
     // 0.03 has some quite bad interactions with velocity + explosions (one extremely stupid line of code... thanks mojang)
     private void addZeroPointThreeToPossibilities(float speed, GrimPlayer player, List<VectorData> possibleVelocities) {
-        Set<VectorData> pointThreePossibilities = new HashSet<>();
+        Set<VectorData> pointThreePossibilities = new ObjectArraySet<>();
 
         // For now just let the player control their Y velocity within 0.03.  Gravity should stop exploits.
         // 0.03 - 0.784 < -0.03 = can't skip next tick
@@ -360,7 +361,7 @@ public class PredictionEngine {
 
     private void addAttackSlowToPossibilities(GrimPlayer player, Set<VectorData> velocities) {
         for (int x = 1; x <= Math.min(player.maxPlayerAttackSlow, 5); x++) {
-            for (VectorData data : new HashSet<>(velocities)) {
+            for (VectorData data : new ObjectArraySet<>(velocities)) {
                 velocities.add(data.returnNewModified(data.vector.clone().multiply(new Vector(0.6, 1, 0.6)), VectorData.VectorType.AttackSlow));
             }
         }
@@ -392,7 +393,7 @@ public class PredictionEngine {
     }
 
     public void addExplosionToPossibilities(GrimPlayer player, Set<VectorData> existingVelocities) {
-        for (VectorData vector : new HashSet<>(existingVelocities)) {
+        for (VectorData vector : new ObjectArraySet<>(existingVelocities)) {
             if (player.likelyExplosions != null) {
                 existingVelocities.add(new VectorData(vector.vector.clone().add(player.likelyExplosions.vector), vector, VectorData.VectorType.Explosion));
             }

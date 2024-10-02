@@ -5,6 +5,7 @@ import ac.grim.grimac.checks.type.BlockPlaceCheck;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.update.BlockPlace;
 import ac.grim.grimac.utils.collisions.datatypes.SimpleCollisionBox;
+import ac.grim.grimac.utils.data.Pair;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 
@@ -19,7 +20,10 @@ public class PositionPlace extends BlockPlaceCheck {
 
     @Override
     public void onBlockPlace(final BlockPlace place) {
-        if (place.getMaterial() == StateTypes.SCAFFOLDING) return;
+        final var material = place.getMaterial();
+        if (material == StateTypes.FIRE || material == StateTypes.SCAFFOLDING) {
+            return;
+        }
 
         SimpleCollisionBox combined = getCombinedBox(place);
 
@@ -61,7 +65,7 @@ public class PositionPlace extends BlockPlaceCheck {
         };
 
         if (flag) {
-            if (flagAndAlert() && shouldModifyPackets() && shouldCancel()) {
+            if (flagAndAlert(new Pair<>("material", material)) && shouldModifyPackets() && shouldCancel()) {
                 place.resync();
             }
         }

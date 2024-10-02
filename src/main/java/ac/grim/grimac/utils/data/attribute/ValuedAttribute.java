@@ -1,6 +1,7 @@
 package ac.grim.grimac.utils.data.attribute;
 
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.primitive.Double2DoubleFunction;
 import ac.grim.grimac.utils.math.GrimMath;
 import com.github.retrooper.packetevents.protocol.attribute.Attribute;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
@@ -9,13 +10,12 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUp
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import static ac.grim.grimac.utils.latency.CompensatedEntities.SPRINTING_MODIFIER_UUID;
 
 public final class ValuedAttribute {
 
-    private static final Function<Double, Double> DEFAULT_GET_REWRITE = Function.identity();
+    private static final Double2DoubleFunction DEFAULT_GET_REWRITE = (t) -> t;
 
     private final Attribute attribute;
     // Attribute limits defined by https://minecraft.wiki/w/Attribute
@@ -29,7 +29,7 @@ public final class ValuedAttribute {
     // BiFunction of <Old, New, Output>
     // This allows us to rewrite the value based on client & server version
     private BiFunction<Double, Double, Double> setRewriter;
-    private Function<Double, Double> getRewriter;
+    private Double2DoubleFunction getRewriter;
 
     private ValuedAttribute(Attribute attribute, double defaultValue, double min, double max) {
         if (defaultValue < min || defaultValue > max) {
@@ -69,7 +69,7 @@ public final class ValuedAttribute {
         return this;
     }
 
-    public ValuedAttribute withGetRewriter(Function<Double, Double> getRewriteFunction) {
+    public ValuedAttribute withGetRewriter(Double2DoubleFunction getRewriteFunction) {
         this.getRewriter = getRewriteFunction;
         return this;
     }

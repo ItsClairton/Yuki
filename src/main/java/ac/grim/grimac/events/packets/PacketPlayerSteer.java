@@ -2,6 +2,7 @@ package ac.grim.grimac.events.packets;
 
 import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.PacketUtil;
 import ac.grim.grimac.utils.collisions.datatypes.SimpleCollisionBox;
 import ac.grim.grimac.utils.data.packetentity.PacketEntity;
 import ac.grim.grimac.utils.data.packetentity.PacketEntityHorse;
@@ -10,7 +11,6 @@ import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
-import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientSteerVehicle;
@@ -25,7 +25,9 @@ public class PacketPlayerSteer extends PacketListenerAbstract {
     public void onPacketReceive(PacketReceiveEvent event) {
 
         if (event.getPacketType() == PacketType.Play.Client.STEER_VEHICLE) {
-            WrapperPlayClientSteerVehicle steer = new WrapperPlayClientSteerVehicle(event);
+            final var steer = PacketUtil.lastWrapper(event,
+                    WrapperPlayClientSteerVehicle.class,
+                    () -> new WrapperPlayClientSteerVehicle(event));
 
             GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
             if (player == null) return;

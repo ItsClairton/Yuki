@@ -55,14 +55,45 @@ public class VectorData {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        VectorData that = (VectorData) o;
-        return isKnockback == that.isKnockback && firstBreadKb == that.firstBreadKb && isExplosion == that.isExplosion && firstBreadExplosion == that.firstBreadExplosion && isTrident == that.isTrident && isZeroPointZeroThree == that.isZeroPointZeroThree && isSwimHop == that.isSwimHop && isFlipSneaking == that.isFlipSneaking && isFlipItem == that.isFlipItem && isJump == that.isJump && isAttackSlow == that.isAttackSlow && vectorType == that.vectorType && Objects.equals(lastVector, that.lastVector) && Objects.equals(preUncertainty, that.preUncertainty) && Objects.equals(vector, that.vector);
+
+        if (o instanceof VectorData that) {
+            return isKnockback == that.isKnockback
+                    && firstBreadKb == that.firstBreadKb
+                    && isExplosion == that.isExplosion
+                    && firstBreadExplosion == that.firstBreadExplosion
+                    && isTrident == that.isTrident
+                    && isZeroPointZeroThree == that.isZeroPointZeroThree
+                    && isSwimHop == that.isSwimHop
+                    && isFlipSneaking == that.isFlipSneaking
+                    && isFlipItem == that.isFlipItem
+                    && isJump == that.isJump
+                    && isAttackSlow == that.isAttackSlow
+                    && vectorType == that.vectorType
+                    && Objects.equals(lastVector, that.lastVector)
+                    && Objects.equals(preUncertainty, that.preUncertainty)
+                    && Objects.equals(vector, that.vector);
+        }
+
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(vectorType, lastVector, preUncertainty, vector, isKnockback, firstBreadKb, isExplosion, firstBreadExplosion, isTrident, isZeroPointZeroThree, isSwimHop, isFlipSneaking, isFlipItem, isJump, isAttackSlow);
+        return Objects.hash(vectorType,
+                lastVector,
+                preUncertainty,
+                vector,
+                isKnockback,
+                firstBreadKb,
+                isExplosion,
+                firstBreadExplosion,
+                isTrident,
+                isZeroPointZeroThree,
+                isSwimHop,
+                isFlipSneaking,
+                isFlipItem,
+                isJump,
+                isAttackSlow);
     }
 
     private void addVectorType(VectorType type) {

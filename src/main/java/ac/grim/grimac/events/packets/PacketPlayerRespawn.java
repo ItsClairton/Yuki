@@ -5,6 +5,7 @@ import ac.grim.grimac.checks.impl.badpackets.BadPacketsE;
 import ac.grim.grimac.checks.impl.badpackets.BadPacketsF;
 import ac.grim.grimac.checks.impl.inventory.InventoryHandler;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.PacketUtil;
 import ac.grim.grimac.utils.data.TrackerData;
 import ac.grim.grimac.utils.data.packetentity.PacketEntitySelf;
 import ac.grim.grimac.utils.enums.Pose;
@@ -61,13 +62,16 @@ public class PacketPlayerRespawn extends PacketListenerAbstract {
         if (PacketEvents.getAPI().getServerManager().getVersion().isOlderThan(ServerVersion.V_1_15)) {
             return false;
         }
+
         return (respawn.getKeptData() & flag) != 0;
     }
 
     @Override
     public void onPacketSend(PacketSendEvent event) {
         if (event.getPacketType() == PacketType.Play.Server.UPDATE_HEALTH) {
-            WrapperPlayServerUpdateHealth health = new WrapperPlayServerUpdateHealth(event);
+            final var health = PacketUtil.lastWrapper(event,
+                    WrapperPlayServerUpdateHealth.class,
+                    () -> new WrapperPlayServerUpdateHealth(event));
 
             GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
             if (player == null) return;
@@ -112,7 +116,9 @@ public class PacketPlayerRespawn extends PacketListenerAbstract {
         }
 
         if (event.getPacketType() == PacketType.Play.Server.RESPAWN) {
-            WrapperPlayServerRespawn respawn = new WrapperPlayServerRespawn(event);
+            final var respawn = PacketUtil.lastWrapper(event,
+                    WrapperPlayServerRespawn.class,
+                    () -> new WrapperPlayServerRespawn(event));
 
             GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
             if (player == null) return;

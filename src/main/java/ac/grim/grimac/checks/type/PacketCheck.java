@@ -1,6 +1,7 @@
 package ac.grim.grimac.checks.type;
 
 import ac.grim.grimac.api.AbstractCheck;
+import ac.grim.grimac.utils.PacketUtil;
 import ac.grim.grimac.utils.anticheat.update.PositionUpdate;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
@@ -20,14 +21,8 @@ public interface PacketCheck extends AbstractCheck {
     default void onPositionUpdate(final PositionUpdate positionUpdate) {
     }
 
-    @SuppressWarnings("unchecked")
     default <T extends PacketWrapper<?>> T lastWrapper(ProtocolPacketEvent event, Class<T> wrapper, Supplier<T> supplier) {
-        final var lastWrapper = event.getLastUsedWrapper();
-        if (lastWrapper != null) {
-            return (T) lastWrapper;
-        }
-
-        return supplier.get();
+        return PacketUtil.lastWrapper(event, wrapper, supplier);
     }
 
 }

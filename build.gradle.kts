@@ -24,10 +24,9 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.itsclairton.packetevents:packetevents-spigot:a99e735db2")
+    implementation("com.github.itsclairton.packetevents:packetevents-spigot:542a3ae4e9")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     implementation("it.unimi.dsi:fastutil:8.5.14")
-    implementation("com.trivago:fastutil-concurrent-wrapper:0.2.2")
     implementation("github.scarsz:configuralize:1.4.0")
 
     implementation("com.github.ItsClairton:GrimAPI:e691d1ae36")

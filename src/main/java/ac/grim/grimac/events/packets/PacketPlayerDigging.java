@@ -4,6 +4,7 @@ import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.checks.impl.movement.NoSlowA;
 import ac.grim.grimac.checks.impl.movement.NoSlowD;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.PacketUtil;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
@@ -23,7 +24,6 @@ import com.github.retrooper.packetevents.protocol.player.GameMode;
 import com.github.retrooper.packetevents.protocol.player.InteractionHand;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
 import com.github.retrooper.packetevents.wrapper.play.client.*;
-import org.bukkit.Bukkit;
 
 public class PacketPlayerDigging extends PacketListenerAbstract {
 
@@ -150,7 +150,9 @@ public class PacketPlayerDigging extends PacketListenerAbstract {
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
         if (event.getPacketType() == PacketType.Play.Client.PLAYER_DIGGING) {
-            WrapperPlayClientPlayerDigging dig = new WrapperPlayClientPlayerDigging(event);
+            final var dig = PacketUtil.lastWrapper(event,
+                    WrapperPlayClientPlayerDigging.class,
+                    () -> new WrapperPlayClientPlayerDigging(event));
 
             if (dig.getAction() == DiggingAction.RELEASE_USE_ITEM) {
                 final GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
@@ -183,7 +185,11 @@ public class PacketPlayerDigging extends PacketListenerAbstract {
         }
 
         if (event.getPacketType() == PacketType.Play.Client.HELD_ITEM_CHANGE) {
-            final int slot = new WrapperPlayClientHeldItemChange(event).getSlot();
+            final var packet = PacketUtil.lastWrapper(event,
+                    WrapperPlayClientHeldItemChange.class,
+                    () -> new WrapperPlayClientHeldItemChange(event));
+
+            final var slot = packet.getSlot();
 
             // Stop people from spamming the server with out of bounds exceptions
             if (slot > 8 || slot < 0) return;

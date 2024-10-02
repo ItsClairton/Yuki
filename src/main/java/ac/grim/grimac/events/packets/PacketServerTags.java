@@ -2,6 +2,7 @@ package ac.grim.grimac.events.packets;
 
 import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.PacketUtil;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
@@ -15,7 +16,10 @@ public class PacketServerTags extends PacketListenerAbstract {
             GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
             if (player == null) return;
 
-            WrapperPlayServerTags tags = new WrapperPlayServerTags(event);
+            final var tags = PacketUtil.lastWrapper(event,
+                    WrapperPlayServerTags.class,
+                    () -> new WrapperPlayServerTags(event));
+
             final boolean isPlay = event.getPacketType() == PacketType.Play.Server.TAGS;
             if (isPlay) {
                 player.latencyUtils.addRealTimeTask(player.lastTransactionSent.get(), () -> player.tagManager.handleTagSync(tags));
@@ -25,4 +29,5 @@ public class PacketServerTags extends PacketListenerAbstract {
             }
         }
     }
+
 }

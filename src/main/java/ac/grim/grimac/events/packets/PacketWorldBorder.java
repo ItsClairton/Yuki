@@ -9,6 +9,7 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.server.*;
 
 public class PacketWorldBorder extends Check implements PacketCheck {
+
     double centerX;
     double centerZ;
     double oldDiameter;
@@ -37,7 +38,9 @@ public class PacketWorldBorder extends Check implements PacketCheck {
     @Override
     public void onPacketSend(PacketSendEvent event) {
         if (event.getPacketType() == PacketType.Play.Server.WORLD_BORDER) {
-            WrapperPlayServerWorldBorder packet = new WrapperPlayServerWorldBorder(event);
+            final var packet = lastWrapper(event,
+                    WrapperPlayServerWorldBorder.class,
+                    () -> new WrapperPlayServerWorldBorder(event));
 
             player.sendTransaction();
             // Names are misleading, it's diameter not radius.
@@ -55,7 +58,11 @@ public class PacketWorldBorder extends Check implements PacketCheck {
         }
         if (event.getPacketType() == PacketType.Play.Server.INITIALIZE_WORLD_BORDER) {
             player.sendTransaction();
-            WrapperPlayServerInitializeWorldBorder border = new WrapperPlayServerInitializeWorldBorder(event);
+
+            final var border = lastWrapper(event,
+                    WrapperPlayServerInitializeWorldBorder.class,
+                    () -> new WrapperPlayServerInitializeWorldBorder(event));
+
             setCenter(border.getX(), border.getZ());
             setLerp(border.getOldDiameter(), border.getNewDiameter(), border.getSpeed());
             setAbsoluteMaxSize(border.getPortalTeleportBoundary());
@@ -63,19 +70,31 @@ public class PacketWorldBorder extends Check implements PacketCheck {
 
         if (event.getPacketType() == PacketType.Play.Server.WORLD_BORDER_CENTER) {
             player.sendTransaction();
-            WrapperPlayServerWorldBorderCenter center = new WrapperPlayServerWorldBorderCenter(event);
+
+            final var center = lastWrapper(event,
+                    WrapperPlayServerWorldBorderCenter.class,
+                    () -> new WrapperPlayServerWorldBorderCenter(event));
+
             setCenter(center.getX(), center.getZ());
         }
 
         if (event.getPacketType() == PacketType.Play.Server.WORLD_BORDER_SIZE) {
             player.sendTransaction();
-            WrapperPlayServerWorldBorderSize size = new WrapperPlayServerWorldBorderSize(event);
+
+            final var size = lastWrapper(event,
+                    WrapperPlayServerWorldBorderSize.class,
+                    () -> new WrapperPlayServerWorldBorderSize(event));
+
             setSize(size.getDiameter());
         }
 
         if (event.getPacketType() == PacketType.Play.Server.WORLD_BORDER_LERP_SIZE) {
             player.sendTransaction();
-            WrapperPlayWorldBorderLerpSize size = new WrapperPlayWorldBorderLerpSize(event);
+
+            final var size = lastWrapper(event,
+                    WrapperPlayWorldBorderLerpSize.class,
+                    () -> new WrapperPlayWorldBorderLerpSize(event));
+
             setLerp(size.getOldDiameter(), size.getNewDiameter(), size.getSpeed());
         }
     }
@@ -110,4 +129,5 @@ public class PacketWorldBorder extends Check implements PacketCheck {
     public double getAbsoluteMaxSize() {
         return absoluteMaxSize;
     }
+
 }

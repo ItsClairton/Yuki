@@ -1,9 +1,7 @@
 package ac.grim.grimac.events.packets;
 
 import ac.grim.grimac.GrimAPI;
-import ac.grim.grimac.utils.anticheat.LogUtil;
 import com.github.retrooper.packetevents.event.*;
-import com.github.retrooper.packetevents.netty.channel.ChannelHelper;
 import com.github.retrooper.packetevents.protocol.ConnectionState;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import org.bukkit.Bukkit;
@@ -29,19 +27,6 @@ public class PacketPlayerJoinQuit extends PacketListenerAbstract {
     }
 
     @Override
-    public void onUserLogin(UserLoginEvent event) {
-        Player player = (Player) event.getPlayer();
-        if (GrimAPI.INSTANCE.getConfigManager().getConfig().getBooleanElse("debug-pipeline-on-join", false)) {
-            LogUtil.info("Pipeline: " + ChannelHelper.pipelineHandlerNamesAsString(event.getUser().getChannel()));
-        }
-
-        if (player.hasPermission("ac.alerts") && GrimAPI.INSTANCE.getConfigManager().getConfig().getBoolean("alerts.auto-enable")) {
-            GrimAPI.INSTANCE.getAlertManager().toggleAlerts(player);
-        }
-
-    }
-
-    @Override
     public void onUserDisconnect(UserDisconnectEvent event) {
         GrimAPI.INSTANCE.getPlayerDataManager().remove(event.getUser());
         GrimAPI.INSTANCE.getPlayerDataManager().exemptUsers.remove(event.getUser());
@@ -52,4 +37,5 @@ public class PacketPlayerJoinQuit extends PacketListenerAbstract {
             GrimAPI.INSTANCE.getAlertManager().handlePlayerQuit(player);
         }
     }
+
 }

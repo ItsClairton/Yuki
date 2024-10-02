@@ -31,6 +31,7 @@ public class PacketEventsInit implements Initable {
                 .checkForUpdates(false)
                 .reEncodeByDefault(false)
                 .debug(false)
+                .bStats(false)
                 .blockStateVersions(candidateVersions);
 
         PacketEvents.getAPI().load();

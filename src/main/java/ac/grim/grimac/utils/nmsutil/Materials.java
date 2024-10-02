@@ -10,13 +10,15 @@ import com.github.retrooper.packetevents.protocol.world.states.defaulttags.Block
 import com.github.retrooper.packetevents.protocol.world.states.type.StateType;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateValue;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Materials {
-    private static final Set<StateType> NO_PLACE_LIQUIDS = new HashSet<>();
+
+    private static final Set<StateType> NO_PLACE_LIQUIDS = new ObjectArraySet<>();
     // Includes iron panes in addition to glass panes
     private static final Set<StateType> PANES = new HashSet<>();
     private static final Set<StateType> WATER_LIQUIDS = new HashSet<>();

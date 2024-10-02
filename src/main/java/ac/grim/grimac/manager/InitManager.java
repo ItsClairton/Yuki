@@ -27,7 +27,6 @@ public class InitManager {
                 .put(TickRunner.class, new TickRunner())
                 .put(TickEndEvent.class, new TickEndEvent())
                 .put(CommandRegister.class, new CommandRegister())
-                .put(BStats.class, new BStats())
                 .put(PacketLimiter.class, new PacketLimiter())
                 .put(GrimExternalAPI.class, GrimAPI.INSTANCE.getExternalAPI())
                 .put(JavaVersion.class, new JavaVersion())

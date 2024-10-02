@@ -7,6 +7,9 @@ import ac.grim.grimac.utils.inventory.InventoryStorage;
 import com.github.retrooper.packetevents.protocol.item.ItemStack;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import io.github.retrooper.packetevents.util.folia.FoliaScheduler;
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import org.bukkit.Material;
 import org.bukkit.inventory.InventoryView;
 
 import java.util.*;
@@ -40,12 +43,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CorrectingPlayerInventoryStorage extends InventoryStorage {
 
     GrimPlayer player;
+
     // The key for this map is the inventory slot ID
     // The value for this map is the transaction that we care about
-    Map<Integer, Integer> serverIsCurrentlyProcessingThesePredictions = new HashMap<>();
+    Int2IntMap serverIsCurrentlyProcessingThesePredictions = new Int2IntArrayMap();
+
     // A list of predictions the client has made for inventory changes
     // Remove if the server rejects these changes
     Map<Integer, Integer> pendingFinalizedSlot = new ConcurrentHashMap<>();
+
+    Map<org.bukkit.inventory.ItemStack, ItemStack> cache = new WeakHashMap<>();
+
     // TODO: How the hell does creative mode work?
     private static final Set<String> SUPPORTED_INVENTORIES = new HashSet<>(
             Arrays.asList("CHEST", "DISPENSER", "DROPPER", "PLAYER", "ENDER_CHEST", "SHULKER_BOX", "BARREL", "CRAFTING", "CREATIVE")
@@ -75,11 +83,11 @@ public class CorrectingPlayerInventoryStorage extends InventoryStorage {
     @Override
     public void setItem(int item, ItemStack stack) {
         // If there is a more recent change to this one, don't override it
-        Integer finalTransaction = serverIsCurrentlyProcessingThesePredictions.get(item);
+        final var finalTransaction = serverIsCurrentlyProcessingThesePredictions.get(item);
 
         // If the server is currently sending a packet to the player AND it is the final change to the slot
         // OR, the client was in control of setting this slot
-        if (finalTransaction == null || player.lastTransactionReceived.get() >= finalTransaction) {
+        if (finalTransaction == 0 || player.lastTransactionReceived.get() >= finalTransaction) {
             // This is the last change for this slot, try to resync this slot if possible
             pendingFinalizedSlot.put(item, GrimAPI.INSTANCE.getTickManager().currentTick + 5);
             serverIsCurrentlyProcessingThesePredictions.remove(item);
@@ -101,12 +109,11 @@ public class CorrectingPlayerInventoryStorage extends InventoryStorage {
             org.bukkit.inventory.ItemStack bukkitItem = player.bukkitPlayer.getInventory().getItem(bukkitSlot);
 
             ItemStack existing = getItem(slot);
-            if (bukkitItem == null && existing == ItemStack.EMPTY) {
+            if ((bukkitItem == null || bukkitItem.getType() == Material.AIR) && existing == ItemStack.EMPTY) {
                 return;
             }
 
-            ItemStack toPE = SpigotConversionUtil.fromBukkitItemStack(bukkitItem);
-
+            final var toPE = cache.computeIfAbsent(bukkitItem, SpigotConversionUtil::fromBukkitItemStack);
             if (existing.getType() != toPE.getType() || existing.getAmount() != toPE.getAmount()) {
                 FoliaScheduler.getEntityScheduler().execute(player.bukkitPlayer, GrimAPI.INSTANCE.getPlugin(), ()
                         -> player.bukkitPlayer.updateInventory(), null, 0);

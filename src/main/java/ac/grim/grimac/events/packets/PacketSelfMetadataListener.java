@@ -3,6 +3,7 @@ package ac.grim.grimac.events.packets;
 import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.checks.impl.movement.NoSlowD;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.PacketUtil;
 import ac.grim.grimac.utils.nmsutil.WatchableIndexUtil;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class PacketSelfMetadataListener extends PacketListenerAbstract {
+
     public PacketSelfMetadataListener() {
         super(PacketListenerPriority.HIGH);
     }
@@ -31,7 +33,9 @@ public class PacketSelfMetadataListener extends PacketListenerAbstract {
     @Override
     public void onPacketSend(PacketSendEvent event) {
         if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
-            WrapperPlayServerEntityMetadata entityMetadata = new WrapperPlayServerEntityMetadata(event);
+            final var entityMetadata = PacketUtil.lastWrapper(event,
+                    WrapperPlayServerEntityMetadata.class,
+                    () -> new WrapperPlayServerEntityMetadata(event));
 
             GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
             if (player == null)
@@ -222,7 +226,9 @@ public class PacketSelfMetadataListener extends PacketListenerAbstract {
         }
 
         if (event.getPacketType() == PacketType.Play.Server.USE_BED) {
-            WrapperPlayServerUseBed bed = new WrapperPlayServerUseBed(event);
+            final var bed = PacketUtil.lastWrapper(event,
+                    WrapperPlayServerUseBed.class,
+                    () -> new WrapperPlayServerUseBed(event));
 
             GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
             if (player != null && player.entityID == bed.getEntityId()) {
@@ -235,7 +241,9 @@ public class PacketSelfMetadataListener extends PacketListenerAbstract {
         }
 
         if (event.getPacketType() == PacketType.Play.Server.ENTITY_ANIMATION) {
-            WrapperPlayServerEntityAnimation animation = new WrapperPlayServerEntityAnimation(event);
+            final var animation = PacketUtil.lastWrapper(event,
+                    WrapperPlayServerEntityAnimation.class,
+                    () -> new  WrapperPlayServerEntityAnimation(event));
 
             GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
             if (player != null && player.entityID == animation.getEntityId()

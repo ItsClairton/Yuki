@@ -45,8 +45,6 @@ public class PacketManager implements Initable {
         }
 
         PacketEvents.getAPI().getEventManager().registerListener(new ProxyAlertMessenger());
-        PacketEvents.getAPI().getEventManager().registerListener(new PacketSetWrapperNull());
-
         PacketEvents.getAPI().init();
     }
 }
