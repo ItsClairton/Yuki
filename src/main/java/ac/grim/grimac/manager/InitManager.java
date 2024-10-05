@@ -3,7 +3,8 @@ package ac.grim.grimac.manager;
 import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.GrimExternalAPI;
 import ac.grim.grimac.manager.init.Initable;
-import ac.grim.grimac.manager.init.load.PacketEventsInit;
+import ac.grim.grimac.manager.init.load.CollisionLoader;
+import ac.grim.grimac.manager.init.load.PacketEventsLoader;
 import ac.grim.grimac.manager.init.start.*;
 import ac.grim.grimac.manager.init.stop.TerminatePacketEvents;
 import com.google.common.collect.ClassToInstanceMap;
@@ -16,7 +17,8 @@ public class InitManager {
 
     public InitManager() {
         initializersOnLoad = new ImmutableClassToInstanceMap.Builder<Initable>()
-                .put(PacketEventsInit.class, new PacketEventsInit())
+                .put(PacketEventsLoader.class, new PacketEventsLoader())
+                .put(CollisionLoader.class, new CollisionLoader())
                 .build();
 
         initializersOnStart = new ImmutableClassToInstanceMap.Builder<Initable>()
@@ -29,7 +31,6 @@ public class InitManager {
                 .put(CommandRegister.class, new CommandRegister())
                 .put(PacketLimiter.class, new PacketLimiter())
                 .put(GrimExternalAPI.class, GrimAPI.INSTANCE.getExternalAPI())
-                .put(JavaVersion.class, new JavaVersion())
                 .build();
 
         initializersOnStop = new ImmutableClassToInstanceMap.Builder<Initable>()

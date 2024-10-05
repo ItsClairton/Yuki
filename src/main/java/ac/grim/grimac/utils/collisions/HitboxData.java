@@ -259,14 +259,6 @@ public enum HitboxData {
 
     private static final Map<StateType, HitboxData> lookup = new HashMap<>();
 
-    static {
-        for (HitboxData data : HitboxData.values()) {
-            for (StateType type : data.materials) {
-                lookup.put(type, data);
-            }
-        }
-    }
-
     private final StateType[] materials;
     private CollisionBox box;
     private HitBoxFactory dynamic;
@@ -283,6 +275,18 @@ public enum HitboxData {
         Set<StateType> mList = new HashSet<>(Arrays.asList(materials));
         mList.remove(null); // Sets can contain one null
         this.materials = mList.toArray(new StateType[0]);
+    }
+
+    public static void load() {
+        if (!lookup.isEmpty()) {
+            return;
+        }
+
+        for (HitboxData data : HitboxData.values()) {
+            for (StateType type : data.materials) {
+                lookup.put(type, data);
+            }
+        }
     }
 
     public static HitboxData getData(StateType material) {

@@ -1106,14 +1106,6 @@ public enum CollisionData {
     // This should be an array... but a hashmap will do for now...
     private static final Map<StateType, CollisionData> rawLookupMap = new IdentityHashMap<>();
 
-    static {
-        for (CollisionData data : values()) {
-            for (StateType type : data.materials) {
-                rawLookupMap.put(type, data);
-            }
-        }
-    }
-
     public final StateType[] materials;
     public CollisionBox box;
     public CollisionFactory dynamic;
@@ -1130,6 +1122,18 @@ public enum CollisionData {
         Set<StateType> mList = new HashSet<>(Arrays.asList(states));
         mList.remove(null); // Sets can contain one null
         this.materials = mList.toArray(new StateType[0]);
+    }
+
+    public static void load() {
+        if (!rawLookupMap.isEmpty()) {
+            return;
+        }
+
+        for (CollisionData data : values()) {
+            for (StateType type : data.materials) {
+                rawLookupMap.put(type, data);
+            }
+        }
     }
 
     private static CollisionBox getAmethystBox(ClientVersion version, com.github.retrooper.packetevents.protocol.world.BlockFace facing, int param_0, int param_1) {
