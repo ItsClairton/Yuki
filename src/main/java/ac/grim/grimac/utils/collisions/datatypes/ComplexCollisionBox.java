@@ -15,7 +15,7 @@ public class ComplexCollisionBox implements CollisionBox {
     }
 
     public ComplexCollisionBox(CollisionBox... boxes) {
-        this.boxes = new ObjectArrayList<>(boxes.length);
+        this.boxes = new ArrayList<>(boxes.length);
         Collections.addAll(this.boxes, boxes);
     }
 
