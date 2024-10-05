@@ -10,7 +10,7 @@ import com.github.retrooper.packetevents.protocol.world.states.defaulttags.Block
 import com.github.retrooper.packetevents.protocol.world.states.type.StateType;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateValue;
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,15 +18,15 @@ import java.util.stream.Collectors;
 
 public class Materials {
 
-    private static final Set<StateType> NO_PLACE_LIQUIDS = new ObjectArraySet<>();
+    private static final Set<StateType> NO_PLACE_LIQUIDS = new ObjectOpenHashSet<>();
     // Includes iron panes in addition to glass panes
-    private static final Set<StateType> PANES = new HashSet<>();
-    private static final Set<StateType> WATER_LIQUIDS = new HashSet<>();
-    private static final Set<StateType> WATER_LIQUIDS_LEGACY = new HashSet<>();
-    private static final Set<StateType> WATER_SOURCES = new HashSet<>();
-    private static final Set<StateType> WATER_SOURCES_LEGACY = new HashSet<>();
+    private static final Set<StateType> PANES = new ObjectOpenHashSet<>();
+    private static final Set<StateType> WATER_LIQUIDS = new ObjectOpenHashSet<>();
+    private static final Set<StateType> WATER_LIQUIDS_LEGACY = new ObjectOpenHashSet<>();
+    private static final Set<StateType> WATER_SOURCES = new ObjectOpenHashSet<>();
+    private static final Set<StateType> WATER_SOURCES_LEGACY = new ObjectOpenHashSet<>();
 
-    private static final Set<StateType> CLIENT_SIDE = new HashSet<>();
+    private static final Set<StateType> CLIENT_SIDE = new ObjectOpenHashSet<>();
 
     static {
         // Base water, flowing on 1.12- but not on 1.13+ servers

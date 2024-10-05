@@ -10,7 +10,7 @@ import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 
 import java.util.Arrays;
 
-public class PacketEventsInit implements Initable {
+public class PacketEventsLoader implements Initable {
 
     @SuppressWarnings("UnstableApiUsage")
     @Override
