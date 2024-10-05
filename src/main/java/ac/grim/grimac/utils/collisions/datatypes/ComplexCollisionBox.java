@@ -1,14 +1,21 @@
 package ac.grim.grimac.utils.collisions.datatypes;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class ComplexCollisionBox implements CollisionBox {
 
-    private final List<CollisionBox> boxes = new ArrayList<>();
+    private final List<CollisionBox> boxes;
+
+    public ComplexCollisionBox(int size) {
+        this.boxes = new ArrayList<>(size);
+    }
 
     public ComplexCollisionBox(CollisionBox... boxes) {
+        this.boxes = new ObjectArrayList<>(boxes.length);
         Collections.addAll(this.boxes, boxes);
     }
 
@@ -35,9 +42,12 @@ public class ComplexCollisionBox implements CollisionBox {
 
     @Override
     public CollisionBox copy() {
-        ComplexCollisionBox cc = new ComplexCollisionBox();
-        for (CollisionBox b : boxes)
+        ComplexCollisionBox cc = new ComplexCollisionBox(boxes.size());
+
+        for (CollisionBox b : boxes) {
             cc.boxes.add(b.copy());
+        }
+
         return cc;
     }
 
