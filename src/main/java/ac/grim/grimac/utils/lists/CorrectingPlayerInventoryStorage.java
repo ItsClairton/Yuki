@@ -4,7 +4,11 @@ import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.inventory.Inventory;
 import ac.grim.grimac.utils.inventory.InventoryStorage;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.item.ItemStack;
+import com.github.retrooper.packetevents.protocol.item.type.ItemType;
+import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import io.github.retrooper.packetevents.util.folia.FoliaScheduler;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
@@ -52,12 +56,14 @@ public class CorrectingPlayerInventoryStorage extends InventoryStorage {
     // Remove if the server rejects these changes
     Map<Integer, Integer> pendingFinalizedSlot = new ConcurrentHashMap<>();
 
-    Map<org.bukkit.inventory.ItemStack, ItemStack> cache = new WeakHashMap<>();
-
     // TODO: How the hell does creative mode work?
     private static final Set<String> SUPPORTED_INVENTORIES = new HashSet<>(
             Arrays.asList("CHEST", "DISPENSER", "DROPPER", "PLAYER", "ENDER_CHEST", "SHULKER_BOX", "BARREL", "CRAFTING", "CREATIVE")
     );
+
+    private final boolean modernServer = PacketEvents.getAPI().getServerManager()
+            .getVersion()
+            .isNewerThanOrEquals(ServerVersion.V_1_13);
 
     public CorrectingPlayerInventoryStorage(GrimPlayer player, int size) {
         super(size);
@@ -107,18 +113,50 @@ public class CorrectingPlayerInventoryStorage extends InventoryStorage {
 
         if (bukkitSlot != -1) {
             org.bukkit.inventory.ItemStack bukkitItem = player.bukkitPlayer.getInventory().getItem(bukkitSlot);
-
             ItemStack existing = getItem(slot);
-            if ((bukkitItem == null || bukkitItem.getType() == Material.AIR) && existing == ItemStack.EMPTY) {
+
+            if (bukkitItem == null && existing == ItemStack.EMPTY) {
                 return;
             }
 
-            final var toPE = cache.computeIfAbsent(bukkitItem, SpigotConversionUtil::fromBukkitItemStack);
-            if (existing.getType() != toPE.getType() || existing.getAmount() != toPE.getAmount()) {
-                FoliaScheduler.getEntityScheduler().execute(player.bukkitPlayer, GrimAPI.INSTANCE.getPlugin(), ()
-                        -> player.bukkitPlayer.updateInventory(), null, 0);
-                setItem(slot, toPE);
+            ItemStack toPE = null;
+
+            if (!modernServer) {
+                if (bukkitItem != null) {
+                    Material material = bukkitItem.getType();
+                    if (material == Material.AIR && existing == ItemStack.EMPTY) {
+                        return;
+                    }
+
+                    ItemType itemType = ItemTypes.getById(PacketEvents.getAPI()
+                            .getServerManager()
+                            .getVersion()
+                            .toClientVersion(), material.getId());
+
+                    if (itemType == null) {
+                        throw new IllegalStateException("not found item with id " + material.getId());
+                    }
+
+                    if (itemType == existing.getType() && bukkitItem.getAmount() == existing.getAmount()) {
+                        return;
+                    }
+                }
+            } else {
+                toPE = SpigotConversionUtil.fromBukkitItemStack(bukkitItem);
+
+                if (toPE.getType() == existing.getType() && toPE.getAmount() == existing.getAmount()) {
+                    return;
+                }
             }
+
+            if (toPE == null) {
+                toPE = SpigotConversionUtil.fromBukkitItemStack(bukkitItem);
+            }
+
+            FoliaScheduler.getEntityScheduler().execute(player.bukkitPlayer, GrimAPI.INSTANCE.getPlugin(), ()
+                    -> player.bukkitPlayer.updateInventory(), null, 0);
+
+            setItem(slot, toPE);
         }
     }
 
