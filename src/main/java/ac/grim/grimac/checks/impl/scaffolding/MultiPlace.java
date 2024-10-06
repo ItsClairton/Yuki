@@ -71,7 +71,7 @@ public class MultiPlace extends BlockPlaceCheck {
 
     @Override
     public void onPredictionComplete(PredictionComplete predictionComplete) {
-        if (!player.skippedTickInActualMovement && player.getClientVersion().isNewerThan(ClientVersion.V_1_8)) {
+        if (predictionComplete.isChecked() && !player.skippedTickInActualMovement && player.getClientVersion().isNewerThan(ClientVersion.V_1_8)) {
             for (Pair<String, Object>[] verbose : flags) {
                 flagAndAlert(verbose);
             }
