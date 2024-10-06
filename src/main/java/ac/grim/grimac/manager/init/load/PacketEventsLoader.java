@@ -6,6 +6,7 @@ import ac.grim.grimac.utils.anticheat.LogUtil;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.util.PEVersions;
+import com.github.retrooper.packetevents.util.TimeStampMode;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 
 import java.util.Arrays;
@@ -32,7 +33,8 @@ public class PacketEventsLoader implements Initable {
                 .reEncodeByDefault(false)
                 .debug(false)
                 .bStats(false)
-                .blockStateVersions(candidateVersions);
+                .blockStateVersions(candidateVersions)
+                .timeStampMode(TimeStampMode.NONE);
 
         PacketEvents.getAPI().load();
     }
