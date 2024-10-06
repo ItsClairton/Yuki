@@ -24,6 +24,8 @@ import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerFlying;
 import com.github.retrooper.packetevents.wrapper.play.server.*;
 import io.github.retrooper.packetevents.util.viaversion.ViaVersionUtil;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +52,7 @@ public class PacketEntityReplication extends Check implements PacketCheck {
     // We should simply add a transaction (which will clear this list!)
     //
     // Another valid solution is to simply spam more transactions, but let's not waste bandwidth.
-    private final List<Integer> despawnedEntitiesThisTransaction = new ArrayList<>();
+    private final IntList despawnedEntitiesThisTransaction = new IntArrayList();
 
     // Maximum ping when a firework boost is removed from the player.
     private final int maxFireworkBoostPing = GrimAPI.INSTANCE.getConfigManager().getConfig().getIntElse("max-ping-firework-boost", 1000);
