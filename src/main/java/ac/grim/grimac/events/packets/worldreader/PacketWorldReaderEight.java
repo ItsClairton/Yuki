@@ -53,7 +53,14 @@ public class PacketWorldReaderEight extends BasePacketWorldReader {
         final int chunkZ = wrapper.readInt();
         boolean groundUp = wrapper.readBoolean();
 
-        BitSet mask = BitSet.valueOf(new long[]{(long) wrapper.readUnsignedShort()});
+        final var rawMask = (long) wrapper.readUnsignedShort();
+        if (groundUp && rawMask == 0) {
+            unloadChunk(player, chunkX, chunkZ);
+            event.setLastUsedWrapper(null); // Make sure this incomplete packet isn't sent
+            return;
+        }
+
+        BitSet mask = BitSet.valueOf(new long[]{(rawMask)});
         int size = wrapper.readVarInt(); // Ignore size
 
         final Chunk_v1_9[] chunks = new Chunk_v1_9[16];

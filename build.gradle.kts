@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.itsclairton.packetevents:packetevents-spigot:00a8ac708e")
+    implementation("com.github.itsclairton.packetevents:packetevents-spigot:e62f117e81")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     implementation("it.unimi.dsi:fastutil:8.5.14")
     implementation("github.scarsz:configuralize:1.4.0")
@@ -86,7 +86,7 @@ tasks {
 
     runServer {
         minecraftVersion("1.8.8")
-        jvmArgs("-XX:+AllowEnhancedClassRedefinition -Dfile.encoding=UTF-8")
+        jvmArgs("-XX:+AllowEnhancedClassRedefinition", "-Dfile.encoding=UTF-8", "-Dio.netty.leakDetection.level=paranoid", "-Xmx250M", "-Xms250M")
 
         downloadPlugins {
             hangar("ViaVersion", "5.0.4-SNAPSHOT+547")
