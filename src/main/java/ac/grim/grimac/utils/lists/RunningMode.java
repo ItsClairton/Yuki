@@ -1,25 +1,24 @@
 package ac.grim.grimac.utils.lists;
 
-import ac.grim.grimac.utils.data.Pair;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
+import ac.grim.grimac.utils.data.primitive.Double2IntPair;
+import it.unimi.dsi.fastutil.doubles.Double2IntMap;
+import it.unimi.dsi.fastutil.doubles.Double2IntOpenHashMap;
+import it.unimi.dsi.fastutil.doubles.DoubleArrayFIFOQueue;
+import lombok.Getter;
 
 // This class is copyright DefineOutside licensed under MIT
 //
 // This class calculates the running mode of a list in best case o(1) worst case o(n) time.
 public class RunningMode {
-    Queue<Double> addList;
-    Map<Double, Integer> popularityMap = new HashMap<>();
-    int maxSize;
+    DoubleArrayFIFOQueue addList;
+    Double2IntMap popularityMap = new Double2IntOpenHashMap();
+    @Getter int maxSize;
 
     private static final double threshold = 1e-3;
 
     public RunningMode(int maxSize) {
         if (maxSize == 0) throw new IllegalArgumentException("There's no mode to a size 0 list!");
-        this.addList = new ArrayBlockingQueue<>(maxSize);
+        this.addList = new DoubleArrayFIFOQueue(maxSize);
         this.maxSize = maxSize;
     }
 
@@ -27,29 +26,25 @@ public class RunningMode {
         return addList.size();
     }
 
-    public int getMaxSize() {
-        return maxSize;
-    }
-
     public void add(double value) {
         pop();
 
-        for (Map.Entry<Double, Integer> entry : popularityMap.entrySet()) {
-            if (Math.abs(entry.getKey() - value) < threshold) {
-                entry.setValue(entry.getValue() + 1);
-                addList.add(entry.getKey());
+        for (final var entry : popularityMap.double2IntEntrySet()) {
+            if (Math.abs(entry.getDoubleKey() - value) < threshold) {
+                entry.setValue(entry.getIntValue() + 1);
+                addList.enqueue(entry.getDoubleKey());
                 return;
             }
         }
 
         // Nothing found
         popularityMap.put(value, 1);
-        addList.add(value);
+        addList.enqueue(value);
     }
 
     private void pop() {
         if (addList.size() >= maxSize) {
-            Double type = addList.poll();
+            double type = addList.dequeueDouble();
             int popularity = popularityMap.get(type);  // Being null isn't possible
             if (popularity == 1) {
                 popularityMap.remove(type); // Make sure not to leak memory
@@ -59,17 +54,17 @@ public class RunningMode {
         }
     }
 
-    public Pair<Double, Integer> getMode() {
+    public Double2IntPair getMode() {
         int max = 0;
-        Double mostPopular = null;
+        double mostPopular = 0;
 
-        for (Map.Entry<Double, Integer> entry : popularityMap.entrySet()) {
-            if (entry.getValue() > max) {
-                max = entry.getValue();
-                mostPopular = entry.getKey();
+        for (final var entry : popularityMap.double2IntEntrySet()) {
+            if (entry.getIntValue() > max) {
+                max = entry.getIntValue();
+                mostPopular = entry.getDoubleKey();
             }
         }
 
-        return new Pair<>(mostPopular, max);
+        return new Double2IntPair(mostPopular, max);
     }
 }

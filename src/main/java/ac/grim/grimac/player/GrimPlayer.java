@@ -48,7 +48,7 @@ import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyCompon
 import io.github.retrooper.packetevents.util.folia.FoliaScheduler;
 import io.github.retrooper.packetevents.util.viaversion.ViaVersionUtil;
 import io.netty.channel.Channel;
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.shorts.ShortOpenHashSet;
 import it.unimi.dsi.fastutil.shorts.ShortSet;
 import lombok.Getter;
@@ -240,7 +240,7 @@ public class GrimPlayer implements GrimUser {
     }
 
     public Set<VectorData> getPossibleVelocities() {
-        Set<VectorData> set = new ObjectArraySet<>();
+        Set<VectorData> set = new ObjectOpenHashSet<>();
 
         if (firstBreadKB != null) {
             set.add(new VectorData(firstBreadKB.vector.clone(), VectorData.VectorType.Knockback).returnNewModified(VectorData.VectorType.FirstBreadKnockback));
@@ -256,7 +256,7 @@ public class GrimPlayer implements GrimUser {
     }
 
     public Set<VectorData> getPossibleVelocitiesMinusKnockback() {
-        Set<VectorData> possibleMovements = new ObjectArraySet<>();
+        Set<VectorData> possibleMovements = new ObjectOpenHashSet<>();
         possibleMovements.add(new VectorData(clientVelocity, VectorData.VectorType.Normal));
 
         // A player cannot swim hop (> 0 y vel) and be on the ground
@@ -278,7 +278,7 @@ public class GrimPlayer implements GrimUser {
 
         // Knockback takes precedence over piston pushing in my testing
         // It's very difficult to test precedence so if there's issues with this bouncy implementation let me know
-        for (VectorData data : new ObjectArraySet<>(possibleMovements)) {
+        for (VectorData data : new ObjectOpenHashSet<>(possibleMovements)) {
             for (BlockFace direction : uncertaintyHandler.slimePistonBounces) {
                 if (direction.getModX() != 0) {
                     possibleMovements.add(data.returnNewModified(data.vector.clone().setX(direction.getModX()), VectorData.VectorType.SlimePistonBounce));
@@ -472,14 +472,14 @@ public class GrimPlayer implements GrimUser {
             couldSkipTick = pointThreeEstimator.determineCanSkipTick(BlockProperties.getFrictionInfluencedSpeed((float) (speed * (isSprinting ? 1.3 : 1)), this), getPossibleVelocitiesMinusKnockback());
         }
 
-        Set<VectorData> knockback = new ObjectArraySet<>();
+        Set<VectorData> knockback = new ObjectOpenHashSet<>();
         if (firstBreadKB != null) knockback.add(new VectorData(firstBreadKB.vector, VectorData.VectorType.Knockback));
         if (likelyKB != null) knockback.add(new VectorData(likelyKB.vector, VectorData.VectorType.Knockback));
 
         boolean kbPointThree = pointThreeEstimator.determineCanSkipTick(BlockProperties.getFrictionInfluencedSpeed((float) (speed * (isSprinting ? 1.3 : 1)), this), knockback);
         checkManager.getKnockbackHandler().setPointThree(kbPointThree);
 
-        Set<VectorData> explosion = new ObjectArraySet<>();
+        Set<VectorData> explosion = new ObjectOpenHashSet<>();
         if (firstBreadExplosion != null)
             explosion.add(new VectorData(firstBreadExplosion.vector, VectorData.VectorType.Explosion));
         if (likelyExplosions != null)

@@ -4,10 +4,9 @@ import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.type.RotationCheck;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.update.RotationUpdate;
-import ac.grim.grimac.utils.data.Pair;
+import ac.grim.grimac.utils.data.primitive.Double2IntPair;
 import ac.grim.grimac.utils.lists.RunningMode;
 import ac.grim.grimac.utils.math.GrimMath;
-
 
 public class AimProcessor extends Check implements RotationCheck {
 
@@ -58,14 +57,14 @@ public class AimProcessor extends Check implements RotationCheck {
         }
 
         if (this.xRotMode.size() > SIGNIFICANT_SAMPLES_THRESHOLD) {
-            Pair<Double, Integer> modeX = this.xRotMode.getMode();
+            Double2IntPair modeX = this.xRotMode.getMode();
             if (modeX.second() > SIGNIFICANT_SAMPLES_THRESHOLD) {
                 this.modeX = modeX.first();
                 this.sensitivityX = convertToSensitivity(this.modeX);
             }
         }
         if (this.yRotMode.size() > SIGNIFICANT_SAMPLES_THRESHOLD) {
-            Pair<Double, Integer> modeY = this.yRotMode.getMode();
+            Double2IntPair modeY = this.yRotMode.getMode();
             if (modeY.second() > SIGNIFICANT_SAMPLES_THRESHOLD) {
                 this.modeY = modeY.first();
                 this.sensitivityY = convertToSensitivity(this.modeY);
