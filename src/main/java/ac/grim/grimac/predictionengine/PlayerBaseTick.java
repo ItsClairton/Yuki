@@ -150,14 +150,17 @@ public class PlayerBaseTick {
         // Pre-1.17 clients don't have powder snow and therefore don't desync
         if (player.getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_16_4)) return;
 
-        final ValuedAttribute playerSpeed = player.compensatedEntities.getSelf().getAttribute(Attributes.GENERIC_MOVEMENT_SPEED).get();
+        final ValuedAttribute playerSpeed = player.compensatedEntities.getSelf().getAttribute(Attributes.GENERIC_MOVEMENT_SPEED);
+        if (playerSpeed == null) {
+            throw new NullPointerException("not found player-speed attribute in map");
+        }
 
         // Might be null after respawn?
-        final Optional<WrapperPlayServerUpdateAttributes.Property> property = playerSpeed.property();
-        if (!property.isPresent()) return;
+        final WrapperPlayServerUpdateAttributes.Property property = playerSpeed.property();
+        if (property == null) return;
 
         // The client first desync's this attribute
-        property.get().getModifiers().removeIf(modifier -> modifier.getUUID().equals(CompensatedEntities.SNOW_MODIFIER_UUID) || modifier.getName().getKey().equals("powder_snow"));
+        property.getModifiers().removeIf(modifier -> modifier.getUUID().equals(CompensatedEntities.SNOW_MODIFIER_UUID) || modifier.getName().getKey().equals("powder_snow"));
         playerSpeed.recalculate();
 
         // And then re-adds it using purely what the server has sent it
@@ -171,7 +174,7 @@ public class PlayerBaseTick {
                 float percentFrozen = (float) Math.min(i, ticksToFreeze) / (float) ticksToFreeze;
                 float percentFrozenReducedToSpeed = -0.05F * percentFrozen;
 
-                property.get().getModifiers().add(new WrapperPlayServerUpdateAttributes.PropertyModifier(CompensatedEntities.SNOW_MODIFIER_UUID, percentFrozenReducedToSpeed, WrapperPlayServerUpdateAttributes.PropertyModifier.Operation.ADDITION));
+                property.getModifiers().add(new WrapperPlayServerUpdateAttributes.PropertyModifier(CompensatedEntities.SNOW_MODIFIER_UUID, percentFrozenReducedToSpeed, WrapperPlayServerUpdateAttributes.PropertyModifier.Operation.ADDITION));
                 playerSpeed.recalculate();
             }
         }

@@ -6,9 +6,9 @@ import ac.grim.grimac.utils.math.GrimMath;
 import com.github.retrooper.packetevents.protocol.attribute.Attribute;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateAttributes;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiFunction;
 
 import static ac.grim.grimac.utils.latency.CompensatedEntities.SPRINTING_MODIFIER_UUID;
@@ -92,8 +92,8 @@ public final class ValuedAttribute {
     }
 
     @Deprecated // Avoid using this, it only exists for special cases
-    public Optional<WrapperPlayServerUpdateAttributes.Property> property() {
-        return Optional.ofNullable(lastProperty);
+    public @Nullable WrapperPlayServerUpdateAttributes.Property property() {
+        return lastProperty;
     }
 
     public void recalculate() {

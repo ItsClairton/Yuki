@@ -30,6 +30,7 @@ import com.github.retrooper.packetevents.util.Vector3d;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import lombok.Getter;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -94,20 +95,24 @@ public class PacketEntity extends TypedPacketEntity {
                 .requiredVersion(player, ClientVersion.V_1_20_5));
     }
 
-    public Optional<ValuedAttribute> getAttribute(Attribute attribute) {
-        if (attribute == null) return Optional.empty();
-        return Optional.ofNullable(attributeMap.get(attribute));
+    public @Nullable ValuedAttribute getAttribute(Attribute attribute) {
+        if (attribute == null) {
+            return null;
+        }
+
+        return attributeMap.get(attribute);
     }
 
     public void setAttribute(Attribute attribute, double value) {
-        ValuedAttribute property = getAttribute(attribute).orElse(null);
+        ValuedAttribute property = getAttribute(attribute);
         if (property == null) throw new IllegalArgumentException("Cannot set attribute " + attribute.getName() + " for entity " + getType().getName().toString() + "!");
         property.override(value);
     }
 
     public double getAttributeValue(Attribute attribute) {
-        return getAttribute(attribute).map(ValuedAttribute::get)
-                .orElseThrow(() -> new IllegalArgumentException("Cannot get attribute " + attribute.getName() + " for entity " + getType().getName().toString() + "!"));
+        ValuedAttribute property = getAttribute(attribute);
+        if (property == null) throw new IllegalArgumentException("Cannot get attribute " + attribute.getName() + " for entity " + getType().getName().toString() + "!");
+        return property.get();
     }
 
     public void resetAttributes() {

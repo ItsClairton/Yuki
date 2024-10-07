@@ -135,13 +135,13 @@ public class CompensatedEntities {
                 attribute = Attributes.GENERIC_JUMP_STRENGTH;
             }
 
-            final Optional<ValuedAttribute> valuedAttribute = entity.getAttribute(attribute);
-            if (!valuedAttribute.isPresent()) {
+            final ValuedAttribute valuedAttribute = entity.getAttribute(attribute);
+            if (valuedAttribute == null) {
                 // Not an attribute we want to track
                 continue;
             }
 
-            valuedAttribute.get().with(snapshotWrapper);
+            valuedAttribute.with(snapshotWrapper);
         }
     }
 
