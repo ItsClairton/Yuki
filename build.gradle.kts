@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.itsclairton.packetevents:packetevents-spigot:e62f117e81")
+    implementation("com.github.itsclairton.packetevents:packetevents-spigot:c16eed7dfe")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     implementation("it.unimi.dsi:fastutil:8.5.14")
     implementation("github.scarsz:configuralize:1.4.0")
