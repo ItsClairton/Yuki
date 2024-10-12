@@ -73,12 +73,9 @@ tasks {
     }
 
     processResources {
-        if (gradle.startParameter.taskNames.contains("build")) {
-            outputs.upToDateWhen { false }
-        }
+        inputs.property("version", project.version)
 
         val version = project.version
-
         filesMatching("plugin.yml") {
             expand(mapOf("version" to version))
         }
@@ -86,7 +83,11 @@ tasks {
 
     runServer {
         minecraftVersion("1.8.8")
-        jvmArgs("-XX:+AllowEnhancedClassRedefinition", "-Dfile.encoding=UTF-8", "-Dio.netty.leakDetection.level=paranoid", "-Xmx250M", "-Xms250M")
+        jvmArgs("-XX:+AllowEnhancedClassRedefinition",
+            "-Dfile.encoding=UTF-8",
+            "-Dio.netty.leakDetection.level=paranoid",
+            "-Xmx250M",
+            "-Xms250M")
 
         downloadPlugins {
             hangar("ViaVersion", "5.0.4-SNAPSHOT+547")
