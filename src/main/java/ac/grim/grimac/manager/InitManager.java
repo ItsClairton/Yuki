@@ -31,6 +31,7 @@ public class InitManager {
                 .put(CommandRegister.class, new CommandRegister())
                 .put(PacketLimiter.class, new PacketLimiter())
                 .put(GrimExternalAPI.class, GrimAPI.INSTANCE.getExternalAPI())
+                .put(ViaVersion.class, new ViaVersion())
                 .build();
 
         initializersOnStop = new ImmutableClassToInstanceMap.Builder<Initable>()
