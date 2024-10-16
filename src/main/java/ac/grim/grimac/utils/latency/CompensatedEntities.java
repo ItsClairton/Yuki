@@ -84,11 +84,11 @@ public class CompensatedEntities {
         }
     }
 
-    public OptionalInt getSlowFallingAmplifier() {
-        return player.getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_12_2) ? OptionalInt.empty() : getPotionLevelForPlayer(PotionTypes.SLOW_FALLING);
+    public int getSlowFallingAmplifier() {
+        return player.getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_12_2) ? -1 : getPotionLevelForPlayer(PotionTypes.SLOW_FALLING);
     }
 
-    public OptionalInt getPotionLevelForPlayer(PotionType type) {
+    public int getPotionLevelForPlayer(PotionType type) {
         return getEntityInControl().getPotionEffectLevel(type);
     }
 

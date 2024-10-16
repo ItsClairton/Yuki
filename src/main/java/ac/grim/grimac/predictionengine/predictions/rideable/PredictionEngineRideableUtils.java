@@ -39,9 +39,9 @@ public class PredictionEngineRideableUtils {
             // broken ever since vehicle control became client sided
             //
             // But plugins can still send this, so support it anyways
-            final OptionalInt jumpBoost = player.compensatedEntities.getPotionLevelForPlayer(PotionTypes.JUMP_BOOST);
-            if (jumpBoost.isPresent()) {
-                d1 = d0 + ((jumpBoost.getAsInt() + 1) * 0.1F);
+            final var jumpBoost = player.compensatedEntities.getPotionLevelForPlayer(PotionTypes.JUMP_BOOST);
+            if (jumpBoost != -1) {
+                d1 = d0 + ((jumpBoost + 1) * 0.1F);
             } else {
                 d1 = d0;
             }

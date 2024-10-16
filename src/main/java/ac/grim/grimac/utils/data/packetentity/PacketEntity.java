@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.OptionalInt;
 import java.util.UUID;
 import java.util.Map;
-import java.util.Optional;
 
 // You may not copy this check unless your anticheat is licensed under GPL
 public class PacketEntity extends TypedPacketEntity {
@@ -202,16 +201,10 @@ public class PacketEntity extends TypedPacketEntity {
         return riding;
     }
 
-    public OptionalInt getPotionEffectLevel(PotionType effect) {
-        final var amplifier = potionsMap == null
+    public int getPotionEffectLevel(PotionType effect) {
+        return potionsMap == null
                 ? -1
                 : potionsMap.getOrDefault(effect, -1);
-
-        if (amplifier == -1) {
-            return OptionalInt.empty();
-        } else {
-            return OptionalInt.of(amplifier);
-        }
     }
 
     public boolean hasPotionEffect(PotionType effect) {

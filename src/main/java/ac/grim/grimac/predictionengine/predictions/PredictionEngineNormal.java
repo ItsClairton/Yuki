@@ -21,9 +21,9 @@ public class PredictionEngineNormal extends PredictionEngine {
 
     public static void staticVectorEndOfTick(GrimPlayer player, Vector vector) {
         double adjustedY = vector.getY();
-        final OptionalInt levitation = player.compensatedEntities.getPotionLevelForPlayer(PotionTypes.LEVITATION);
-        if (levitation.isPresent()) {
-            adjustedY += (0.05 * (levitation.getAsInt() + 1) - vector.getY()) * 0.2;
+        final var levitation = player.compensatedEntities.getPotionLevelForPlayer(PotionTypes.LEVITATION);
+        if (levitation != -1) {
+            adjustedY += (0.05 * (levitation + 1) - vector.getY()) * 0.2;
             // Reset fall distance with levitation
             player.fallDistance = 0;
         } else if (player.hasGravity) {
@@ -46,8 +46,8 @@ public class PredictionEngineNormal extends PredictionEngine {
                 // If the player didn't try to jump
                 // And 0.03 didn't affect onGround status
                 // The player cannot jump
-                final OptionalInt jumpBoost = player.compensatedEntities.getPotionLevelForPlayer(PotionTypes.JUMP_BOOST);
-                if (((!jumpBoost.isPresent() || jumpBoost.getAsInt() >= 0) && player.onGround) || !player.lastOnGround)
+                final var jumpBoost = player.compensatedEntities.getPotionLevelForPlayer(PotionTypes.JUMP_BOOST);
+                if (((jumpBoost == -1 || jumpBoost >= 0) && player.onGround) || !player.lastOnGround)
                     return;
 
                 JumpPower.jumpFromGround(player, jump);

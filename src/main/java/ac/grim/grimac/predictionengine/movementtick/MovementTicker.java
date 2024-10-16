@@ -331,7 +331,7 @@ public class MovementTicker {
                 : player.compensatedEntities.getSelf().getRiding().getAttributeValue(Attributes.GENERIC_GRAVITY);
 
         boolean isFalling = player.actualMovement.getY() <= 0.0;
-        if (isFalling && player.compensatedEntities.getSlowFallingAmplifier().isPresent()) {
+        if (isFalling && player.compensatedEntities.getSlowFallingAmplifier() != -1) {
             playerGravity = player.getClientVersion().isOlderThan(ClientVersion.V_1_20_5) ? 0.01 : Math.min(playerGravity, 0.01);
             // Set fall distance to 0 if the player has slow falling
             player.fallDistance = 0;
@@ -366,7 +366,7 @@ public class MovementTicker {
                 swimSpeed += (player.speed - swimSpeed) * player.depthStriderLevel / divisor;
             }
 
-            if (player.compensatedEntities.getPotionLevelForPlayer(PotionTypes.DOLPHINS_GRACE).isPresent()) {
+            if (player.compensatedEntities.getPotionLevelForPlayer(PotionTypes.DOLPHINS_GRACE) != -1) {
                 swimFriction = 0.96F;
             }
 

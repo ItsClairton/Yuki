@@ -132,18 +132,18 @@ public class BlockBreakSpeed {
             }
         }
 
-        OptionalInt digSpeed = player.compensatedEntities.getPotionLevelForPlayer(PotionTypes.HASTE);
-        OptionalInt conduit = player.compensatedEntities.getPotionLevelForPlayer(PotionTypes.CONDUIT_POWER);
+        final var digSpeed = player.compensatedEntities.getPotionLevelForPlayer(PotionTypes.HASTE);
+        final var conduit = player.compensatedEntities.getPotionLevelForPlayer(PotionTypes.CONDUIT_POWER);
 
-        if (digSpeed.isPresent() || conduit.isPresent()) {
-            int hasteLevel = Math.max(!digSpeed.isPresent() ? 0 : digSpeed.getAsInt(), !conduit.isPresent() ? 0 : conduit.getAsInt());
+        if (digSpeed != -1 || conduit != -1) {
+            int hasteLevel = Math.max(digSpeed == -1 ? 0 : digSpeed, conduit == -1 ? 0 : conduit);
             speedMultiplier *= (float) (1 + (0.2 * (hasteLevel + 1)));
         }
 
-        OptionalInt miningFatigue = player.compensatedEntities.getPotionLevelForPlayer(PotionTypes.MINING_FATIGUE);
+        final var miningFatigue = player.compensatedEntities.getPotionLevelForPlayer(PotionTypes.MINING_FATIGUE);
 
-        if (miningFatigue.isPresent()) {
-            switch (miningFatigue.getAsInt()) {
+        if (miningFatigue != -1) {
+            switch (miningFatigue) {
                 case 0:
                     speedMultiplier *= 0.3f;
                     break;
