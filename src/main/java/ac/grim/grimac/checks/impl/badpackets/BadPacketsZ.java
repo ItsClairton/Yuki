@@ -72,7 +72,7 @@ public class BadPacketsZ extends Check implements PacketCheck {
             final Vector3i pos = dig.getBlockPosition();
 
             if (shouldExempt(pos)) {
-                lastCancelledBlock = null;
+                lastCancelledBlock = pos;
                 lastLastBlock = null;
                 lastBlock = null;
                 return;

@@ -90,9 +90,9 @@ tasks {
             "-Xms250M")
 
         downloadPlugins {
-            hangar("ViaVersion", "5.0.4-SNAPSHOT+547")
-            hangar("ViaBackwards", "5.0.4-SNAPSHOT+328")
-            hangar("ViaRewind", "4.0.3-SNAPSHOT+207")
+            hangar("ViaVersion", "5.0.5")
+            hangar("ViaBackwards", "5.0.4")
+            hangar("ViaRewind", "4.0.3")
 
             url("https://ci.lucko.me/job/spark/455/artifact/spark-bukkit/build/libs/spark-1.10.109-bukkit.jar")
         }
